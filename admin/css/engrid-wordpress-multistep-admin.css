@@ -1,0 +1,8 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+ .wp-block .wp-block-myguten-meta-block{
+  max-width: 50%;
+ }
