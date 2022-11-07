@@ -20,7 +20,7 @@ function engrid_wordpress_promotion_menu_pages()
         'redirect' => true,
         'icon_url' => 'dashicons-admin-customizer',
         'update_button' => 'Save',
-        'updated_message' => 'WordPress Promotion Saved',
+        'updated_message' => 'Promotion Saved',
     ));
 }
 
@@ -34,31 +34,31 @@ function engrid_wordpress_promotion_menu_pages()
 // add_action('acf/init', 'foursite_wordpress_promotion_menu_pages');
 
 
-// Register WordPress Promotion Post Type
+// Register Promotion Post Type
 function register_wordpress_promotion_post_type() {
     $labels = array(
-        'name'                  => _x( 'WordPress Promotions', 'Post Type General Name', '4site-wordpress-promotion' ),
-        'singular_name'         => _x( 'WordPress Promotion', 'Post Type Singular Name', '4site-wordpress-promotion' ),
-        'menu_name'             => __( 'WordPress Promotions', '4site-wordpress-promotion' ),
-        'name_admin_bar'        => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
-        'archives'              => __( 'WordPress Promotion Archives', '4site-wordpress-promotion' ),
-        'attributes'            => __( 'WordPress Promotion Attributes', '4site-wordpress-promotion' ),
-        'parent_item_colon'     => __( 'Parent WordPress Promotion:', '4site-wordpress-promotion' ),
-        'all_items'             => __( 'All WordPress Promotions', '4site-wordpress-promotion' ),
-        'add_new_item'          => __( 'Add New WordPress Promotion', '4site-wordpress-promotion' ),
+        'name'                  => _x( 'Promotions', 'Post Type General Name', '4site-wordpress-promotion' ),
+        'singular_name'         => _x( 'Promotion', 'Post Type Singular Name', '4site-wordpress-promotion' ),
+        'menu_name'             => __( 'Promotions', '4site-wordpress-promotion' ),
+        'name_admin_bar'        => __( 'Promotion', '4site-wordpress-promotion' ),
+        'archives'              => __( 'Promotion Archives', '4site-wordpress-promotion' ),
+        'attributes'            => __( 'Promotion Attributes', '4site-wordpress-promotion' ),
+        'parent_item_colon'     => __( 'Parent Promotion:', '4site-wordpress-promotion' ),
+        'all_items'             => __( 'All Promotions', '4site-wordpress-promotion' ),
+        'add_new_item'          => __( 'Add New Promotion', '4site-wordpress-promotion' ),
         'add_new'               => __( 'Add New', '4site-wordpress-promotion' ),
-        'new_item'              => __( 'New WordPress Promotion', '4site-wordpress-promotion' ),
-        'edit_item'             => __( 'Edit WordPress Promotion', '4site-wordpress-promotion' ),
-        'update_item'           => __( 'Update WordPress Promotion', '4site-wordpress-promotion' ),
-        'view_item'             => __( 'View WordPress Promotion', '4site-wordpress-promotion' ),
-        'view_items'            => __( 'View WordPress Promotions', '4site-wordpress-promotion' ),
-        'search_items'          => __( 'Search WordPress Promotion', '4site-wordpress-promotion' ),
+        'new_item'              => __( 'New Promotion', '4site-wordpress-promotion' ),
+        'edit_item'             => __( 'Edit Promotion', '4site-wordpress-promotion' ),
+        'update_item'           => __( 'Update Promotion', '4site-wordpress-promotion' ),
+        'view_item'             => __( 'View Promotion', '4site-wordpress-promotion' ),
+        'view_items'            => __( 'View Promotions', '4site-wordpress-promotion' ),
+        'search_items'          => __( 'Search Promotion', '4site-wordpress-promotion' ),
         'not_found'             => __( 'Not found', '4site-wordpress-promotion' ),
         'not_found_in_trash'    => __( 'Not found in Trash', '4site-wordpress-promotion' ),
     );
     $args = array(
-        'label'                 => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
-        'description'           => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
+        'label'                 => __( 'Promotion', '4site-wordpress-promotion' ),
+        'description'           => __( 'Promotion', '4site-wordpress-promotion' ),
         'labels'                => $labels,
 		'supports'              => array( 'title' ),
 		'hierarchical'          => false,
