@@ -9,18 +9,18 @@
  * @uses acf_add_options_page https://www.advancedcustomfields.com/resources/acf_add_options_page/
  * @uses acf_add_options_sub_page https://www.advancedcustomfields.com/resources/acf_add_options_sub_page/
  */
-function engrid_wordpress_multistep_menu_pages()
+function engrid_wordpress_promotion_menu_pages()
 {
     acf_add_options_page(array(
-        'page_title' => 'Multistep Lightbox',
-        'menu_title' => 'Multistep Lightbox',
-        'menu_slug' => 'multistep-lightbox',
+        'page_title' => 'Promotions',
+        'menu_title' => 'Promotions',
+        'menu_slug' => 'wordpress-promotions',
         'capability' => 'manage_options',
         'position' => 61.1,
         'redirect' => true,
         'icon_url' => 'dashicons-admin-customizer',
         'update_button' => 'Save',
-        'updated_message' => 'Multistep Lightbox Saved',
+        'updated_message' => 'WordPress Promotion Saved',
     ));
 }
 
@@ -31,34 +31,34 @@ function engrid_wordpress_multistep_menu_pages()
  * @uses add_action() https://developer.wordpress.org/reference/functions/add_action/
  * @uses acf/init https://www.advancedcustomfields.com/resources/acf-init/
  */
-// add_action('acf/init', 'engrid_wordpress_multistep_menu_pages');
+// add_action('acf/init', 'foursite_wordpress_promotion_menu_pages');
 
 
-// Register Multistep Lightbox Post Type
-function register_multistep_lightbox_post_type() {
+// Register WordPress Promotion Post Type
+function register_wordpress_promotion_post_type() {
     $labels = array(
-        'name'                  => _x( 'Multistep Lightboxes', 'Post Type General Name', 'engrid-wordpress-multistep' ),
-        'singular_name'         => _x( 'Multistep Lightbox', 'Post Type Singular Name', 'engrid-wordpress-multistep' ),
-        'menu_name'             => __( 'Multistep Lightboxes', 'engrid-wordpress-multistep' ),
-        'name_admin_bar'        => __( 'Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'archives'              => __( 'Multistep Lightbox Archives', 'engrid-wordpress-multistep' ),
-        'attributes'            => __( 'Multistep Lightbox Attributes', 'engrid-wordpress-multistep' ),
-        'parent_item_colon'     => __( 'Parent Multistep Lightbox:', 'engrid-wordpress-multistep' ),
-        'all_items'             => __( 'All Multistep Lightboxes', 'engrid-wordpress-multistep' ),
-        'add_new_item'          => __( 'Add New Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'add_new'               => __( 'Add New', 'engrid-wordpress-multistep' ),
-        'new_item'              => __( 'New Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'edit_item'             => __( 'Edit Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'update_item'           => __( 'Update Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'view_item'             => __( 'View Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'view_items'            => __( 'View Multistep Lightboxes', 'engrid-wordpress-multistep' ),
-        'search_items'          => __( 'Search Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'not_found'             => __( 'Not found', 'engrid-wordpress-multistep' ),
-        'not_found_in_trash'    => __( 'Not found in Trash', 'engrid-wordpress-multistep' ),
+        'name'                  => _x( 'WordPress Promotions', 'Post Type General Name', '4site-wordpress-promotion' ),
+        'singular_name'         => _x( 'WordPress Promotion', 'Post Type Singular Name', '4site-wordpress-promotion' ),
+        'menu_name'             => __( 'WordPress Promotions', '4site-wordpress-promotion' ),
+        'name_admin_bar'        => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
+        'archives'              => __( 'WordPress Promotion Archives', '4site-wordpress-promotion' ),
+        'attributes'            => __( 'WordPress Promotion Attributes', '4site-wordpress-promotion' ),
+        'parent_item_colon'     => __( 'Parent WordPress Promotion:', '4site-wordpress-promotion' ),
+        'all_items'             => __( 'All WordPress Promotions', '4site-wordpress-promotion' ),
+        'add_new_item'          => __( 'Add New WordPress Promotion', '4site-wordpress-promotion' ),
+        'add_new'               => __( 'Add New', '4site-wordpress-promotion' ),
+        'new_item'              => __( 'New WordPress Promotion', '4site-wordpress-promotion' ),
+        'edit_item'             => __( 'Edit WordPress Promotion', '4site-wordpress-promotion' ),
+        'update_item'           => __( 'Update WordPress Promotion', '4site-wordpress-promotion' ),
+        'view_item'             => __( 'View WordPress Promotion', '4site-wordpress-promotion' ),
+        'view_items'            => __( 'View WordPress Promotions', '4site-wordpress-promotion' ),
+        'search_items'          => __( 'Search WordPress Promotion', '4site-wordpress-promotion' ),
+        'not_found'             => __( 'Not found', '4site-wordpress-promotion' ),
+        'not_found_in_trash'    => __( 'Not found in Trash', '4site-wordpress-promotion' ),
     );
     $args = array(
-        'label'                 => __( 'Multistep Lightbox', 'engrid-wordpress-multistep' ),
-        'description'           => __( 'Multistep Lightbox', 'engrid-wordpress-multistep' ),
+        'label'                 => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
+        'description'           => __( 'WordPress Promotion', '4site-wordpress-promotion' ),
         'labels'                => $labels,
 		'supports'              => array( 'title' ),
 		'hierarchical'          => false,
@@ -76,13 +76,13 @@ function register_multistep_lightbox_post_type() {
 		'capability_type'       => 'page',
 		'show_in_rest'          => false,
     );
-    register_post_type( 'multistep_lightbox', $args );
+    register_post_type( 'wordpress_promotion', $args );
 }
 
-add_action( 'init', 'register_multistep_lightbox_post_type', 0 );
+add_action( 'init', 'register_wordpress_promotion_post_type', 0 );
 
 // Add new columns to list page
-add_filter( 'manage_multistep_lightbox_posts_columns', 'smashing_add_new_columns' );
+add_filter( 'manage_wordpress_promotion_posts_columns', 'smashing_add_new_columns' );
 
 function smashing_add_new_columns( $columns ) {
     $columns['status'] = __( 'Status', 'smashing' );
@@ -92,8 +92,8 @@ function smashing_add_new_columns( $columns ) {
     return $columns;
 }
 
-add_action( 'manage_multistep_lightbox_posts_custom_column', 'smashing_multistep_lightbox_column', 10, 2);
-function smashing_multistep_lightbox_column( $column, $post_id ) {
+add_action( 'manage_wordpress_promotion_posts_custom_column', 'smashing_wordpress_promotion_column', 10, 2);
+function smashing_wordpress_promotion_column( $column, $post_id ) {
   $status = get_post_meta( $post_id, 'engrid_lightbox_display', true);
 
   if ( $column == 'status' ) {
@@ -146,8 +146,8 @@ function smashing_multistep_lightbox_column( $column, $post_id ) {
   }
 }
 
-add_filter( 'manage_edit-multistep_lightbox_sortable_columns', 'smashing_multistep_lightbox_sortable_columns');
-function smashing_multistep_lightbox_sortable_columns( $columns ) {
+add_filter( 'manage_edit-wordpress_promotion_sortable_columns', 'smashing_wordpress_promotion_sortable_columns');
+function smashing_wordpress_promotion_sortable_columns( $columns ) {
   $columns['status'] = 'engrid_lightbox_display';
   $columns['engrid_start_date'] = 'engrid_start_date';
   $columns['engrid_end_date'] = 'engrid_end_date';

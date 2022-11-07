@@ -9,8 +9,8 @@
  * @link       https://www.4sitestudios.com
  * @since      1.0.0
  *
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  */
 
 /**
@@ -23,11 +23,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  * @author     Fernando Santos <fernando@4sitestudios.com>
  */
-class Engrid_Wordpress_Multistep {
+class Foursite_Wordpress_Promotion {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +35,7 @@ class Engrid_Wordpress_Multistep {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Engrid_Wordpress_Multistep_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Foursite_Wordpress_Promotion_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -44,9 +44,9 @@ class Engrid_Wordpress_Multistep {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $engrid_wordpress_multistep    The string used to uniquely identify this plugin.
+	 * @var      string    $foursite_wordpress_promotion    The string used to uniquely identify this plugin.
 	 */
-	protected $engrid_wordpress_multistep;
+	protected $foursite_wordpress_promotion;
 
 	/**
 	 * The current version of the plugin.
@@ -67,12 +67,12 @@ class Engrid_Wordpress_Multistep {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'ENGRID_WORDPRESS_MULTISTEP_VERSION' ) ) {
-			$this->version = ENGRID_WORDPRESS_MULTISTEP_VERSION;
+		if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
+			$this->version = foursite_wordpress_promotion_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->engrid_wordpress_multistep = 'engrid-wordpress-multistep';
+		$this->foursite_wordpress_promotion = 'foursite-wordpress-promotion';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -86,10 +86,10 @@ class Engrid_Wordpress_Multistep {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Engrid_Wordpress_Multistep_Loader. Orchestrates the hooks of the plugin.
-	 * - Engrid_Wordpress_Multistep_i18n. Defines internationalization functionality.
-	 * - Engrid_Wordpress_Multistep_Admin. Defines all hooks for the admin area.
-	 * - Engrid_Wordpress_Multistep_Public. Defines all hooks for the public side of the site.
+	 * - Foursite_Wordpress_Promotion_Loader. Orchestrates the hooks of the plugin.
+	 * - Foursite_Wordpress_Promotion_i18n. Defines internationalization functionality.
+	 * - Foursite_Wordpress_Promotion_Admin. Defines all hooks for the admin area.
+	 * - Foursite_Wordpress_Promotion_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -99,8 +99,8 @@ class Engrid_Wordpress_Multistep {
 	 */
 	private function load_dependencies() {
 
-		add_filter('acf/settings/load_json', 'engrid_wordpress_multistep_json_load_point');
-		function engrid_wordpress_multistep_json_load_point( $paths ) {        			
+		add_filter('acf/settings/load_json', 'foursite_wordpress_promotion_json_load_point');
+		function foursite_wordpress_promotion_json_load_point( $paths ) {        			
 			$paths[] = plugin_dir_path( dirname( __FILE__ ) ) . 'acf-json';
 			return $paths;
 		}
@@ -110,34 +110,34 @@ class Engrid_Wordpress_Multistep {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-engrid-wordpress-multistep-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-foursite-wordpress-promotion-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-engrid-wordpress-multistep-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-foursite-wordpress-promotion-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-engrid-wordpress-multistep-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-foursite-wordpress-promotion-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-engrid-wordpress-multistep-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-foursite-wordpress-promotion-public.php';
 
-		$this->loader = new Engrid_Wordpress_Multistep_Loader();
-		add_action('acf/save_post', 'engrid_wordpress_multistep_save_post');
-		function engrid_wordpress_multistep_save_post( $post_id ) {
+		$this->loader = new Foursite_Wordpress_Promotion_Loader();
+		add_action('acf/save_post', 'foursite_wordpress_promotion_save_post');
+		function foursite_wordpress_promotion_save_post( $post_id ) {
 			// Detect when the options page for this plugin is being saved
 			if($post_id == 'options' && isset($_POST['acf']['field_61f180fb94e9c'])) {
 				// Clear the cloudflare caches. This requires both the
-				// ENgrid Wordpress Multistep Cloudflare Addon plugin and 
+				// Foursite Wordpress Promotion Cloudflare Addon plugin and 
 				// the Cloudflare plugin.
-				do_action('engrid_wpm_clear_cloudflare_all');
+				do_action('engrid_fwp_clear_cloudflare_all');
 			}
 		}
 
@@ -148,7 +148,7 @@ class Engrid_Wordpress_Multistep {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Engrid_Wordpress_Multistep_i18n class in order to set the domain and to register the hook
+	 * Uses the Foursite_Wordpress_Promotion_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -156,7 +156,7 @@ class Engrid_Wordpress_Multistep {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Engrid_Wordpress_Multistep_i18n();
+		$plugin_i18n = new Foursite_Wordpress_Promotion_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -171,7 +171,7 @@ class Engrid_Wordpress_Multistep {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Engrid_Wordpress_Multistep_Admin( $this->get_engrid_wordpress_multistep(), $this->get_version() );
+		$plugin_admin = new Foursite_Wordpress_Promotion_Admin( $this->get_foursite_wordpress_promotion(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -186,7 +186,7 @@ class Engrid_Wordpress_Multistep {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Engrid_Wordpress_Multistep_Public( $this->get_engrid_wordpress_multistep(), $this->get_version() );
+		$plugin_public = new Foursite_Wordpress_Promotion_Public( $this->get_foursite_wordpress_promotion(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -209,15 +209,15 @@ class Engrid_Wordpress_Multistep {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_engrid_wordpress_multistep() {
-		return $this->engrid_wordpress_multistep;
+	public function get_foursite_wordpress_promotion() {
+		return $this->foursite_wordpress_promotion;
 	}
 
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Engrid_Wordpress_Multistep_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Foursite_Wordpress_Promotion_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

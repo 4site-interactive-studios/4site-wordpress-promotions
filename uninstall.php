@@ -22,7 +22,7 @@
  * @link       https://www.4sitestudios.com
  * @since      1.0.0
  *
- * @package    Engrid_Wordpress_Multistep
+ * @package    Foursite_Wordpress_Promotion
  */
 
 // If uninstall not called from WordPress, then exit.

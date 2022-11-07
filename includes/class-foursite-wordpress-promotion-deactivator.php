@@ -6,8 +6,8 @@
  * @link       https://www.4sitestudios.com
  * @since      1.0.0
  *
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  * @author     Fernando Santos <fernando@4sitestudios.com>
  */
-class Engrid_Wordpress_Multistep_Deactivator {
+class Foursite_Wordpress_Promotion_Deactivator {
 
 	/**
 	 * Short Description. (use period)

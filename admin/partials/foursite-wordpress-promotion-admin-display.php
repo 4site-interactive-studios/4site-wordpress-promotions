@@ -8,6 +8,6 @@
  * @link       https://www.4sitestudios.com
  * @since      1.0.0
  *
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/admin/partials
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/admin/partials
  */

@@ -9,8 +9,8 @@
  * @link       https://www.4sitestudios.com
  * @since      1.0.0
  *
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Engrid_Wordpress_Multistep
- * @subpackage Engrid_Wordpress_Multistep/includes
+ * @package    Foursite_Wordpress_Promotion
+ * @subpackage Foursite_Wordpress_Promotion/includes
  * @author     Fernando Santos <fernando@4sitestudios.com>
  */
-class Engrid_Wordpress_Multistep_i18n {
+class Foursite_Wordpress_Promotion_i18n {
 
 
 	/**
@@ -35,7 +35,7 @@ class Engrid_Wordpress_Multistep_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'engrid-wordpress-multistep',
+			'foursite-wordpress-promotion',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
