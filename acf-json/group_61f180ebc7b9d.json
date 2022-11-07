@@ -20,6 +20,29 @@
       "endpoint": 0
     },
     {
+      "key": "field_63694582ec47e",
+      "label": "Promotion Type",
+      "name": "engrid_promotion_type",
+      "aria-label": "",
+      "type": "button_group",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "multistep_lightbox": "EN Multistep Lightbox",
+        "raw_code": "Raw Code"
+      },
+      "default_value": "",
+      "return_format": "value",
+      "allow_null": 0,
+      "layout": "horizontal"
+    },
+    {
       "key": "field_630676e57bb3b",
       "label": "Lightbox Display",
       "name": "engrid_lightbox_display",
@@ -103,17 +126,25 @@
       "type": "text",
       "instructions": "Title of the Lightbox.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
         "id": ""
       },
       "default_value": "",
+      "maxlength": "",
       "placeholder": "",
       "prepend": "",
-      "append": "",
-      "maxlength": ""
+      "append": ""
     },
     {
       "key": "field_61f180fb94e9c",
@@ -123,7 +154,15 @@
       "type": "url",
       "instructions": "",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "raw_code"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
@@ -140,7 +179,15 @@
       "type": "radio",
       "instructions": "",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
@@ -151,11 +198,11 @@
         "autoplay-video": "Auto play Video",
         "click-to-play-video": "Click to Play Video"
       },
+      "default_value": "",
+      "return_format": "value",
       "allow_null": 0,
       "other_choice": 0,
-      "default_value": "",
       "layout": "vertical",
-      "return_format": "value",
       "save_other_choice": 0
     },
     {
@@ -172,6 +219,11 @@
             "field": "field_6243ac17400c8",
             "operator": "==",
             "value": "image"
+          },
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
           }
         ]
       ],
@@ -213,6 +265,13 @@
             "operator": "==",
             "value": "click-to-play-video"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
         ]
       ],
       "wrapper": {
@@ -234,14 +293,21 @@
       "type": "image",
       "instructions": "SVG Image Used Between the Hero and the Content Area",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "100",
         "class": "",
         "id": ""
       },
       "return_format": "url",
-      "preview_size": "medium",
       "library": "all",
       "min_width": "",
       "min_height": "",
@@ -249,7 +315,8 @@
       "max_width": "",
       "max_height": "",
       "max_size": "",
-      "mime_types": "svg"
+      "mime_types": "svg",
+      "preview_size": "medium"
     },
     {
       "key": "field_624ca8da9a726",
@@ -259,7 +326,15 @@
       "type": "true_false",
       "instructions": "",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
@@ -267,9 +342,9 @@
       },
       "message": "",
       "default_value": 1,
-      "ui": 1,
       "ui_on_text": "Yes",
-      "ui_off_text": "No"
+      "ui_off_text": "No",
+      "ui": 1
     },
     {
       "key": "field_6243ad93bd622",
@@ -400,6 +475,13 @@
             "operator": "==",
             "value": "1"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
         ]
       ],
       "wrapper": {
@@ -426,16 +508,24 @@
       "type": "textarea",
       "instructions": "Content of the Lightbox.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
         "id": ""
       },
       "default_value": "",
-      "placeholder": "",
       "maxlength": "",
       "rows": 4,
+      "placeholder": "",
       "new_lines": "br"
     },
     {
@@ -446,7 +536,15 @@
       "type": "color_picker",
       "instructions": "HEX color of the left column text.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "33",
         "class": "",
@@ -464,7 +562,15 @@
       "type": "color_picker",
       "instructions": "HEX color of the left column background.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "33",
         "class": "",
@@ -482,7 +588,15 @@
       "type": "color_picker",
       "instructions": "HEX color for the form theme.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "33",
         "class": "",
@@ -500,16 +614,24 @@
       "type": "textarea",
       "instructions": "Content of the footer.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
         "id": ""
       },
       "default_value": "",
-      "placeholder": "",
       "maxlength": "",
       "rows": 4,
+      "placeholder": "",
       "new_lines": "br"
     },
     {
@@ -520,16 +642,25 @@
       "type": "repeater",
       "instructions": "Colors for the celebration confetti. Remove all to disable the confetti.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
         "id": ""
       },
-      "collapsed": "",
+      "layout": "table",
+      "pagination": 0,
       "min": 0,
       "max": 0,
-      "layout": "table",
+      "collapsed": "",
       "button_label": "Add Color",
       "rows_per_page": 20,
       "sub_fields": [
@@ -553,6 +684,90 @@
           "parent_repeater": "field_6243b2605a3e1"
         }
       ]
+    },
+    {
+      "key": "field_6369483fec484",
+      "label": "Javascript",
+      "name": "engrid_javascript",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Add your own <script> tags as needed",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "raw_code"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": "",
+      "placeholder": "",
+      "new_lines": ""
+    },
+    {
+      "key": "field_63694921ec485",
+      "label": "HTML",
+      "name": "engrid_html",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "raw_code"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": "",
+      "placeholder": "",
+      "new_lines": ""
+    },
+    {
+      "key": "field_63694962ec486",
+      "label": "CSS",
+      "name": "engrid_css",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Don't put style tags here as they will automatically be added when loading the CSS.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "raw_code"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": "",
+      "placeholder": "",
+      "new_lines": ""
     },
     {
       "key": "field_61f184e1c8650",
@@ -824,7 +1039,15 @@
       "type": "tab",
       "instructions": "",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "",
         "class": "",
