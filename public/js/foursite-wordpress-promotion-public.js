@@ -32,7 +32,13 @@
   $.post(
     "/wp-content/plugins/4site-wordpress-promotions/public/raw-code-data.php",
     function (data) {
-      const jsonData = JSON.parse(data);
+      let jsonData;
+      try {
+        jsonData = JSON.parse(data);
+      } catch {
+        return false;
+      }
+
       window.rawCodeTriggers = [];
 
       // if (jsonData["css"]) {

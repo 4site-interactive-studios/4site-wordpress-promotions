@@ -14,7 +14,7 @@ $lightbox = new Foursite_Wordpress_Promotion_Public("foursite-wordpress-promotio
 $lightbox_ids = $lightbox->get_lightbox();
 
 if($lightbox_ids) {
-  $output_arr = [];
+  $output = [];
 
   foreach($lightbox_ids as $lightbox_id) {
     $promotion_type = get_field('engrid_promotion_type', $lightbox_id);
