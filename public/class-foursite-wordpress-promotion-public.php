@@ -345,7 +345,6 @@ class Foursite_Wordpress_Promotion_Public {
 					gtm_close_event_name: "$engrid_gtm_close_event_name",
 					gtm_suppressed_event_name: "$engrid_gtm_suppressed_event_name",
 					confetti: $engrid_confetti,
-					lightbox_ids: $lightbox_ids[0], $lightbox_ids[1]
 				};
 				ENGRID;
 				
