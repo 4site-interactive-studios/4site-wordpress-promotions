@@ -159,7 +159,7 @@
           {
             "field": "field_63694582ec47e",
             "operator": "==",
-            "value": "raw_code"
+            "value": "multistep_lightbox"
           }
         ]
       ],
@@ -691,7 +691,7 @@
       "name": "engrid_javascript",
       "aria-label": "",
       "type": "textarea",
-      "instructions": "Add your own <script> tags as needed",
+      "instructions": "Add your own script tags as needed",
       "required": 0,
       "conditional_logic": [
         [
