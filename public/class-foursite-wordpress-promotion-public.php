@@ -250,7 +250,7 @@ class Foursite_Wordpress_Promotion_Public {
 		foreach($lightbox_ids as $lightbox_id){
 			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
-			$engrid_promotion_type = get_field('engrid_donation_page', $lightbox_id);
+			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
 
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && $engrid_donation_page){
