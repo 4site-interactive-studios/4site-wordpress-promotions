@@ -142,20 +142,23 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
 
     switch($trigger) {
         case "0":
-            echo "Immediately";
-            break;
+          echo "Immediately";
+          break;
         case "seconds":
-            echo "After $seconds seconds";
-            break;
+          echo "After $seconds seconds";
+          break;
         case "px":
-            echo "After scrolling $pixels pixels";
-            break;
+          echo "After scrolling $pixels pixels";
+          break;
         case "%":
-            echo "After scrolling $percentage% of the page";
-            break;
+          echo "After scrolling $percentage% of the page";
+          break;
         case "exit":
-            echo "On exit";
-            break;
+          echo "On exit";
+          break;
+        case "js":
+          echo "Javascript Trigger";
+          break;
     }
   }
 }
