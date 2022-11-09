@@ -918,7 +918,7 @@
       "name": "engrid_trigger_type",
       "aria-label": "",
       "type": "select",
-      "instructions": "",
+      "instructions": "For Javascript Trigger, open the lightbox with the following command: window.dispatchEvent(new CustomEvent('open-lightbox', {detail: { lightbox_id: 1 }})); \r\nReplace \"1\" with your lightbox id.",
       "required": 0,
       "conditional_logic": 0,
       "wrapper": {
@@ -931,7 +931,8 @@
         "seconds": "Seconds Later",
         "px": "On Pixel Scroll",
         "%": "On Percentage Scroll",
-        "exit": "On Exit"
+        "exit": "On Exit",
+        "js": "Javascript Trigger"
       },
       "default_value": false,
       "allow_null": 0,
