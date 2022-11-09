@@ -244,10 +244,12 @@ class Foursite_Wordpress_Promotion_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array(), $this->version, false );
 
 		foreach($lightbox_ids as $lightbox_id){
+			$script_name = $this->foursite_wordpress_promotion."-".$lightbox_id;
+			wp_enqueue_script( $script_name, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
+
 			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
@@ -348,7 +350,7 @@ class Foursite_Wordpress_Promotion_Public {
 				};
 				ENGRID;
 				
-				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
+				wp_add_inline_script($script_name, $engrid_js_code, 'before');
 			}
 		}
 	}
