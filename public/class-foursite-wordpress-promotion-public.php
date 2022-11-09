@@ -245,17 +245,16 @@ class Foursite_Wordpress_Promotion_Public {
 		 */
 
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array(), $this->version, false );
+		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 
 		foreach($lightbox_ids as $lightbox_id){
-			$script_name = $this->foursite_wordpress_promotion."-".$lightbox_id;
-			wp_enqueue_script( $script_name, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
-
 			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
+			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
 
 			// Only render the plugin if the donation page is set
-			if($engrid_promotion_type == "multistep_lightbox" && $engrid_donation_page){
+			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
 				$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
 				$engrid_image = ($engrid_hero_type == 'image') ? get_field('engrid_image', $lightbox_id) : '';
 				$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
@@ -275,7 +274,6 @@ class Foursite_Wordpress_Promotion_Public {
 				$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
 				$engrid_cookie_hours = get_field('engrid_cookie_hours', $lightbox_id);
 				$engrid_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
-				$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
 				$engrid_trigger_seconds = get_field('engrid_trigger_seconds', $lightbox_id);
 				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
 				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
@@ -350,7 +348,7 @@ class Foursite_Wordpress_Promotion_Public {
 				};
 				ENGRID;
 				
-				wp_add_inline_script($script_name, $engrid_js_code, 'before');
+				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
 			}
 		}
 	}
