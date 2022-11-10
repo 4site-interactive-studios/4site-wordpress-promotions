@@ -83,7 +83,7 @@ class Foursite_Wordpress_Promotion_Public {
 	 * @since    1.0.0
 	 */
 
-	public function get_lightbox_ids() {
+	public function get_lightbox() {
 		// Get the current page URL
 		$current_page_url = get_permalink();
 		// Get the current page ID
@@ -226,7 +226,7 @@ class Foursite_Wordpress_Promotion_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		$lightbox_ids = $this->get_lightbox_ids();
+		$lightbox_ids = $this->get_lightbox();
 
 		if(!$lightbox_ids) return;
 
@@ -242,8 +242,11 @@ class Foursite_Wordpress_Promotion_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array('jquery'), $this->version, false );
 		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
+		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
+
+		// populate this with raw html configs & js-triggered multisteps
+		$js_triggered_lb_config = [];
 
 		foreach($lightbox_ids as $lightbox_id){
 			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
@@ -251,71 +254,72 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
 			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
 
+			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
+			$engrid_image = ($engrid_hero_type == 'image') ? get_field('engrid_image', $lightbox_id) : '';
+			$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
+			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
+			$engrid_logo = ($engrid_use_logo) ? get_field('engrid_logo', $lightbox_id) : '';
+			$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
+			$engrid_divider = get_field('engrid_divider', $lightbox_id);
+			$engrid_title = get_field('engrid_title', $lightbox_id);
+			$engrid_paragraph = get_field('engrid_paragraph', $lightbox_id);
+			$engrid_footer = get_field('engrid_footer', $lightbox_id);
+			$engrid_bg_color = get_field('engrid_bg_color', $lightbox_id);
+			$engrid_text_color = get_field('engrid_text_color', $lightbox_id);
+			$engrid_form_color = get_field('engrid_form_color', $lightbox_id);
+			$engrid_show_on = get_field('engrid_show_on', $lightbox_id);
+			$engrid_hide_on = get_field('engrid_hide_on', $lightbox_id);
+			$engrid_start_date = get_field('engrid_start_date', $lightbox_id);
+			$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
+			$engrid_cookie_hours = get_field('engrid_cookie_hours', $lightbox_id);
+			$engrid_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
+			$engrid_trigger_seconds = get_field('engrid_trigger_seconds', $lightbox_id);
+			$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
+			$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
+			$engrid_gtm_open_event_name = get_field('engrid_gtm_open_event_name', $lightbox_id);
+			$engrid_gtm_close_event_name = get_field('engrid_gtm_close_event_name', $lightbox_id);
+			$engrid_gtm_suppressed_event_name = get_field('engrid_gtm_suppressed_event_name', $lightbox_id);
+			$engrid_display = get_field('engrid_lightbox_display', $lightbox_id);
+			$engrid_javascript = get_field('engrid_javascript', $lightbox_id);
+			$engrid_html = get_field('engrid_html', $lightbox_id);
+			$engrid_css = get_field('engrid_css', $lightbox_id);
+			$confetti = array();
+
+			if(have_rows('engrid_confetti', $lightbox_id) ){
+				while( have_rows('engrid_confetti', $lightbox_id) ){
+					the_row();
+					$confetti[] = get_sub_field('color');
+				}
+			}
+
+			$trigger = 0;
+			switch(trim($engrid_trigger_type)){
+				case "0":
+					$trigger = 0;
+					break;
+				case 'seconds':
+					$trigger = $engrid_trigger_seconds;
+					break;
+				case 'px':
+					$trigger = $engrid_trigger_scroll_pixels.'px';
+					break;
+				case '%':
+					$trigger = $engrid_trigger_scroll_percentage.'%';
+					break;
+				case 'exit':
+					$trigger = 'exit';
+					break;
+			}
+
+			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
+
+			$engrid_confetti = json_encode($confetti);
+
+
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
-				$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
-				$engrid_image = ($engrid_hero_type == 'image') ? get_field('engrid_image', $lightbox_id) : '';
-				$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
-				$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
-				$engrid_logo = ($engrid_use_logo) ? get_field('engrid_logo', $lightbox_id) : '';
-				$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
-				$engrid_divider = get_field('engrid_divider', $lightbox_id);
-				$engrid_title = get_field('engrid_title', $lightbox_id);
-				$engrid_paragraph = get_field('engrid_paragraph', $lightbox_id);
-				$engrid_footer = get_field('engrid_footer', $lightbox_id);
-				$engrid_bg_color = get_field('engrid_bg_color', $lightbox_id);
-				$engrid_text_color = get_field('engrid_text_color', $lightbox_id);
-				$engrid_form_color = get_field('engrid_form_color', $lightbox_id);
-				$engrid_show_on = get_field('engrid_show_on', $lightbox_id);
-				$engrid_hide_on = get_field('engrid_hide_on', $lightbox_id);
-				$engrid_start_date = get_field('engrid_start_date', $lightbox_id);
-				$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
-				$engrid_cookie_hours = get_field('engrid_cookie_hours', $lightbox_id);
-				$engrid_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
-				$engrid_trigger_seconds = get_field('engrid_trigger_seconds', $lightbox_id);
-				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
-				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
-				$engrid_gtm_open_event_name = get_field('engrid_gtm_open_event_name', $lightbox_id);
-				$engrid_gtm_close_event_name = get_field('engrid_gtm_close_event_name', $lightbox_id);
-				$engrid_gtm_suppressed_event_name = get_field('engrid_gtm_suppressed_event_name', $lightbox_id);
-				$engrid_display = get_field('engrid_lightbox_display', $lightbox_id);
-				$engrid_javascript = get_field('engrid_javascript', $lightbox_id);
-				$engrid_html = get_field('engrid_html', $lightbox_id);
-				$engrid_css = get_field('engrid_css', $lightbox_id);
-				$confetti = array();
-
-				if(have_rows('engrid_confetti', $lightbox_id) ){
-					while( have_rows('engrid_confetti', $lightbox_id) ){
-						the_row();
-						$confetti[] = get_sub_field('color');
-					}
-				}
-
-				$trigger = 0;
-				switch(trim($engrid_trigger_type)){
-					case "0":
-						$trigger = 0;
-						break;
-					case 'seconds':
-						$trigger = $engrid_trigger_seconds;
-						break;
-					case 'px':
-						$trigger = $engrid_trigger_scroll_pixels.'px';
-						break;
-					case '%':
-						$trigger = $engrid_trigger_scroll_percentage.'%';
-						break;
-					case 'exit':
-						$trigger = 'exit';
-						break;
-				}
-
-				$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
-
-				$engrid_confetti = json_encode($confetti);
 
 				$engrid_js_code = <<<ENGRID
-
 				console.log('Wordpress Promotion ID: $lightbox_id');
 
 				DonationLightboxOptions = {
@@ -347,8 +351,26 @@ class Foursite_Wordpress_Promotion_Public {
 				ENGRID;
 				
 				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
+			} else if($engrid_promotion_type == "raw_code") {
+				$js_triggered_lb_config[$lightbox_id] = [
+					'promotion_type' => $engrid_promotion_type, 
+					'html' => $engrid_html, 
+					'js' => $engrid_js, 
+					'css' => $engrid_css, 
+					/* Other fields go here*/
+				];
+			} else if(trim($engrid_trigger_type) == "js") {
+				$js_triggered_lb_config[$lightbox_id] = [
+					'promotion_type' => $engrid_promotion_type, 
+					'url' => $engrid_donation_page, 
+					'image' => $engrid_image, 
+					'logo' => $engrid_logo, 
+					/*Other fields go here*/
+				];
 			}
 		}
+		if(count($js_triggered_lb_config)) {
+			wp_localize_script($this->foursite_wordpress_promotion, 'js_triggered_lb_config', $js_triggered_lb_config);
+		}
 	}
-	
 }

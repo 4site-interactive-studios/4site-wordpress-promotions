@@ -1,6 +1,9 @@
 (function ($) {
   "use strict";
 
+  // iterate over this object's configurations and take appropriate action  
+  console.log('js_triggered_lb_config', js_triggered_lb_config);
+
   /**
    * All of the code for your public-facing JavaScript source
    * should reside in this file.
@@ -29,6 +32,7 @@
    * practising this, we should strive to set a better example in our own work.
    */
 
+/*
   $.post(
     "/wp-content/plugins/4site-wordpress-promotions/public/raw-code-data.php",
     function (data) {
@@ -130,7 +134,7 @@
       }
     }
   );
-
+*/
   function setCookie(cookie, hours = 24, path = "/") {
     const expires = new Date(Date.now() + hours * 36e5).toUTCString();
     document.cookie =

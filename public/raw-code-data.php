@@ -10,7 +10,7 @@ require_once(__ROOT__.'/public/class-foursite-wordpress-promotion-public.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');
 
 $lightbox = new Foursite_Wordpress_Promotion_Public("foursite-wordpress-promotion", "1.0.0");
-$lightbox_ids = $lightbox->get_lightbox_ids();
+$lightbox_ids = $lightbox->get_lightbox();
 $script_name = "foursite-wordpress-promotion-".$lightbox_id."-js-before";
 wp_enqueue_script( $script_name, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), "1.0.0", false );
 
