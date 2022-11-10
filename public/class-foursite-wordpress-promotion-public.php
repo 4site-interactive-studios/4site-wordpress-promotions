@@ -246,7 +246,7 @@ class Foursite_Wordpress_Promotion_Public {
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
-		$js_triggered_lb_config = [];
+		$client_side_triggered_config = [];
 
 		foreach($lightbox_ids as $lightbox_id){
 			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
@@ -280,7 +280,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_gtm_close_event_name = get_field('engrid_gtm_close_event_name', $lightbox_id);
 			$engrid_gtm_suppressed_event_name = get_field('engrid_gtm_suppressed_event_name', $lightbox_id);
 			$engrid_display = get_field('engrid_lightbox_display', $lightbox_id);
-			$engrid_javascript = get_field('engrid_javascript', $lightbox_id);
+			$engrid_js = get_field('engrid_javascript', $lightbox_id);
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$confetti = array();
@@ -352,25 +352,47 @@ class Foursite_Wordpress_Promotion_Public {
 				
 				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
 			} else if($engrid_promotion_type == "raw_code") {
-				$js_triggered_lb_config[$lightbox_id] = [
+				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'html' => $engrid_html, 
 					'js' => $engrid_js, 
 					'css' => $engrid_css, 
-					/* Other fields go here*/
+					'cookie' => $engrid_cookie_name, 
+					'cookie_hours' => $engrid_cookie_hours, 
+					'id' => $lightbox_id, 
+					'trigger' => $trigger, 
 				];
 			} else if(trim($engrid_trigger_type) == "js") {
-				$js_triggered_lb_config[$lightbox_id] = [
+				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 
 					'image' => $engrid_image, 
 					'logo' => $engrid_logo, 
-					/*Other fields go here*/
+					'video' => $engrid_video,
+					'autoplay' => $engrid_video_auto_play,
+					'logo_position_top' => "{$engrid_logo_position['top']}px",
+					'logo_position_left' => "{$engrid_logo_position['left']}px",
+					'logo_position_right' => "{$engrid_logo_position['right']}px",
+					'logo_position_bottom' => "{$engrid_logo_position['bottom']}px",
+					'divider' => $engrid_divider,
+					'title' => $engrid_title,
+					'paragraph' => $engrid_paragraph,
+					'footer' => $engrid_footer,
+					'bg_color' => $engrid_bg_color,
+					'txt_color' => $engrid_text_color,
+					'form_color' => $engrid_form_color,
+					'cookie_hours' => $engrid_cookie_hours,
+					'cookie_name' => $engrid_cookie_name,
+					'trigger' => $trigger,
+					'gtm_open_event_name' => $engrid_gtm_open_event_name,
+					'gtm_close_event_name' => $engrid_gtm_close_event_name,
+					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
+					'confetti' => $engrid_confetti,
 				];
 			}
 		}
-		if(count($js_triggered_lb_config)) {
-			wp_localize_script($this->foursite_wordpress_promotion, 'js_triggered_lb_config', $js_triggered_lb_config);
+		if(count($client_side_triggered_config)) {
+			wp_localize_script($this->foursite_wordpress_promotion, 'client_side_triggered_config', $client_side_triggered_config);
 		}
 	}
 }

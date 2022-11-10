@@ -1,8 +1,8 @@
 (function ($) {
   "use strict";
 
-  // iterate over this object's configurations and take appropriate action  
-  console.log('js_triggered_lb_config', js_triggered_lb_config);
+  // iterate over this object's configurations and take appropriate action
+  console.log("client_side_triggered_config", client_side_triggered_config);
 
   /**
    * All of the code for your public-facing JavaScript source
@@ -32,7 +32,7 @@
    * practising this, we should strive to set a better example in our own work.
    */
 
-/*
+  /*
   $.post(
     "/wp-content/plugins/4site-wordpress-promotions/public/raw-code-data.php",
     function (data) {
@@ -135,6 +135,85 @@
     }
   );
 */
+
+  window.rawCodeTriggers = [];
+
+  for (const property in client_side_triggered_config) {
+    const type = client_side_triggered_config[property].promotion_type;
+
+    if (type == "multistep_lightbox") {
+      addEventListener("open-lightbox", openLightboxEvent);
+    } else if (type == "raw_code") {
+      const cookie = client_side_triggered_config[property].cookie;
+      const cookieExpiration =
+        client_side_triggered_config[property].cookie_hours;
+      const id = client_side_triggered_config[property].id;
+      window.rawCodeTriggers[id] = false;
+      let trigger = client_side_triggered_config[property].trigger;
+      const triggerType = getTriggerType(trigger);
+
+      if (!getCookie(cookie)) {
+        if (triggerType === false) {
+          trigger = 2000;
+        }
+        if (triggerType === "seconds") {
+          trigger = Number(trigger) * 1000;
+        }
+
+        if (triggerType === "seconds" || triggerType === false) {
+          window.setTimeout(() => {
+            addRawCode(client_side_triggered_config[property]);
+            if (cookieExpiration) {
+              setCookie(cookie, cookieExpiration);
+            } else {
+              setCookie(cookie);
+            }
+          }, trigger);
+          window.rawCodeTriggers[
+            client_side_triggered_config[property].id
+          ] = true;
+        }
+        if (triggerType === "exit") {
+          document.body.addEventListener("mouseout", (e) => {
+            if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
+              addRawCode(client_side_triggered_config[property]);
+              if (cookieExpiration) {
+                setCookie(cookie, cookieExpiration);
+              } else {
+                setCookie(cookie);
+              }
+              window.rawCodeTriggers[id] = true;
+            }
+          });
+        }
+        if (triggerType === "pixels") {
+          document.addEventListener(
+            "scroll",
+            function () {
+              scrollTriggerPx(client_side_triggered_config[property]);
+            },
+            true
+          );
+        }
+        if (triggerType === "percent") {
+          document.addEventListener(
+            "scroll",
+            function () {
+              scrollTriggerPercent(client_side_triggered_config[property]);
+            },
+            true
+          );
+        }
+
+        if (triggerType === "js") {
+          window.addEventListener("open-lightbox", openLightboxEvent);
+        }
+      } else if (getCookie(cookie) && triggerType == "js") {
+        window.addEventListener("open-lightbox", openLightboxEvent);
+      }
+    }
+  }
+
   function setCookie(cookie, hours = 24, path = "/") {
     const expires = new Date(Date.now() + hours * 36e5).toUTCString();
     document.cookie =
@@ -156,6 +235,7 @@
   function deleteCookie(cookie, path = "/") {
     setCookie(cookie, "", -1, path);
   }
+  ``;
 
   function getTriggerType(trigger) {
     /**
@@ -188,8 +268,8 @@
         "head"
       ).innerHTML += `<style type='text/css'>${array.css}</style>`;
     }
-    if (array.javascript) {
-      document.querySelector("head").innerHTML += array.javascript;
+    if (array.js) {
+      document.querySelector("head").innerHTML += array.js;
     }
     if (array.html) {
       document.querySelector("body").innerHTML += array.html;
@@ -226,25 +306,17 @@
 
   function openLightboxEvent(e) {
     if (e.detail.lightbox_id) {
-      const lightbox = window.lightboxArr.find(
-        (item) => item.id == e.detail.lightbox_id
-      );
+      const lightbox = client_side_triggered_config[e.detail.lightbox_id];
 
-      if (lightbox.type != "raw_code") {
-        const lightboxScript = document.createElement("script");
-        lightboxScript.id = lightbox.script_name;
-
-        // Remove lightbox script if it exists already
-        if (document.querySelector(`[id=${lightboxScript.id}]`)) {
-          document.querySelector(`[id=${lightboxScript.id}]`).remove();
-        }
-        lightboxScript.textContent = lightbox.script_code;
-
-        const parentScript = document.querySelector(
-          "#foursite-wordpress-promotion-js"
-        );
-        console.log("Adding ", lightboxScript);
-        parentScript.parentElement.insertBefore(lightboxScript, parentScript);
+      if (lightbox.promotion_type != "raw_code") {
+        window.DonationLightboxOptions = lightbox;
+        deleteCookie(lightbox.cookie_name);
+        document
+          .querySelectorAll(".foursiteDonationLightbox")
+          .forEach((lightbox) => {
+            lightbox.remove();
+          });
+        window.jsLightbox = new DonationLightbox();
       } else {
         addRawCode(lightbox);
       }
