@@ -162,7 +162,8 @@ class Foursite_Wordpress_Promotion_Public {
 				$blacklist = get_field('engrid_blacklist', $lightbox_id);
 				$lightbox_start = get_field('engrid_start_date', $lightbox_id);
 				$lightbox_end = get_field('engrid_end_date', $lightbox_id);
-
+				$lightbox_display = get_field("engrid_lightbox_display", $lightbox_id);
+				
 				if($whitelist){
 					// Explode the whitelist into an array
 					$whitelist_array = explode(',', $whitelist);
@@ -196,7 +197,7 @@ class Foursite_Wordpress_Promotion_Public {
 				}
 
 				// Check if scheduled lightbox is in date range
-				elseif($lightbox_start && $lightbox_end) {
+				elseif($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
 					$today_date = date("Ymd");
 
 					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
@@ -253,7 +254,6 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
 			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
-
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
 			$engrid_image = ($engrid_hero_type == 'image') ? get_field('engrid_image', $lightbox_id) : '';
 			$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
@@ -309,16 +309,20 @@ class Foursite_Wordpress_Promotion_Public {
 				case 'exit':
 					$trigger = 'exit';
 					break;
+				case 'js':
+					$trigger = 'js';
+					break;
 			}
 
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
 
 			$engrid_confetti = json_encode($confetti);
 
+			wp_localize_script($this->foursite_wordpress_promotion, 'debug_var', $debug_var);
+
 
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
-
 				$engrid_js_code = <<<ENGRID
 				console.log('Wordpress Promotion ID: $lightbox_id');
 
