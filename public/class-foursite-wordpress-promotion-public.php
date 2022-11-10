@@ -83,7 +83,7 @@ class Foursite_Wordpress_Promotion_Public {
 	 * @since    1.0.0
 	 */
 
-	public function get_lightbox() {
+	public function get_lightbox_ids() {
 		// Get the current page URL
 		$current_page_url = get_permalink();
 		// Get the current page ID
@@ -226,7 +226,7 @@ class Foursite_Wordpress_Promotion_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		$lightbox_ids = $this->get_lightbox();
+		$lightbox_ids = $this->get_lightbox_ids();
 
 		if(!$lightbox_ids) return;
 
