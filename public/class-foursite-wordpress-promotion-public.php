@@ -202,8 +202,6 @@ class Foursite_Wordpress_Promotion_Public {
 					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
 						$lightbox_ids[] = $lightbox_id;
 					} 
-
-					return false;
 				}
 
 				else{
