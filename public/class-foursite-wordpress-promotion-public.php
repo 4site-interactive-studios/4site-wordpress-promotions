@@ -242,7 +242,7 @@ class Foursite_Wordpress_Promotion_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array(), $this->version, false );
+		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array('jquery'), $this->version, false );
 		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 
 		foreach($lightbox_ids as $lightbox_id){
