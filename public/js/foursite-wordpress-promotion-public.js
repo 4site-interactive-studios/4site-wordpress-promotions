@@ -189,7 +189,35 @@ window.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(jsContainer);
       Array.from(document.querySelector(".promotion-js").children).forEach(
         (child) => {
-          eval(child.innerHTML);
+          if (child.innerHTML != "") {
+            eval(child.innerHTML);
+          } else if (child.tagName == "SCRIPT" && child.src != "") {
+            const newScript = document.createElement("script");
+            newScript.setAttribute("src", child.src);
+            newScript.classList.add("promotion-js");
+            newScript.classList.add("promotion-element");
+            newScript.classList.add(promotionClass);
+
+            child.remove();
+            document.body.appendChild(newScript);
+          } else if (
+            child.tagName == "LINK" &&
+            child.getAttribute("href") != ""
+          ) {
+            const newLink = document.createElement("link");
+            newLink.setAttribute("href", child.getAttribute("href"));
+
+            if (child.getAttribute("rel")) {
+              newLink.setAttribute("rel", child.getAttribute("rel"));
+            }
+
+            newLink.classList.add("promotion-js");
+            newLink.classList.add("promotion-element");
+            newLink.classList.add(promotionClass);
+
+            child.remove();
+            document.body.appendChild(newLink);
+          }
         }
       );
     }
