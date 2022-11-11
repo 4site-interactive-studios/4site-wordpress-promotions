@@ -918,7 +918,7 @@
       "name": "engrid_trigger_type",
       "aria-label": "",
       "type": "select",
-      "instructions": "For Javascript Trigger, open the lightbox with the following command: triggerPromotion(id); \r\nReplace \"id\" with your lightbox id.",
+      "instructions": "For Javascript Trigger, open the promotion with the following command: triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
       "required": 0,
       "conditional_logic": 0,
       "wrapper": {
