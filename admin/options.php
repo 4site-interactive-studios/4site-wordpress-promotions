@@ -88,7 +88,7 @@ function smashing_add_new_columns( $columns ) {
     $columns['status'] = __( 'Status', 'smashing' );
     $columns['engrid_start_date'] = __( 'Start Date', 'smashing' );
     $columns['engrid_end_date'] = __( 'End Date', 'smashing' );
-    $columns['id'] = __( 'Post ID', 'smashing' );
+    $columns['post_id'] = __( 'Post ID', 'smashing' );
     $columns['promotion_type'] = __( 'Type', 'smashing' );
     $columns['trigger'] = __( 'Trigger', 'smashing' );
     return $columns;
@@ -163,7 +163,7 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
     }
   }
 
-  if ('id' === $column) {
+  if ('post_id' === $column) {
     echo $post_id;
   }
 }
@@ -173,6 +173,7 @@ function smashing_wordpress_promotion_sortable_columns( $columns ) {
   $columns['status'] = 'engrid_lightbox_display';
   $columns['engrid_start_date'] = 'engrid_start_date';
   $columns['engrid_end_date'] = 'engrid_end_date';
+  $columns['post_id'] = 'post_id';
 
   return $columns;
 }
@@ -198,5 +199,9 @@ function smashing_posts_orderby( $query ) {
     $query->set( 'orderby', 'meta_value' );
     $query->set( 'meta_key', 'engrid_end_date' );
     $query->set( 'meta_type', 'date' );
+  }
+  
+  if ( 'post_id' === $query->get( 'orderby') ) {
+    $query->set( 'orderby', 'ID' );
   }
 }
