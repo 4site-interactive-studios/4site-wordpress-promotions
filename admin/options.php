@@ -88,6 +88,7 @@ function smashing_add_new_columns( $columns ) {
     $columns['status'] = __( 'Status', 'smashing' );
     $columns['engrid_start_date'] = __( 'Start Date', 'smashing' );
     $columns['engrid_end_date'] = __( 'End Date', 'smashing' );
+    $columns['id'] = __( 'Post ID', 'smashing' );
     $columns['promotion_type'] = __( 'Type', 'smashing' );
     $columns['trigger'] = __( 'Trigger', 'smashing' );
     return $columns;
@@ -160,6 +161,10 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
           echo "Javascript Trigger";
           break;
     }
+  }
+
+  if ('id' === $column) {
+    echo $post_id;
   }
 }
 
