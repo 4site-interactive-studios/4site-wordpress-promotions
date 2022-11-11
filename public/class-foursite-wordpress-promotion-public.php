@@ -318,9 +318,6 @@ class Foursite_Wordpress_Promotion_Public {
 
 			$engrid_confetti = json_encode($confetti);
 
-			wp_localize_script($this->foursite_wordpress_promotion, 'debug_var', $debug_var);
-
-
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
 				$engrid_js_code = <<<ENGRID
