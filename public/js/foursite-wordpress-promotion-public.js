@@ -156,6 +156,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addRawCode(promotionConfig) {
+    removeOldPromotions();
     const promotionClass = "promotion-" + promotionConfig.id;
 
     if (promotionConfig.html) {
@@ -250,7 +251,6 @@ window.addEventListener("DOMContentLoaded", () => {
         removeOldPromotions();
         new DonationLightbox();
       } else {
-        removeOldPromotions();
         addRawCode(promotion);
       }
     }
