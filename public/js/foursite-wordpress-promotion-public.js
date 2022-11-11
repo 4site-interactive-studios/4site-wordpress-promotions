@@ -264,15 +264,36 @@
 
   function addRawCode(array) {
     if (array.css) {
-      document.querySelector(
-        "head"
-      ).innerHTML += `<style type='text/css'>${array.css}</style>`;
+      const newCSS = document.createElement("style");
+      newCSS.setAttribute("type", "text/css");
+      newCSS.textContent = array.css;
+      document.head.appendChild(newCSS);
     }
     if (array.js) {
-      document.querySelector("head").innerHTML += array.js;
+      // Remove line breaks between scripts
+      const scripts = array.js
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .replace("><", ">|<")
+        .replace(">\x3C", ">|\x3C")
+        .split("|");
+
+      for (let i = 0; i < scripts.length; i++) {
+        const script = stringToElement(scripts[i]);
+        document.head.appendChild(script);
+      }
     }
     if (array.html) {
-      document.querySelector("body").innerHTML += array.html;
+      // Remove line breaks between elements
+      const elements = array.html
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .replace("><", ">|<")
+        .replace(">\x3C", ">|\x3C")
+        .split("|");
+
+      for (let i = 0; i < elements.length; i++) {
+        const element = stringToElement(elements[i]);
+        document.body.appendChild(element);
+      }
     }
   }
 
@@ -321,5 +342,55 @@
         addRawCode(lightbox);
       }
     }
+  }
+
+  function stringToElement(element) {
+    // Get text between tags
+    let elementContent;
+    if (element.includes("/>")) {
+      elementContent = false;
+    } else {
+      elementContent = element.slice(
+        element.indexOf(">") + 1,
+        element.indexOf("</")
+      );
+    }
+
+    let elementNameEnd;
+    let hasAttributes = false;
+    if (
+      element.indexOf(" ") != -1 &&
+      element.indexOf(" ") > element.indexOf(">")
+    ) {
+      elementNameEnd = element.indexOf(">");
+    } else {
+      elementNameEnd = element.indexOf(" ");
+      hasAttributes = "true";
+    }
+
+    const elementName = element.slice(element.indexOf("<") + 1, elementNameEnd);
+
+    const newElement = document.createElement(elementName);
+
+    if (elementContent) {
+      newElement.textContent = elementContent;
+    }
+
+    if (hasAttributes) {
+      const attributes = element
+        .slice(element.indexOf(" ") + 1, element.indexOf(">"))
+        .split(" ");
+
+      for (let i = 0; i < attributes.length; i++) {
+        if (attributes[i].includes("=")) {
+          newElement.setAttribute(
+            attributes[i].split("=")[0],
+            attributes[i].split("=")[1].replace(/"/g, "")
+          );
+        }
+      }
+    }
+
+    return newElement;
   }
 })(jQuery);
