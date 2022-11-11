@@ -265,7 +265,10 @@
   function addRawCode(array) {
     if (array.css) {
       const newCSS = document.createElement("style");
+      const promotionClass = "promotion-" + array.id;
       newCSS.setAttribute("type", "text/css");
+      newCSS.classList.add("promotion-css");
+      newCSS.classList.add(promotionClass);
       newCSS.textContent = array.css;
       document.head.appendChild(newCSS);
     }
@@ -278,7 +281,7 @@
         .split("|");
 
       for (let i = 0; i < scripts.length; i++) {
-        const script = stringToElement(scripts[i]);
+        const script = stringToElement(scripts[i], array);
         document.head.appendChild(script);
       }
     }
@@ -291,7 +294,7 @@
         .split("|");
 
       for (let i = 0; i < elements.length; i++) {
-        const element = stringToElement(elements[i]);
+        const element = stringToElement(elements[i], array);
         document.body.appendChild(element);
       }
     }
@@ -333,20 +336,18 @@
       if (lightbox.promotion_type != "raw_code") {
         window.DonationLightboxOptions = lightbox;
         deleteCookie(lightbox.cookie_name);
-        document
-          .querySelectorAll(".foursiteDonationLightbox")
-          .forEach((lightbox) => {
-            lightbox.remove();
-          });
+        removeOldPromotions();
         new DonationLightbox();
       } else {
+        removeOldPromotions();
         addRawCode(lightbox);
       }
     }
   }
 
-  function stringToElement(element) {
+  function stringToElement(element, promotion) {
     // Get text between tags
+    const promotionClass = "promotion-" + promotion.id;
     let elementContent;
     if (element.includes("/>")) {
       elementContent = false;
@@ -372,6 +373,8 @@
     const elementName = element.slice(element.indexOf("<") + 1, elementNameEnd);
 
     const newElement = document.createElement(elementName);
+    newElement.classList.add("promotion-element");
+    newElement.classList.add(promotionClass);
 
     if (elementContent) {
       newElement.textContent = elementContent;
@@ -393,5 +396,15 @@
     }
 
     return newElement;
+  }
+
+  function removeOldPromotions() {
+    document
+      .querySelectorAll(
+        ".foursiteDonationLightbox,.promotion-element,.promotion-css"
+      )
+      .forEach((promotion) => {
+        promotion.remove();
+      });
   }
 })(jQuery);
