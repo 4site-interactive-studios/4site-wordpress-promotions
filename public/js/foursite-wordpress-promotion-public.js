@@ -328,6 +328,7 @@
   function openLightboxEvent(e) {
     if (e.detail.lightbox_id) {
       const lightbox = client_side_triggered_config[e.detail.lightbox_id];
+      lightbox.trigger = 0;
 
       if (lightbox.promotion_type != "raw_code") {
         window.DonationLightboxOptions = lightbox;
@@ -337,7 +338,7 @@
           .forEach((lightbox) => {
             lightbox.remove();
           });
-        window.jsLightbox = new DonationLightbox();
+        new DonationLightbox();
       } else {
         addRawCode(lightbox);
       }
