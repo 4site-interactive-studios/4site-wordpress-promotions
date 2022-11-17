@@ -83,8 +83,9 @@ add_action( 'init', 'register_wordpress_promotion_post_type', 0 );
 
 // Add new columns to list page
 add_filter( 'manage_wordpress_promotion_posts_columns', 'smashing_add_new_columns' );
-
 function smashing_add_new_columns( $columns ) {
+    unset($columns['date']);
+    $columns['custom_date'] = __('Published', 'smashing');
     $columns['status'] = __( 'Status', 'smashing' );
     $columns['engrid_start_date'] = __( 'Start Date', 'smashing' );
     $columns['engrid_end_date'] = __( 'End Date', 'smashing' );
@@ -163,6 +164,10 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
     }
   }
 
+  if ('custom_date' === $column) {
+    echo get_the_date( 'Y/m/d' ).' at '.get_the_date('g:i a');
+  }
+
   if ('post_id' === $column) {
     echo $post_id;
   }
@@ -170,6 +175,7 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
 
 add_filter( 'manage_edit-wordpress_promotion_sortable_columns', 'smashing_wordpress_promotion_sortable_columns');
 function smashing_wordpress_promotion_sortable_columns( $columns ) {
+  $columns['custom_date'] = 'custom_date';
   $columns['status'] = 'engrid_lightbox_display';
   $columns['engrid_start_date'] = 'engrid_start_date';
   $columns['engrid_end_date'] = 'engrid_end_date';
@@ -203,5 +209,9 @@ function smashing_posts_orderby( $query ) {
   
   if ( 'post_id' === $query->get( 'orderby') ) {
     $query->set( 'orderby', 'ID' );
+  }
+  
+  if ( 'custom_date' === $query->get( 'orderby') ) {
+    $query->set( 'orderby', 'date' );
   }
 }
