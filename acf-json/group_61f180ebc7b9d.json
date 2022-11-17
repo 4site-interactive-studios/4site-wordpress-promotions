@@ -854,7 +854,7 @@
       "name": "engrid_blacklist",
       "aria-label": "",
       "type": "text",
-      "instructions": "Comma-separated word/slug list. It will show the lightbox if the URL contains any value from the list.",
+      "instructions": "Comma-separated word/slug list. It will show the promotion if the URL contains any value from the list.",
       "required": 0,
       "conditional_logic": 0,
       "wrapper": {
@@ -874,7 +874,7 @@
       "name": "engrid_cookie_hours",
       "aria-label": "",
       "type": "number",
-      "instructions": "Number of hours to not auto open the lightbox after the user closes it.",
+      "instructions": "Number of hours to not show the promotion after the user has seen it.",
       "required": 0,
       "conditional_logic": 0,
       "wrapper": {
