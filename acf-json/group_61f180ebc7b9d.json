@@ -44,7 +44,7 @@
     },
     {
       "key": "field_630676e57bb3b",
-      "label": "Lightbox Display",
+      "label": "Promotion Visibility",
       "name": "engrid_lightbox_display",
       "aria-label": "",
       "type": "button_group",
