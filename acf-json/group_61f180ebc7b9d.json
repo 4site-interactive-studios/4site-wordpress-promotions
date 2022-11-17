@@ -257,6 +257,11 @@
             "field": "field_6243ac17400c8",
             "operator": "==",
             "value": "autoplay-video"
+          },
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "multistep_lightbox"
           }
         ],
         [
@@ -264,9 +269,7 @@
             "field": "field_6243ac17400c8",
             "operator": "==",
             "value": "click-to-play-video"
-          }
-        ],
-        [
+          },
           {
             "field": "field_63694582ec47e",
             "operator": "==",
