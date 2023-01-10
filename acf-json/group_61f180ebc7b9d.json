@@ -234,6 +234,34 @@
       "append": ""
     },
     {
+      "key": "field_63bdc41e5682c",
+      "label": "Pushdown Title",
+      "name": "engrid_pushdown_title",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
       "key": "field_63bc6d8161fe4",
       "label": "Pushdown Image",
       "name": "engrid_pushdown_image",
@@ -617,18 +645,6 @@
             "field": "field_63694582ec47e",
             "operator": "==",
             "value": "multistep_lightbox"
-          }
-        ],
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "pushdown"
-          },
-          {
-            "field": "field_63bc637c4661c",
-            "operator": "==",
-            "value": "text"
           }
         ]
       ],
