@@ -175,7 +175,7 @@
     {
       "key": "field_63bc637c4661c",
       "label": "Pushdown Type",
-      "name": "pushdown_type",
+      "name": "engrid_pushdown_type",
       "aria-label": "",
       "type": "radio",
       "instructions": "",
@@ -202,13 +202,13 @@
       "return_format": "value",
       "allow_null": 0,
       "other_choice": 0,
-      "save_other_choice": 0,
-      "layout": "vertical"
+      "layout": "vertical",
+      "save_other_choice": 0
     },
     {
       "key": "field_63bc64544661d",
       "label": "Pushdown Link",
-      "name": "pushdown_link",
+      "name": "engrid_pushdown_link",
       "aria-label": "",
       "type": "text",
       "instructions": "",
@@ -236,7 +236,7 @@
     {
       "key": "field_63bc6d8161fe4",
       "label": "Pushdown Image",
-      "name": "pushdown_image",
+      "name": "engrid_pushdown_image",
       "aria-label": "",
       "type": "image",
       "instructions": "",
