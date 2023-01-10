@@ -132,6 +132,9 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
       case "raw_code":
         echo "Raw Code";
         break;
+      case "pushdown":
+        echo "Pushdown";
+        break;
     }
   }
   
