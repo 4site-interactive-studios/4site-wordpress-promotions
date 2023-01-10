@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (type == "multistep_lightbox") {
       addEventListener("trigger-promotion", triggerPromotionEvent);
-    } else if (type == "raw_code") {
+    } else if (type == "raw_code" || type == "pushdown") {
       const cookie = client_side_triggered_config[property].cookie;
       const cookieExpiration =
         client_side_triggered_config[property].cookie_hours;
@@ -104,7 +104,67 @@ window.addEventListener("DOMContentLoaded", () => {
       } else if (getCookie(cookie) && triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
       }
-    }
+    } /*else if (type == "pushdown") {
+      if (!getCookie(cookie)) {
+        if (triggerType === false) {
+          trigger = 2000;
+        }
+        if (triggerType === "seconds") {
+          trigger = Number(trigger) * 1000;
+        }
+
+        if (triggerType === "seconds" || triggerType === false) {
+          window.setTimeout(() => {
+            addRawCode(client_side_triggered_config[property]);
+            if (cookieExpiration) {
+              setCookie(cookie, cookieExpiration);
+            } else {
+              setCookie(cookie);
+            }
+          }, trigger);
+          window.rawCodeTriggers[
+            client_side_triggered_config[property].id
+          ] = true;
+        }
+        if (triggerType === "exit") {
+          document.body.addEventListener("mouseout", (e) => {
+            if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
+              addRawCode(client_side_triggered_config[property]);
+              if (cookieExpiration) {
+                setCookie(cookie, cookieExpiration);
+              } else {
+                setCookie(cookie);
+              }
+              window.rawCodeTriggers[id] = true;
+            }
+          });
+        }
+        if (triggerType === "pixels") {
+          document.addEventListener(
+            "scroll",
+            function () {
+              scrollTriggerPx(client_side_triggered_config[property]);
+            },
+            true
+          );
+        }
+        if (triggerType === "percent") {
+          document.addEventListener(
+            "scroll",
+            function () {
+              scrollTriggerPercent(client_side_triggered_config[property]);
+            },
+            true
+          );
+        }
+
+        if (triggerType === "js") {
+          window.addEventListener("trigger-promotion", triggerPromotionEvent);
+        }
+      } else if (getCookie(cookie) && triggerType == "js") {
+        window.addEventListener("trigger-promotion", triggerPromotionEvent);
+      }
+    }*/
   }
 
   function setCookie(cookie, hours = 24, path = "/") {
@@ -158,6 +218,29 @@ window.addEventListener("DOMContentLoaded", () => {
   function addRawCode(promotionConfig) {
     removeOldPromotions();
     const promotionClass = "promotion-" + promotionConfig.id;
+
+    if (promotionConfig.promotion_type == "pushdown") {
+      const pushdownMode = promotionConfig.pushdown_type;
+      const pushdownImage = promotionConfig.image;
+      const pushdownText = promotionConfig.pushdown_title;
+      const pushdownLink = promotionConfig.url;
+
+      console.log(promotionConfig.id, pushdownText);
+
+      const pushdownScript = document.createElement("script");
+      pushdownScript.src =
+        "/wp-content/plugins/4site-wordpress-promotions/public/pushdown/js/pushdown.js?ver=1.0.4";
+      pushdownScript.id = "foursite-wordpress-pushdown-promotion-js";
+      pushdownScript.setAttribute("crossorigin", "anonymous");
+      pushdownScript.setAttribute("data-pushdown-mode", pushdownMode);
+      pushdownScript.setAttribute("data-pushdown-link", pushdownLink);
+      pushdownScript.setAttribute("data-pushdown-image", pushdownImage);
+      pushdownScript.setAttribute("data-pushdown-content", pushdownText);
+      pushdownScript.classList.add(promotionClass);
+
+      document.body.appendChild(pushdownScript);
+      return;
+    }
 
     if (promotionConfig.html) {
       const htmlContainer = document.createElement("div");
@@ -271,9 +354,8 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      promotion.trigger = 0;
-
-      if (promotion.promotion_type != "raw_code") {
+      if (promotion.promotion_type == "multistep_lightbox") {
+        promotion.trigger = 0;
         window.DonationLightboxOptions = promotion;
         deleteCookie(promotion.cookie_name);
         removeOldPromotions();
@@ -286,7 +368,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function removeOldPromotions() {
     document
-      .querySelectorAll(".foursiteDonationLightbox,.promotion-element")
+      .querySelectorAll(
+        ".foursiteDonationLightbox,.promotion-element,.pushdown-mode-image,.pushdown-mode-text"
+      )
       .forEach((promotion) => {
         promotion.remove();
       });
