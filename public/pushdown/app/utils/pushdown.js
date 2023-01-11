@@ -1,6 +1,6 @@
 export class Pushdown {
   constructor() {
-    console.log("Pushdown: constructor");
+    // console.log("Pushdown: constructor");
     const scriptTag = document.querySelector("script[src*='pushdown.js']");
     this.mode = scriptTag.getAttribute("data-pushdown-mode") || "text";
     this.content = scriptTag.getAttribute("data-pushdown-content") || "";
@@ -11,14 +11,14 @@ export class Pushdown {
       this.init();
       return;
     }
-    console.log("Pushdown: No Link");
+    // console.log("Pushdown: No Link");
   }
   init() {
-    console.log("Pushdown: init");
+    // console.log("Pushdown: init");
     this.createContainer();
   }
   createContainer() {
-    console.log("Pushdown: createContainer");
+    // console.log("Pushdown: createContainer");
     const container = document.createElement("div");
     container.setAttribute("id", "pushdown");
     container.classList.add("pushdown-mode-" + this.mode);
@@ -27,7 +27,7 @@ export class Pushdown {
     body.insertBefore(container, body.firstChild);
   }
   getContent() {
-    console.log("Pushdown: getContent");
+    // console.log("Pushdown: getContent");
     let content = "";
     if (this.mode === "text") {
       content = `<a class="pushdown-link" href="${this.link}">
