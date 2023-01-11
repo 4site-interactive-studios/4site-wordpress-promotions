@@ -1,0 +1,152 @@
+@import "normalize";
+
+.visible {
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.lightbox {
+  position: fixed;
+  display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+  transition: opacity 0.2s linear;
+  font-family: "AmnestyTradeGothic", sans-serif;
+  z-index: 9999999;
+
+  .lightbox-content {
+    position: relative;
+    display: flex;
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 340px;
+    padding: 12px;
+    margin: 20px;
+
+    @media (min-width: 840px) {
+      margin: 0;
+      max-width: 800px;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    cursor: pointer;
+    content: url("data:image/svg+xml;charset=UTF-8, <svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 14 14'><path fill='%23fff' stroke='%23000' d='M12.73 13.292L7.358 7.915l-.353-.354-.354.354-5.373 5.378-.57-.57 5.38-5.37L6.443 7l-.355-.354-5.38-5.369.57-.57 5.373 5.378.353.354.354-.354L12.73.715l.563.563L7.92 6.646 7.567 7l.354.354 5.373 5.37-.564.568z'/></svg>");
+  }
+
+  .logo {
+    position: absolute;
+    top: -67px;
+    left: 0;
+    // display: none;
+
+    @media (min-width: 840px) {
+      top: 0;
+    }
+  }
+
+  .container-image {
+    display: none;
+
+    @media (min-width: 840px) {
+      display: block;
+    }
+
+    // @media (max-width: 840px) {
+    //   flex-shrink: 2;
+    // }
+  }
+
+  .container-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-basis: 100%;
+    margin: 0 20px;
+    font-size: 16px;
+
+    @media (min-width: 840px) {
+      margin: 0 50px;
+    }
+  }
+
+  h1 {
+    font-size: 32px;
+    line-height: normal;
+    margin-bottom: 4px;
+    font-family: "AmnestyTradeGothicCn", Arial, sans-serif;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin-bottom: 7px;
+    font-size: 16px;
+  }
+
+  p.italic {
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 7px;
+  }
+
+  input {
+    background: #F5F5F5;
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 4px;
+    box-sizing: border-box;
+    border: 0;
+  }
+
+  button {
+    position: relative;
+    background: #FFFF00;
+    width: 100%;
+    padding: 9px 0;
+    font-size: 20px;
+    text-transform: uppercase;
+    border: 0;
+    cursor: pointer;
+    font-family: "AmnestyTradeGothicCn", Arial, sans-serif;
+  }
+
+  button#lightbox-submit {
+    &::after {
+      position: absolute;
+      right: 16px;
+      content: url("data:image/svg+xml;charset=UTF-8, <svg xmlns='http://www.w3.org/2000/svg' width='17' height='16' fill='none' viewBox='0 0 17 16'><path fill='%23000' d='M8.247 0L6.814 1.4 12.546 7H.059v2h12.487l-5.732 5.6L8.247 16l8.188-8-8.188-8z'/></svg>");
+
+    }
+  }
+
+  /* Visually hide, but not from screen readers and other assistaive devices */
+  /* REF: https://www.w3.org/WAI/tutorials/forms/labels/#note-on-hiding-elements */
+  .visuallyhidden{
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+}
