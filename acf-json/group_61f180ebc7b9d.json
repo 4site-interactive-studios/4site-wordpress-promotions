@@ -35,6 +35,7 @@
       },
       "choices": {
         "multistep_lightbox": "EN Multistep Lightbox",
+        "pushdown": "Pushdown",
         "raw_code": "Raw Code"
       },
       "default_value": "",
@@ -170,6 +171,171 @@
       },
       "default_value": "",
       "placeholder": ""
+    },
+    {
+      "key": "field_63bc637c4661c",
+      "label": "Pushdown Type",
+      "name": "engrid_pushdown_type",
+      "aria-label": "",
+      "type": "radio",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "image": "Image",
+        "text": "Text"
+      },
+      "default_value": "",
+      "return_format": "value",
+      "allow_null": 0,
+      "other_choice": 0,
+      "layout": "vertical",
+      "save_other_choice": 0
+    },
+    {
+      "key": "field_63bc64544661d",
+      "label": "Pushdown Link",
+      "name": "engrid_pushdown_link",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_63bdc41e5682c",
+      "label": "Pushdown Title",
+      "name": "engrid_pushdown_title",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_63bc6d8161fe4",
+      "label": "Pushdown Image",
+      "name": "engrid_pushdown_image",
+      "aria-label": "",
+      "type": "image",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          },
+          {
+            "field": "field_63bc637c4661c",
+            "operator": "==",
+            "value": "image"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "return_format": "url",
+      "library": "all",
+      "min_width": "",
+      "min_height": "",
+      "min_size": "",
+      "max_width": "",
+      "max_height": "",
+      "max_size": "",
+      "mime_types": "",
+      "preview_size": "medium"
+    },
+    {
+      "key": "field_63bee8909b82f",
+      "label": "Pushdown Gif",
+      "name": "engrid_pushdown_gif",
+      "aria-label": "",
+      "type": "image",
+      "instructions": "Use this field to upload a gif for the pushdown.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "pushdown"
+          },
+          {
+            "field": "field_63bc637c4661c",
+            "operator": "==",
+            "value": "image"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "return_format": "url",
+      "library": "all",
+      "min_width": "",
+      "min_height": "",
+      "min_size": "",
+      "max_width": "",
+      "max_height": "",
+      "max_size": "",
+      "mime_types": "",
+      "preview_size": "medium"
     },
     {
       "key": "field_6243ac17400c8",

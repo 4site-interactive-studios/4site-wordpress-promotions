@@ -250,7 +250,6 @@ class Foursite_Wordpress_Promotion_Public {
 		$client_side_triggered_config = [];
 
 		foreach($lightbox_ids as $lightbox_id){
-			// wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
 			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
@@ -284,6 +283,11 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$confetti = array();
+			$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
+			$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
+			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
+			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
+			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
@@ -362,6 +366,20 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id, 
 					'trigger' => $trigger, 
+				];
+			} else if (trim($engrid_promotion_type == "pushdown")) {
+				$client_side_triggered_config[$lightbox_id] = [
+					'promotion_type' => $engrid_promotion_type, 
+					'url' => $engrid_pushdown_link,
+					'pushdown_type' => $engrid_pushdown_type,
+					'pushdown_title' => $engrid_pushdown_title,
+					'image' => $engrid_pushdown_image,
+					'gif' => $engrid_pushdown_gif,
+					'trigger' => $trigger,
+					'cookie' => $engrid_cookie_name, 
+					'cookie_hours' => $engrid_cookie_hours, 
+					'id' => $lightbox_id, 
+					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
 			} else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
