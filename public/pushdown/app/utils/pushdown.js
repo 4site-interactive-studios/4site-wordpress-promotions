@@ -6,6 +6,7 @@ export class Pushdown {
     this.content = scriptTag.getAttribute("data-pushdown-content") || "";
     this.link = scriptTag.getAttribute("data-pushdown-link") || "";
     this.image = scriptTag.getAttribute("data-pushdown-image") || "";
+    this.gif = scriptTag.getAttribute("data-pushdown-gif") || "";
     if (this.link) {
       this.init();
       return;

@@ -222,19 +222,19 @@ window.addEventListener("DOMContentLoaded", () => {
     if (promotionConfig.promotion_type == "pushdown") {
       const pushdownMode = promotionConfig.pushdown_type;
       const pushdownImage = promotionConfig.image;
+      const pushdownGif = promotionConfig.gif;
       const pushdownText = promotionConfig.pushdown_title;
       const pushdownLink = promotionConfig.url;
-
-      console.log(promotionConfig.id, pushdownText);
+      const pushdownSrc = promotionConfig.src;
 
       const pushdownScript = document.createElement("script");
-      pushdownScript.src =
-        "/wp-content/plugins/4site-wordpress-promotions/public/pushdown/js/pushdown.js?ver=1.0.4";
+      pushdownScript.src = pushdownSrc;
       pushdownScript.id = "foursite-wordpress-pushdown-promotion-js";
       pushdownScript.setAttribute("crossorigin", "anonymous");
       pushdownScript.setAttribute("data-pushdown-mode", pushdownMode);
       pushdownScript.setAttribute("data-pushdown-link", pushdownLink);
       pushdownScript.setAttribute("data-pushdown-image", pushdownImage);
+      pushdownScript.setAttribute("data-pushdown-gif", pushdownGif);
       pushdownScript.setAttribute("data-pushdown-content", pushdownText);
       pushdownScript.classList.add(promotionClass);
 

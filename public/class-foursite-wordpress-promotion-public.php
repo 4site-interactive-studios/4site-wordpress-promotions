@@ -285,6 +285,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$confetti = array();
 			$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
 			$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
+			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id);
 			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
 
@@ -373,10 +374,12 @@ class Foursite_Wordpress_Promotion_Public {
 					'pushdown_type' => $engrid_pushdown_type,
 					'pushdown_title' => $engrid_pushdown_title,
 					'image' => $engrid_pushdown_image,
+					'gif' => $engrid_pushdown_gif,
 					'trigger' => $trigger,
 					'cookie' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id, 
+					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
 			} else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
