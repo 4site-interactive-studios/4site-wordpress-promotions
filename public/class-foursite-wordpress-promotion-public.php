@@ -285,7 +285,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$confetti = array();
 			$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
 			$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
-			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id);
+			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
 			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
 
