@@ -288,6 +288,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
 			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
+			$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
@@ -373,7 +374,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'url' => $engrid_pushdown_link,
 					'pushdown_type' => $engrid_pushdown_type,
 					'pushdown_title' => $engrid_pushdown_title,
-					'image' => $engrid_pushdown_image,
+					'image' => esc_url($resized_pushdown_image),
 					'gif' => $engrid_pushdown_gif,
 					'trigger' => $trigger,
 					'cookie' => $engrid_cookie_name, 

@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV == "production";
 const stylesHandler = "style-loader";
 
 const config = {
-  entry: "./app/utils/pushdown.js",
+  entry: "./index.js",
   output: {
     filename: "pushdown.js",
     path: path.resolve(__dirname, "js"),
