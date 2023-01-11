@@ -41,7 +41,7 @@ export class Pushdown {
       content = `<a class="pushdown-link" href="${this.link}" style="background-image: url('${this.image}')">
       <div class="pushdown-content">
       <h2 class="pushdown-title">${this.content}</h2>
-      <img src="https://aaf1a18515da0e792f78-c27fdabe952dfc357fe25ebf5c8897ee.ssl.cf5.rackcdn.com/1839/pushdown-highlight.gif?v=1636659064000" alt="${this.content}">
+      <img src="${this.gif}" alt="${this.content}">
       </div>
       </a>`;
     }
