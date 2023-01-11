@@ -287,22 +287,12 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
 			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
-			$pushdown_attribute_string;
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
 					the_row();
 					$confetti[] = get_sub_field('color');
 				}
-			}
-
-			switch($engrid_promotion_type) {
-				case "raw_code":
-				case "multistep_lightbox":
-					break;
-				case "pushdown":
-					$pushdown_attribute_string = "data-pushdown-mode=$engrid_pushdown_type data-pushdown-content=$engrid_paragraph data-pushdown-link=$engrid_pushdown_link data-pushdown-image=$engrid_pushdown_image";
-				break;
 			}
 
 			$trigger = 0;
