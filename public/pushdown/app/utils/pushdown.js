@@ -40,10 +40,13 @@ export class Pushdown {
     } else {
       content = `<a class="pushdown-link" href="${this.link}" style="background-image: url('${this.image}')">
       <div class="pushdown-content">
-      <h2 class="pushdown-title">${this.content}</h2>
-      <img src="${this.gif}" alt="${this.content}">
-      </div>
-      </a>`;
+      <h2 class="pushdown-title">${this.content}</h2>`;
+
+      if (this.gif) {
+        content += `<img src="${this.gif}" alt="${this.content}">`;
+      }
+
+      content += "</div> </a>";
     }
     return content;
   }

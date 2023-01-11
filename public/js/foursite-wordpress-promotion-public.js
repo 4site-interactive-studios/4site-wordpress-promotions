@@ -222,7 +222,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (promotionConfig.promotion_type == "pushdown") {
       const pushdownMode = promotionConfig.pushdown_type;
       const pushdownImage = promotionConfig.image;
-      const pushdownGif = promotionConfig.gif;
+      const pushdownGif = promotionConfig.gif != "" ? promotionConfig.gif : "";
       const pushdownText = promotionConfig.pushdown_title;
       const pushdownLink = promotionConfig.url;
       const pushdownSrc = promotionConfig.src;
@@ -234,7 +234,9 @@ window.addEventListener("DOMContentLoaded", () => {
       pushdownScript.setAttribute("data-pushdown-mode", pushdownMode);
       pushdownScript.setAttribute("data-pushdown-link", pushdownLink);
       pushdownScript.setAttribute("data-pushdown-image", pushdownImage);
-      pushdownScript.setAttribute("data-pushdown-gif", pushdownGif);
+      if (pushdownGif != "") {
+        pushdownScript.setAttribute("data-pushdown-gif", pushdownGif);
+      }
       pushdownScript.setAttribute("data-pushdown-content", pushdownText);
       pushdownScript.classList.add(promotionClass);
 
