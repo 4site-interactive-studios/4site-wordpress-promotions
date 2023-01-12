@@ -1,10 +1,8 @@
-@import "normalize";
-
-.visible {
+.fs-signup-visible {
   opacity: 1;
 }
 
-.hidden {
+.fs-signup-hidden {
   opacity: 0;
 }
 
@@ -13,7 +11,7 @@ img {
   height: auto;
 }
 
-.lightbox {
+.fs-signup-lightbox {
   position: fixed;
   display: flex;
   top: 0;
@@ -28,10 +26,10 @@ img {
   font-family: "AmnestyTradeGothic", sans-serif;
   z-index: 9999999;
 
-  .lightbox-content {
+  .fs-signup-lightbox-content {
     position: relative;
     display: flex;
-    background: #FFFFFF;
+    background: #ffffff;
     width: 100%;
     max-width: 340px;
     padding: 12px;
@@ -43,7 +41,7 @@ img {
     }
   }
 
-  .close-btn {
+  .fs-signup-close-btn {
     position: absolute;
     top: 14px;
     right: 14px;
@@ -51,7 +49,7 @@ img {
     content: url("data:image/svg+xml;charset=UTF-8, <svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 14 14'><path fill='%23fff' stroke='%23000' d='M12.73 13.292L7.358 7.915l-.353-.354-.354.354-5.373 5.378-.57-.57 5.38-5.37L6.443 7l-.355-.354-5.38-5.369.57-.57 5.373 5.378.353.354.354-.354L12.73.715l.563.563L7.92 6.646 7.567 7l.354.354 5.373 5.37-.564.568z'/></svg>");
   }
 
-  .logo {
+  .fs-signup-logo {
     position: absolute;
     top: -67px;
     left: 0;
@@ -62,7 +60,7 @@ img {
     }
   }
 
-  .container-image {
+  .fs-signup-container-image {
     display: none;
 
     @media (min-width: 840px) {
@@ -74,7 +72,7 @@ img {
     // }
   }
 
-  .container-form {
+  .fs-signup-container-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,7 +105,7 @@ img {
   }
 
   input {
-    background: #F5F5F5;
+    background: #f5f5f5;
     width: 100%;
     padding: 12px 20px;
     margin-bottom: 4px;
@@ -117,7 +115,7 @@ img {
 
   button {
     position: relative;
-    background: #FFFF00;
+    background: #ffff00;
     width: 100%;
     padding: 9px 0;
     font-size: 20px;
@@ -127,18 +125,17 @@ img {
     font-family: "AmnestyTradeGothicCn", Arial, sans-serif;
   }
 
-  button#lightbox-submit {
+  button#fs-signup-lightbox-submit {
     &::after {
       position: absolute;
       right: 16px;
       content: url("data:image/svg+xml;charset=UTF-8, <svg xmlns='http://www.w3.org/2000/svg' width='17' height='16' fill='none' viewBox='0 0 17 16'><path fill='%23000' d='M8.247 0L6.814 1.4 12.546 7H.059v2h12.487l-5.732 5.6L8.247 16l8.188-8-8.188-8z'/></svg>");
-
     }
   }
 
   /* Visually hide, but not from screen readers and other assistaive devices */
   /* REF: https://www.w3.org/WAI/tutorials/forms/labels/#note-on-hiding-elements */
-  .visuallyhidden{
+  .fs-signup-visuallyhidden {
     border: 0;
     clip: rect(0 0 0 0);
     height: 1px;
@@ -148,5 +145,4 @@ img {
     position: absolute;
     width: 1px;
   }
-
 }

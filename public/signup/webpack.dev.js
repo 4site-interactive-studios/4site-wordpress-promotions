@@ -6,7 +6,7 @@ module.exports = merge(common, {
   mode: "development",
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "js"),
   },
   module: {
     rules: [
@@ -19,12 +19,12 @@ module.exports = merge(common, {
             loader: "postcss-loader", // 2. Adiciona Autoprefixer no CSS
             options: {
               ident: "postcss",
-              plugins: [require("autoprefixer")]
-            }
+              plugins: [require("autoprefixer")],
+            },
           },
-          "sass-loader" //1. De SASS para o CSS
-        ]
-      }
-    ]
-  }
+          "sass-loader", //1. De SASS para o CSS
+        ],
+      },
+    ],
+  },
 });

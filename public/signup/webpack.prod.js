@@ -9,7 +9,7 @@ module.exports = merge(common, {
   mode: "production",
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "js"),
   },
   optimization: {
     minimizer: [new OptimizeCssAssetsPlugin(), new TerserPlugin()],

@@ -1,34 +1,34 @@
 //import css from "./main.css";
 import scss from "./sass/main.scss";
 import { crumbs } from "./crumbs";
-// import { options } from './config';
+// import { fs_signup_options } from './config';
 
 const body = document.querySelector("body");
 
 let image = "";
-if (options.imageURL) {
-  image += `<img src="${options.imageURL}" />`;
+if (fs_signup_options.imageURL) {
+  image += `<img src="${fs_signup_options.imageURL}" />`;
 }
 let logo = "";
-if (options.logoURL) {
-  logo += `<img src="${options.logoURL}" />`;
+if (fs_signup_options.logoURL) {
+  logo += `<img src="${fs_signup_options.logoURL}" />`;
 }
 
 let content = "";
-if (options.title) {
-  content += `<h1>${options.title}</h1>`;
+if (fs_signup_options.title) {
+  content += `<h1>${fs_signup_options.title}</h1>`;
 }
-if (options.paragraph) {
-  content += `<p>${options.paragraph}</p>`;
+if (fs_signup_options.paragraph) {
+  content += `<p>${fs_signup_options.paragraph}</p>`;
 }
-if (options.iframe) {
-  content += `${options.iframe.replace("data-src", "src")}`;
+if (fs_signup_options.iframe) {
+  content += `${fs_signup_options.iframe.replace("data-src", "src")}`;
 }
-if (options.info) {
-  content += `<p class="italic">${options.info}</p>`;
+if (fs_signup_options.info) {
+  content += `<p class="italic">${fs_signup_options.info}</p>`;
 }
 
-const hideSignUpForm = !!parseInt(crumbs.get(options.cookie_name)); // Get cookie
+const hideSignUpForm = !!parseInt(crumbs.get(fs_signup_options.cookie_name)); // Get cookie
 
 // This is for disable mobile view
 const viewportWidth = Math.max(
@@ -40,7 +40,7 @@ const isIE = !!document.documentMode;
 
 const setLightbox = () => {
   if (!hideSignUpForm) {
-    crumbs.set(options.cookie_name, 0, {
+    crumbs.set(fs_signup_options.cookie_name, 0, {
       type: "day",
       value: 1,
     });
@@ -59,16 +59,16 @@ const setLightbox = () => {
     body.insertAdjacentHTML(
       "afterbegin",
       `
-  <div class="lightbox hidden" style="display: none;">
-    <div class="lightbox-content">
-      <div class="close-btn"></div>
-      <div class="logo">
+  <div class="fs-signup-lightbox fs-signup-hidden" style="display: none;">
+    <div class="fs-signup-lightbox-content">
+      <div class="fs-signup-close-btn"></div>
+      <div class="fs-signup-logo">
         ${logo}
       </div>
-      <div class="container-image">
+      <div class="fs-signup-container-image">
         ${image}
       </div>
-      <div class="container-form">
+      <div class="fs-signup-container-form">
         ${content}
       </div>
     </div>
@@ -77,14 +77,14 @@ const setLightbox = () => {
   }
   const lightbox = document.querySelector(".lightbox");
 
-  const lightBoxClose = document.querySelector(".close-btn");
+  const lightBoxClose = document.querySelector(".fs-signup-close-btn");
   lightBoxClose &&
     lightBoxClose.addEventListener("click", () => closeLightbox(lightbox));
 
-  const submitBtn = document.querySelector("#lightbox-submit");
+  const submitBtn = document.querySelector("#fs-signup-lightbox-submit");
   submitBtn &&
     submitBtn.addEventListener("click", () => {
-      crumbs.set(options.cookie_name, 1, {
+      crumbs.set(fs_signup_options.cookie_name, 1, {
         type: "month",
         value: 12,
       }); // Create one year cookie
@@ -92,19 +92,19 @@ const setLightbox = () => {
 
   setTimeout(function () {
     lightbox.style.display = "flex";
-  }, options.trigger - 100);
+  }, fs_signup_options.trigger - 100);
 
   setTimeout(function () {
-    lightbox.classList.remove("hidden");
-    lightbox.classList.add("visible");
+    lightbox.classList.remove("fs-signup-hidden");
+    lightbox.classList.add("fs-signup-visible");
     body.style.overflow = "hidden";
-  }, options.trigger);
+  }, fs_signup_options.trigger);
 
   lightbox.addEventListener("transitionend", () => {
-    if (lightbox.classList.contains("hidden")) {
+    if (lightbox.classList.contains("fs-signup-hidden")) {
       lightbox.style.display = "none";
     }
-    if (lightbox.classList.contains("visible")) {
+    if (lightbox.classList.contains("fs-signup-visible")) {
       lightbox.style.display = "flex";
     }
   });
@@ -151,7 +151,10 @@ const setLightbox = () => {
           e.data.pageCount &&
           e.data.pageNumber == e.data.pageCount
         ) {
-          crumbs.set(options.cookie_name, 1, { type: "month", value: 12 }); // Create one year cookie
+          crumbs.set(fs_signup_options.cookie_name, 1, {
+            type: "month",
+            value: 12,
+          }); // Create one year cookie
         }
       }
 
@@ -164,19 +167,19 @@ const setLightbox = () => {
 setLightbox();
 
 function closeLightbox(lightbox) {
-  lightbox.classList.remove("visible");
-  lightbox.classList.add("hidden");
+  lightbox.classList.remove("fs-signup-visible");
+  lightbox.classList.add("fs-signup-hidden");
   body.style.overflow = "auto";
-  crumbs.set(options.cookie_name, 1, { type: "day", value: 1 });
+  crumbs.set(fs_signup_options.cookie_name, 1, { type: "day", value: 1 });
 }
 
 function isWhitelisted() {
   let result = true;
-  if (options.whitelist.length) {
+  if (fs_signup_options.whitelist.length) {
     let url = window.location.pathname + window.location.search;
     // Change the default since now we need to show ONLY in whitelisted places
     result = false;
-    options.whitelist.forEach((test) => {
+    fs_signup_options.whitelist.forEach((test) => {
       if (url.match(new RegExp(test))) result = true;
     });
   }
@@ -185,9 +188,9 @@ function isWhitelisted() {
 
 function isBlacklisted() {
   let result = false;
-  if (options.blacklist.length) {
+  if (fs_signup_options.blacklist.length) {
     let url = window.location.pathname + window.location.search;
-    options.blacklist.forEach((test) => {
+    fs_signup_options.blacklist.forEach((test) => {
       if (url.match(new RegExp(test))) result = true;
     });
   }
@@ -197,10 +200,10 @@ function isBlacklisted() {
 function isBetweenDates() {
   let result = true;
   // Check if the there are dates defined
-  if (options.dates.length) {
+  if (fs_signup_options.dates.length) {
     let now = new Date();
-    let start = new Date(options.dates[0]);
-    let end = new Date(options.dates[1] + " 23:59:59");
+    let start = new Date(fs_signup_options.dates[0]);
+    let end = new Date(fs_signup_options.dates[1] + " 23:59:59");
     if (now < start || now > end) {
       result = false;
     }
