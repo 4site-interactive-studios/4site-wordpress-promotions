@@ -36,7 +36,8 @@
       "choices": {
         "multistep_lightbox": "EN Multistep Lightbox",
         "pushdown": "Pushdown",
-        "raw_code": "Raw Code"
+        "raw_code": "Raw Code",
+        "signup_lightbox": "Signup Lightbox"
       },
       "default_value": "",
       "return_format": "value",
@@ -134,6 +135,13 @@
             "operator": "==",
             "value": "multistep_lightbox"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
+          }
         ]
       ],
       "wrapper": {
@@ -161,6 +169,13 @@
             "field": "field_63694582ec47e",
             "operator": "==",
             "value": "multistep_lightbox"
+          }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
           }
         ]
       ],
@@ -390,6 +405,13 @@
             "field": "field_63694582ec47e",
             "operator": "==",
             "value": "multistep_lightbox"
+          }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
           }
         ]
       ],
@@ -651,6 +673,13 @@
             "operator": "==",
             "value": "multistep_lightbox"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
+          }
         ]
       ],
       "wrapper": {
@@ -683,6 +712,41 @@
             "field": "field_63694582ec47e",
             "operator": "==",
             "value": "multistep_lightbox"
+          }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": 4,
+      "placeholder": "",
+      "new_lines": "br"
+    },
+    {
+      "key": "field_63c0326d9477e",
+      "label": "Info",
+      "name": "engrid_signup_info",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Content of the Lightbox.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
           }
         ]
       ],
@@ -1089,7 +1153,15 @@
       "type": "select",
       "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
       "required": 0,
-      "conditional_logic": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "!=",
+            "value": "signup_lightbox"
+          }
+        ]
+      ],
       "wrapper": {
         "width": "50",
         "class": "",
@@ -1104,10 +1176,10 @@
         "js": "Javascript Trigger"
       },
       "default_value": false,
-      "allow_null": 0,
-      "multiple": 0,
-      "ui": 0,
       "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "ui": 0,
       "ajax": 0,
       "placeholder": ""
     },
@@ -1126,6 +1198,13 @@
             "operator": "==",
             "value": "seconds"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
+          }
         ]
       ],
       "wrapper": {
@@ -1134,12 +1213,12 @@
         "id": ""
       },
       "default_value": 2,
-      "placeholder": "",
-      "prepend": "Trigger after",
-      "append": "seconds",
       "min": "",
       "max": "",
-      "step": 1
+      "placeholder": "",
+      "step": 1,
+      "prepend": "Trigger after",
+      "append": "seconds"
     },
     {
       "key": "field_61f1e946d1f28",
@@ -1164,12 +1243,12 @@
         "id": ""
       },
       "default_value": 500,
-      "placeholder": "",
-      "prepend": "Trigger after scrolling",
-      "append": "pixels",
       "min": "",
       "max": "",
-      "step": 1
+      "placeholder": "",
+      "step": 1,
+      "prepend": "Trigger after scrolling",
+      "append": "pixels"
     },
     {
       "key": "field_61f1e998d1f29",

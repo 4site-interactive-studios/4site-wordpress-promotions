@@ -124,18 +124,8 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
   
   if ( 'promotion_type' === $column ) {
     $promotion_type = get_post_meta( $post_id, 'engrid_promotion_type', true );
-    
-    switch($promotion_type) {
-      case "multistep_lightbox":
-        echo "Multistep Lightbox";
-        break;
-      case "raw_code":
-        echo "Raw Code";
-        break;
-      case "pushdown":
-        echo "Pushdown";
-        break;
-    }
+
+    echo implode(" ", array_map("ucfirst", explode("_", $promotion_type)));
   }
   
   if ( 'trigger' === $column ) {
