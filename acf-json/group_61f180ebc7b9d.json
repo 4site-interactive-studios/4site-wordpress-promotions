@@ -739,7 +739,7 @@
       "name": "engrid_signup_info",
       "aria-label": "",
       "type": "textarea",
-      "instructions": "Content of the Lightbox.",
+      "instructions": "Text that goes at the bottom of the lightbox.",
       "required": 0,
       "conditional_logic": [
         [

@@ -245,6 +245,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'foursite-wordpress-signup-lightbox', plugin_dir_url( __FILE__ ) . 'signup/js/website-lightbox.js', array( 'jquery' ), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
@@ -254,10 +255,10 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
 			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
-			$engrid_image = ($engrid_hero_type == 'image') ? get_field('engrid_image', $lightbox_id) : '';
+			$engrid_image = ($engrid_hero_type == 'image' || $engrid_promotion_type == "signup_lightbox") ? get_field('engrid_image', $lightbox_id) : '';
 			$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
 			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
-			$engrid_logo = ($engrid_use_logo) ? get_field('engrid_logo', $lightbox_id) : '';
+			$engrid_logo = ($engrid_use_logo || $engrid_promotion_type == 'signup_lightbox') ? get_field('engrid_logo', $lightbox_id) : '';
 			$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
 			$engrid_divider = get_field('engrid_divider', $lightbox_id);
 			$engrid_title = get_field('engrid_title', $lightbox_id);
@@ -289,6 +290,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
 			$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
+			$engrid_signup_info = get_field('engrid_signup_info', $lightbox_id);
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
@@ -355,6 +357,8 @@ class Foursite_Wordpress_Promotion_Public {
 					confetti: $engrid_confetti,
 				};
 				ENGRID;
+
+				$client_side_triggered_config[$lightbox_id] = "Multistep lightbox";
 				
 				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
 			} else if($engrid_promotion_type == "raw_code") {
@@ -382,7 +386,38 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
-			} else if(trim($engrid_trigger_type) == "js") {
+			} else if(trim($engrid_promotion_type == "signup_lightbox")) {
+				$signup_trigger = $engrid_trigger_seconds * 1000; // Convert to milliseconds
+				$engrid_js_code = <<<ENGRID
+				console.log('Wordpress Promotion ID: $lightbox_id');
+
+				fs_signup_options = {
+					promotion_type: "$engrid_promotion_type",
+					url: "$engrid_donation_page",
+					imageURL: "$engrid_image",
+					logoURL: "$engrid_logo",
+					divider: "$engrid_divider",
+					title: "$engrid_title",
+					paragraph: `$engrid_paragraph`,
+					info: `$engrid_signup_info`,
+					cookie_hours: $engrid_cookie_hours,
+					cookie_name: "$engrid_cookie_name",
+					trigger: "$signup_trigger",
+					gtm_open_event_name: "$engrid_gtm_open_event_name",
+					gtm_close_event_name: "$engrid_gtm_close_event_name",
+					gtm_suppressed_event_name: "$engrid_gtm_suppressed_event_name",
+					confetti: $engrid_confetti,
+					dates: [],
+					blacklist: [],
+					whitelist: [],
+					iframe: `<iframe width='100%' scrolling='yes' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+				};
+				ENGRID;
+				$client_side_triggered_config[$lightbox_id] = "Signup lightbox";
+				
+				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
+				}
+				else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 

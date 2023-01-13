@@ -134,6 +134,11 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
     $seconds = get_post_meta( $post_id, 'engrid_trigger_seconds', true );
     $percentage = get_post_meta( $post_id, 'engrid_trigger_scroll_percentage', true );
 
+    $promotion_type = get_post_meta( $post_id, 'engrid_promotion_type', true );
+    if($promotion_type == "signup_lightbox") {
+      $trigger = $seconds == 0 ? "0" : "seconds";
+    }
+
     switch($trigger) {
         case "0":
           echo "Immediately";

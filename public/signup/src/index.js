@@ -75,7 +75,7 @@ const setLightbox = () => {
   </div>`
     );
   }
-  const lightbox = document.querySelector(".lightbox");
+  const lightbox = document.querySelector(".fs-signup-lightbox");
 
   const lightBoxClose = document.querySelector(".fs-signup-close-btn");
   lightBoxClose &&
