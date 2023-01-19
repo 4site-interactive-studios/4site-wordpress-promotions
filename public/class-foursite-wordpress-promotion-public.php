@@ -410,7 +410,7 @@ class Foursite_Wordpress_Promotion_Public {
 					dates: [],
 					blacklist: [],
 					whitelist: [],
-					iframe: `<iframe width='100%' scrolling='yes' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+					iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
 				};
 				ENGRID;
 				$client_side_triggered_config[$lightbox_id] = "Signup lightbox";
