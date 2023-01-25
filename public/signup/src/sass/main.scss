@@ -14,6 +14,7 @@ img {
 .fs-signup-lightbox {
   position: fixed;
   display: flex;
+  flex-direction: column;
   top: 0;
   left: 0;
   width: 100%;
@@ -84,6 +85,23 @@ img {
 
     @media (min-width: 840px) {
       margin: 0 50px;
+    }
+  }
+
+  .fs-signup-footer {
+    color: #fff;
+    margin: 12px auto;
+    max-width: 350px;
+
+    p {
+      font-size: 12px;
+      font-weight: 600;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-align: center;
+      margin: 0;
     }
   }
 
@@ -172,17 +190,17 @@ img {
     max-width: 1231px;
   }
 
-  .container-image {
+  .fs-signup-container-image {
     background-image: url("https://www.amnestyusa.org/wp-content/uploads/2022/06/12012021_Abortion_Rights_Rally_02.jpg");
     background-size: cover;
     background-position: right center;
   }
 
-  .container-image img {
+  .fs-signup-container-image img {
     visibility: hidden;
   }
 
-  .container-form {
+  .fs-signup-container-form {
     max-width: 238px;
     margin: 0 40px;
   }

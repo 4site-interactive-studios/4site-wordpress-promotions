@@ -35,9 +35,9 @@
       },
       "choices": {
         "multistep_lightbox": "EN Multistep Lightbox",
+        "signup_lightbox": "EN Signup Lightbox",
         "pushdown": "Pushdown",
-        "raw_code": "Raw Code",
-        "signup_lightbox": "Signup Lightbox"
+        "raw_code": "Raw Code"
       },
       "default_value": "",
       "return_format": "value",
@@ -735,7 +735,7 @@
     },
     {
       "key": "field_63c0326d9477e",
-      "label": "Info",
+      "label": "Footer",
       "name": "engrid_signup_info",
       "aria-label": "",
       "type": "textarea",

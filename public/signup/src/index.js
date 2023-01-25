@@ -24,9 +24,9 @@ if (fs_signup_options.paragraph) {
 if (fs_signup_options.iframe) {
   content += `${fs_signup_options.iframe.replace("data-src", "src")}`;
 }
-if (fs_signup_options.info) {
-  content += `<p class="italic">${fs_signup_options.info}</p>`;
-}
+// if (fs_signup_options.info) {
+//   content += `<p class="italic fs-signup-footer">${fs_signup_options.info}</p>`;
+// }
 
 const hideSignUpForm = !!parseInt(crumbs.get(fs_signup_options.cookie_name)); // Get cookie
 
@@ -60,16 +60,21 @@ const setLightbox = () => {
       "afterbegin",
       `
   <div class="fs-signup-lightbox fs-signup-hidden" style="display: none;">
-    <div class="fs-signup-lightbox-content">
-      <div class="fs-signup-close-btn"></div>
-      <div class="fs-signup-logo">
-        ${logo}
+    <div class="fs-signup-container">
+      <div class="fs-signup-lightbox-content">
+        <div class="fs-signup-close-btn"></div>
+        <div class="fs-signup-logo">
+          ${logo}
+        </div>
+        <div class="fs-signup-container-image">
+          ${image}
+        </div>
+        <div class="fs-signup-container-form">
+          ${content}
+        </div>
       </div>
-      <div class="fs-signup-container-image">
-        ${image}
-      </div>
-      <div class="fs-signup-container-form">
-        ${content}
+      <div class="fs-signup-footer">
+        <p>${fs_signup_options.info}</p>                    
       </div>
     </div>
   </div>`
