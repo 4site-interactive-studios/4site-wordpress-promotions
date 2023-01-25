@@ -734,34 +734,6 @@
       "new_lines": "br"
     },
     {
-      "key": "field_63c0326d9477e",
-      "label": "Footer",
-      "name": "engrid_signup_info",
-      "aria-label": "",
-      "type": "textarea",
-      "instructions": "Text that goes at the bottom of the lightbox.",
-      "required": 0,
-      "conditional_logic": [
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "signup_lightbox"
-          }
-        ]
-      ],
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": "",
-      "maxlength": "",
-      "rows": 4,
-      "placeholder": "",
-      "new_lines": "br"
-    },
-    {
       "key": "field_61f1833c13dfc",
       "label": "Text Color",
       "name": "engrid_text_color",
@@ -853,6 +825,13 @@
             "field": "field_63694582ec47e",
             "operator": "==",
             "value": "multistep_lightbox"
+          }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "signup_lightbox"
           }
         ]
       ],

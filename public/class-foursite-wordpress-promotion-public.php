@@ -399,7 +399,7 @@ class Foursite_Wordpress_Promotion_Public {
 					divider: "$engrid_divider",
 					title: "$engrid_title",
 					paragraph: `$engrid_paragraph`,
-					info: `$engrid_signup_info`,
+					info: `$engrid_footer`,
 					cookie_hours: $engrid_cookie_hours,
 					cookie_name: "$engrid_cookie_name",
 					trigger: "$signup_trigger",
