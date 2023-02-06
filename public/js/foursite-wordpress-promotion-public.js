@@ -104,67 +104,7 @@ window.addEventListener("DOMContentLoaded", () => {
       } else if (getCookie(cookie) && triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
       }
-    } /*else if (type == "pushdown") {
-      if (!getCookie(cookie)) {
-        if (triggerType === false) {
-          trigger = 2000;
-        }
-        if (triggerType === "seconds") {
-          trigger = Number(trigger) * 1000;
-        }
-
-        if (triggerType === "seconds" || triggerType === false) {
-          window.setTimeout(() => {
-            addRawCode(client_side_triggered_config[property]);
-            if (cookieExpiration) {
-              setCookie(cookie, cookieExpiration);
-            } else {
-              setCookie(cookie);
-            }
-          }, trigger);
-          window.rawCodeTriggers[
-            client_side_triggered_config[property].id
-          ] = true;
-        }
-        if (triggerType === "exit") {
-          document.body.addEventListener("mouseout", (e) => {
-            if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
-              addRawCode(client_side_triggered_config[property]);
-              if (cookieExpiration) {
-                setCookie(cookie, cookieExpiration);
-              } else {
-                setCookie(cookie);
-              }
-              window.rawCodeTriggers[id] = true;
-            }
-          });
-        }
-        if (triggerType === "pixels") {
-          document.addEventListener(
-            "scroll",
-            function () {
-              scrollTriggerPx(client_side_triggered_config[property]);
-            },
-            true
-          );
-        }
-        if (triggerType === "percent") {
-          document.addEventListener(
-            "scroll",
-            function () {
-              scrollTriggerPercent(client_side_triggered_config[property]);
-            },
-            true
-          );
-        }
-
-        if (triggerType === "js") {
-          window.addEventListener("trigger-promotion", triggerPromotionEvent);
-        }
-      } else if (getCookie(cookie) && triggerType == "js") {
-        window.addEventListener("trigger-promotion", triggerPromotionEvent);
-      }
-    }*/
+    }
   }
 
   function setCookie(cookie, hours = 24, path = "/") {

@@ -125,11 +125,7 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
   if ( 'promotion_type' === $column ) {
     $promotion_type = get_post_meta( $post_id, 'engrid_promotion_type', true );
 
-    if ( 'promotion_type' === $column ) {
-      $promotion_type = get_post_meta( $post_id, 'engrid_promotion_type', true );
-
-      echo implode(" ", array_map("ucfirst", explode("_", $promotion_type)));
-    }
+    echo implode(" ", array_map("ucfirst", explode("_", $promotion_type)));
   }
   
   if ( 'trigger' === $column ) {
@@ -137,6 +133,11 @@ function smashing_wordpress_promotion_column( $column, $post_id ) {
     $pixels = get_post_meta( $post_id, 'engrid_trigger_scroll_pixels', true );
     $seconds = get_post_meta( $post_id, 'engrid_trigger_seconds', true );
     $percentage = get_post_meta( $post_id, 'engrid_trigger_scroll_percentage', true );
+
+    $promotion_type = get_post_meta( $post_id, 'engrid_promotion_type', true );
+    if($promotion_type == "signup_lightbox") {
+      $trigger = $seconds == 0 ? "0" : "seconds";
+    }
 
     switch($trigger) {
         case "0":
