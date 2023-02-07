@@ -425,7 +425,7 @@ class Foursite_Wordpress_Promotion_Public {
 					$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 					$fsft_css = get_field('engrid_css', $lightbox_id);
 					$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
-					$fsft_id = 'fs-promotion-tab';
+					$fsft_id = 'fs-donation-tab';
 
 					$style = '';
 					if(!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";

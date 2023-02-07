@@ -1,4 +1,4 @@
-#fs-promotion-tab {
+#fs-donation-tab {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,6 +24,6 @@
   white-space: unset;
 }
 
-#fs-promotion-tab.fixed-in-page {
+#fs-donation-tab.fixed-in-page {
   position: absolute;
 }
