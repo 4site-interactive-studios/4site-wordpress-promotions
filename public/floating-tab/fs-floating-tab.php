@@ -8,55 +8,39 @@ Author:         4Site Interactive Studios
 Author URI:     https://www.4sitestudios.com
 */
 
-if(function_exists('acf_add_options_page')) {
-	acf_add_options_page([
-		'page_title' => 'Floating Tab',
-		'menu_title' => 'Floating Tab',
-		'menu_slug' => 'fs-en-floating-tab',
-		'capability' => 'edit_posts',
-		'icon_url' => 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAyMSAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNi4yODMgMTkuNzM4Yy0uMTUzLS4wNjYtLjE3NS0uNTUtLjI2My0uNTUtLjEzMiAwLS4xOTguNDQtLjQ2Mi41MDYtLjI2NC4wNDQtLjY1OS0uMjg2LS43NjktLjE5OC0uMTEuMDg4LjI0Mi43MDQtLjM1MS43MDQtLjE3NiAwLS4yNjQtLjE5OC0uMjY0LS4zNTJ2LTQuNzY5cy4wMjIgMCAuMjg2LjA2NmMuMTc1LjA0NC4zNTEuMTMyLjM1MS4zNzQgMCAuMTMyLS4wNDQuMzk1LjA0NC40NC4wODguMDQzLjE1NC0uMDQ1LjE5OC0uMDY3LjgxMy0uNTkzIDEuMDEuNDYyIDEuMTg2LjQ2Mi4xNTQgMCAuMTMyLS43MjUuMzUyLS43MjUuMTc2LS4wNjYgMS44NDYuNzQ3IDEuODQ2IDEuMjc0IDAgLjExLS4yMi4xMzItLjI0Mi4yNDItLjAyMi4xNTQuMzk2LjIyLjMzLjUwNS0uMDIyLjE3Ni0uNDE4LjM5Ni0uMzA4LjUwNi4xMS4xMS42MzgtLjExLjY4MS0uMTEuMTEgMCAuMTMyLjE3Ni4xMzIuMjQyIDAgLjk0NS0yLjI0MSAxLjY3LTIuNzQ3IDEuNDV6bS01Ljk5OS43N2MtLjEzMi0uMjItLjA2Ni0uNTk0LS4xOTgtLjU5NC0uMDY1IDAtLjQxNy41MjctLjYxNS41MjdzLS41MjctLjM3My0uNjYtLjM3M2MtLjA4NyAwIC4wODkuNTI3LS4wODcuNzQ3LS4xMS4xNTQtMS4xNjUuMjYzLTEuMTY1LjEzMnYtNy40MjhjMC0uMzUxLjI2NC0uNDgzLjUwNi0uNDgzaDMuOTExYy40ODQgMCAuNjgxLjE1NC42ODEuNjU5djYuNjU4Yy4wMjMuMjItMi4yODUuMzA4LTIuMzczLjE1NHptMi4zOTYgOS40MDRjMCAuNDYyLS4xNTQuNTcyLS41NS40ODRsLTQuMTc1LS44MzVjLS4yNDItLjA0NC0uMzc0LS4xOTgtLjM3NC0uNDYyVjIxLjU0YzAtLjE5OC42ODItLjIyLjc5MS0uMTMyLjE5OC4xNzYuMTMyLjgxMy4yNjQuODEzLjE3NiAwIC42MzctLjc2OS44MzUtLjc2OS40MTggMCAuNzAzLjI0Mi43OTEuMTk4LjA4OC0uMDQ0LjA4OC0uMzk2LjE5OC0uNDg0LjE1NC0uMTEuNjE1LS4xMS44NTctLjEzMS4zOTYtLjAyMiAxLjEyLS4wODggMS4xMi0uMDg4LjI4NyAwIC4yNjQuMTk3LjI2NC42MTV2OC4zNWgtLjAyMXpNOC4xNzUgOC4wMDNjMC0zLjAxIDQuNDYtNC43NDYgNC43NjgtNi4yNjIuMzMuMzA3LjM3NC44MTMuMzc0IDEuMjUyIDAgMS44MjQtMy4xODcgNC45MjMtMy4xODcgNy4xNDIgMCAuMjQyLjAyMi4zMDguMDIyLjQ2MiAwIC4yMi0uMDg3LjI2My0uMTMxLjI2My0uNTI4LS4wMjItMS44NDYtMS4wNTUtMS44NDYtMi44NTd6TTUuNzEzIDI2LjgzNmMtLjM1MSAwLS41Ny0uNzAzLS42NTktLjY4MS0uMTEuMDIyLjAyMi41OTMtLjExLjY4LS4xMS4xMS0yLjQxNy0uOTY2LTIuNTkzLTEuMTQyLS4xNTQtLjE1NC4wNjYtLjM3MyAwLS41MjctLjA0NC0uMTMyLS4zOTUtLjA4OC0uNTA1LS4xNTQtLjA4OC0uMDg4LjExLS40ODMtLjAyMi0uNTcxLS4xMS0uMDY2LS4zNTIuMzk1LS41MDYuMTc1LS4wNjUtLjA4Ny0uMDg3LS4yNDEtLjA4Ny0uNDQgMC0xLjM0IDEuNDI4LTEuODY3IDIuMzczLTIuMTk3LjM5NS0uMTMxLjI2NC4zNzQuMzk1LjM5Ni4xNTQuMDQ0LjE3Ni0uMjQyLjM1Mi0uMjQyLjEzMiAwIC42MzcuMjQyLjc0Ny4xNTQuMDg4LS4wNjYtLjI2NC0uMzk1LS4xNTQtLjUyNy4xMzItLjExIDEuMTQzLS4zMDggMS4xNDMtLjA0NHY0LjY1OGMwIC41MDYtLjM3NC40NjItLjM3NC40NjJ6bTEzLjcxMy04LjA0M2MuMjQyLS40MTcuMjQyLS45MjMuMzMtMS4xMi4xMzEtLjIyLjYxNS0uMTc2LjYxNS0uMzMgMC0uMDY2LS4zNTItLjE1NC0uNDg0LS4yNDItLjI2My0uMTU0LS4xNzUtLjk0NS0uMzA3LS45NDUtLjE5OCAwLS4zOTYuNTUtLjU5NC4zMDgtLjM1MS0uNDQtMS43OC0xLjI3NS0yLjQzOS0xLjUxNi0uMjQyLS4wODguMTc2LS44MTQuMDY2LS44OC0uMTEtLjA2NS0uMzk1LjQ0LS44MTMuMzUyLS4zMy0uMDY2LS4xNzYtLjY2LS4zNTItLjY2LS4wODggMC0uNDE3LjgzNi0uNjU5Ljc3bC0uNjE1LS4xNTR2LTIuMTc1YzAtLjM3NC0uMjQyLS42Ni0uNTcyLS42NmgtMi4zNWMtLjY2IDAtLjYxNi0uNDgzLS42MTYtLjU5MyAwLTIuOSA0LjIxOS0zLjM4NCA0LjIxOS03LjE4NiAwLTEuNjctMS4wNTUtMi43NjktMi4yNjMtMy43NTctLjA2Ni0uMDQ0IDAgLjI0MSAwIC4zNTEgMCAxLjc1OC02LjU3IDIuNjgxLTYuNTcgNi43NjggMCAzLjU2IDMuNTM3IDMuNzE0IDMuNTM3IDQuMjY0IDAgLjExLS4yMi4xNTMtLjI0Mi4xNTNINi42MTRjLS4yODUgMC0uNTI3LjE3Ni0uNTI3LjY2djIuMTk3Yy0uMjY0LjA4OC0uNjE1LS4zMDctLjc5MS0uMzA3LS4wODggMC0uMDQ0LjY4LS4xOTguNzY5LS4xMzIuMDY2LTIuNTkzLjk0NS0yLjgxMy45NjYtLjM1MS4wNjYtLjI2My0uNTQ5LS40NjEtLjU0OS0uMTc2IDAtLjE3Ni42MTUtLjYxNS42MTUtLjI2NCAwLS40ODQtLjI0MS0uNjgyLS4yNDEtLjEzMSAwIC4yODYuNTA1LjI4Ni42NTkgMCAuNDE3LS44MTMuNTcxLS44MTMuODU3IDAgLjE1NC43Ny0uMDY2Ljg3OS0uMDY2LjM5NiAwIC4zNTIuNDYyLjUwNS40NjIuMTU0IDAgLjI2NC0uNTI4LjM5Ni0uNjE2LjI2NC0uMTU0LjU3MS4xMS43MDMuMTEuMjIgMC0uMTc2LS41MjcuMDIyLS42MTUgMCAwIDIuNjYtMS4xNDMgMi44MzUtMS4wNTUuMTU0LjA4OC4xMzIuMzUyLjMwOC40NC4xNzUuMDg3LjQzOS0uNjE2LjQzOS0uMTc2djUuMzYyYy0uMzA4LjE5Ny0uOTY3LjMwNy0xLjMxOC4zMDctLjE3NiAwLS4wODgtLjU3MS0uMTk4LS41NzEtLjE3NiAwLS4zNTIuNDgzLS42MTYuNDgzLS4yNDEgMC0uNTkzLS41OTMtLjgzNS0uNTkzLS4xNTMgMCAuMjg2Ljc0Ny4wMjIuODc5LTEuMDEuNTA1LTIuNTkzLjk4OS0yLjU5MyAyLjU3MSAwIC4zMy4xNzYuNzI1LjExLjgzNS0uMDY2LjE1NC0uNDE3LjQ2Mi0uMzk1LjU5MyAwIC4xMzIuNjU5LjA4OC43OS4yODYuMDY3LjExLjExLjU5My4yNDMuNTkzLjExIDAgLjM5NS0uMzczLjYzNy0uMjQxLjc2OS40NjEgMi4wODcuOTY3IDIuNzAzIDEuMjk2LjE1NC4wODguMDY2LjU3Mi4xNTQuNjE2LjE3NS4wODcuNTI3LS40NjIgMS4wNzYtLjE1NC4xMS4wNDQuMjIuMjIuMjIuNDE3djEuNzhjMCAuMzMuMTU0LjQxOC4zMy40NjJsNi41MDQgMS4yOTZzLjU3Mi4xMzIuNzcuMTMyYy4yMiAwIC41MDUgMCAuNDgzLS41NXYtNC4wNjVjMC0uMDQ0LjA0NC0uMTMyLjEzMi0uMTMyLjM3MyAwIC4xOTcgMS4xLjI4NSAxLjEuMTc2IDAgLjI4Ni0uNzQ4LjUwNi0uNzQ4LjMwNyAwIC41MDUuMjg2LjYzNy4yMi4xMS0uMDY2LS4wNjYtLjQxOC0uMDY2LS42MzcgMC0uMTk4LjU3Mi0uMjg2IDEuMjc1LS41NS42MTUtLjIyIDEuMTItLjQ2MSAxLjMxOC0uNDYxLjE1NCAwIC4yNjQuNDE3LjM5Ni40MTcuMTEgMCAuMTMxLS41NS4zNzMtLjU1LjE5OCAwIC42MzcuMzA4Ljc0Ny4yMi4wODgtLjA2NS0uMjItLjQ4My4wMjItLjY1OS4xNzYtLjExLjU5NC0uMzczLjU5NC0uNDgzIDAtLjA2Ni0uODEzLS4wODgtLjg1Ny0uMDg4LS4xNTQtLjA0NC0uMzMtLjUyNy0uNDQtLjUyNy0uMTMyIDAtLjEzMi40ODMtLjMzLjYzNy0uMTc1LjEzMi0uNjE1LS40NjItLjgxMy0uNDYyLS4xMSAwIC4xMzIuNDQuMTMyLjc5MiAwIC4zNTEtMi4xMSAxLjAzMi0yLjM5NSAxLjAzMi0uNDQgMC0uNDYxLS41NS0uNTUtLjU1LS4xMzEgMC0uMTMxLjY2LS42MTUuNjYtLjI0MSAwLS4zMy0uMTc2LS4zMy0uMzA4di01LjI1MmMwLS4xNTMuMDQ1LS4zNTEuMzMtLjM3My4zNTItLjAyMi4zNzQuNzkxLjUwNi43OTEuMjQyIDAgLjM3My0uODEzLjgzNS0uODEzLjM1MiAwIC42MzcuNDgzLjg1Ny40ODMuMTU0IDAtLjI2NC0uNTA1LS4yNjQtLjc0Ny0uMDIyLS4yMiAyLjEzMi0uMTMyIDIuOTY3LTEuNjA0eiIgZmlsbD0iY3VycmVudENvbG9yIi8+Cjwvc3ZnPg==',
-		'redirect' => false
-	]);
-}
-
-add_filter('acf/settings/load_json', function($paths) {
-	$paths[] = plugin_dir_path(__FILE__) . '/acf-json';
-	return $paths;
-});
-
 add_action('wp_enqueue_scripts', function() {
 	wp_enqueue_style('fs-floating-tab', plugins_url('fs-floating-tab.css', __FILE__));
 });
 
 add_action('wp_footer', function() {
-	$colors = get_field('fsft_color', 'option');
-	$radius = get_field('fsft_radius', 'option');
-	$location = get_field('fsft_location', 'option');
-	$image = get_field('fsft_image', 'option');
-	$link = get_field('fsft_link', 'option');
-	$id = 'fs-donation-tab';
+	$fsft_colors = get_field('engrid_fsft_color', 'option');
+	$fsft_radius = get_field('engrid_fsft_radius', 'option');
+	$fsft_location = get_field('engrid_fsft_location', 'option');
+	$fsft_image = get_field('engrid_fsft_image', 'option');
+	$fsft_link = get_field('engrid_fsft_link', 'option');
+	$fsft_id = 'fs-donation-tab';
 
 	$style = '';
-	if(!empty($colors['foreground'])) $style .= "color: {$colors['foreground']};";
-	if(!empty($colors['background'])) $style .= "background-color: {$colors['background']};";
-	if(!empty($radius)) $style .= "border-radius: {$radius} {$radius} 0 0;";
+	if(!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";
+	if(!empty($fsft_colors['background'])) $style .= "background-color: {$fsft_colors['background']};";
+	if(!empty($fsft_radius)) $style .= "border-radius: {$fsft_radius} {$fsft_radius} 0 0;";
 
-	$classes = "{$location} {$image}";
+	$classes = "{$fsft_location} {$fsft_image}";
 
 	if(!empty($svg_markup)) $svg_markup = " <div class='svg-wrapper'>{$svg_markup}</div>";
 
 	$attributes = '';
-	if(is_array($link['attributes'])) {
-		for($i = 0; $i < count($link['attributes']); $i++) {
-			$key = $link['attributes'][$i]['key'];
-			$value = $link['attributes'][$i]['value'];
+	if(is_array($fsft_link['attributes'])) {
+		for($i = 0; $i < count($fsft_link['attributes']); $i++) {
+			$key = $fsft_link['attributes'][$i]['key'];
+			$value = $fsft_link['attributes'][$i]['value'];
 
 			if(stripos($key, 'class') !== false) {
 				$classes .= " {$value}";				
 			} else if(stripos($key, 'id') !== false) {
-				$id = $value;
+				$fsft_id = $value;
 			} else if(stripos($key, 'href') !== false) {
-				// ignore this key -- we set href via the $link['url'] field
+				// ignore this key -- we set href via the $fsft_link['url'] field
 			} else {
 				$attributes .= "{$key}='{$value}' ";				
 			}
@@ -90,16 +74,5 @@ add_action('wp_footer', function() {
 	";
 
 
-	echo "<a href='{$link['url']}' id='{$id}' style='{$style}' class='{$classes}' {$attributes}>{$link['label']}{$svg_markup}</a>";
-});
-
-register_activation_hook(__FILE__, function() {
-	if(!function_exists( 'is_plugin_active_for_network')) {
-		include_once(ABSPATH . '/wp-admin/includes/plugin.php');
-	}
-	if(current_user_can('activate_plugins') && !class_exists('ACF')) {
-		deactivate_plugins(plugin_basename( __FILE__ ));
-		$error_message = __('This plugin requires', 'fsft') . ' Advanced Custom Fields ' . __('to be active.', 'fsft');
-		die("<p style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;font-size: 13px;line-height: 1.5;color:#444;'>{$error_message}</p>");
-	}
+	echo "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes}' {$attributes}>{$fsft_link['label']}{$svg_markup}</a>";
 });
