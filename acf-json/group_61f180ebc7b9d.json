@@ -1114,42 +1114,6 @@
       "placeholder": ""
     },
     {
-      "key": "field_63e17c5c84c95",
-      "label": "Image",
-      "name": "engrid_fsft_image",
-      "aria-label": "",
-      "type": "select",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": [
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "floating_tab"
-          }
-        ]
-      ],
-      "wrapper": {
-        "width": "33",
-        "class": "",
-        "id": ""
-      },
-      "choices": {
-        "no-candle": "None",
-        "static-candle": "Static Candle",
-        "hover-candle": "On-hover Animated Candle",
-        "animated-candle": "Always Animated Candle"
-      },
-      "default_value": false,
-      "return_format": "value",
-      "multiple": 0,
-      "allow_null": 0,
-      "ui": 0,
-      "ajax": 0,
-      "placeholder": ""
-    },
-    {
       "key": "field_63e18264ddd9b",
       "label": "Link",
       "name": "engrid_fsft_link",
