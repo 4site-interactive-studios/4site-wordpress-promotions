@@ -104,6 +104,29 @@ window.addEventListener("DOMContentLoaded", () => {
       } else if (getCookie(cookie) && triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
       }
+    } else if (type == "floating_tab") {
+      const cookie = client_side_triggered_config[property].cookie;
+      const cookieExpiration =
+        client_side_triggered_config[property].cookie_hours;
+      const id = client_side_triggered_config[property].id;
+      window.rawCodeTriggers[id] = false;
+      let trigger = client_side_triggered_config[property].trigger;
+      const triggerType = getTriggerType(trigger);
+
+      if (triggerType == "js") {
+        window.addEventListener("trigger-promotion", triggerPromotionEvent);
+      } else if (triggerType === "seconds") {
+        addRawCode(client_side_triggered_config[property]);
+        if (cookieExpiration) {
+          setCookie(cookie, cookieExpiration);
+        } else {
+          setCookie(cookie);
+        }
+
+        window.rawCodeTriggers[
+          client_side_triggered_config[property].id
+        ] = true;
+      }
     }
   }
 
@@ -181,6 +204,30 @@ window.addEventListener("DOMContentLoaded", () => {
       pushdownScript.classList.add(promotionClass);
 
       document.body.appendChild(pushdownScript);
+      return;
+    } else if (
+      promotionConfig.promotion_type == "floating_tab" &&
+      promotionConfig.html
+    ) {
+      const htmlContainer = document.createElement("div");
+      htmlContainer.classList.add("floating-tab-html");
+      htmlContainer.classList.add("floating-tab-element");
+      htmlContainer.classList.add("promotion-element");
+      htmlContainer.classList.add(promotionClass);
+      htmlContainer.innerHTML = promotionConfig.html;
+      document.body.appendChild(htmlContainer.children[0]);
+
+      if (promotionConfig.css) {
+        const newCSS = document.createElement("style");
+        newCSS.setAttribute("type", "text/css");
+        newCSS.classList.add("floating-tab-css");
+        newCSS.classList.add("floating-tab-element");
+        newCSS.classList.add("promotion-element");
+        newCSS.classList.add(promotionClass);
+        newCSS.textContent = promotionConfig.css;
+        document.body.appendChild(newCSS);
+      }
+
       return;
     }
 
