@@ -969,6 +969,13 @@
             "operator": "==",
             "value": "raw_code"
           }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
         ]
       ],
       "wrapper": {
@@ -1391,6 +1398,11 @@
             "field": "field_63694582ec47e",
             "operator": "!=",
             "value": "signup_lightbox"
+          },
+          {
+            "field": "field_63694582ec47e",
+            "operator": "!=",
+            "value": "floating_tab"
           }
         ]
       ],
@@ -1405,6 +1417,40 @@
         "px": "On Pixel Scroll",
         "%": "On Percentage Scroll",
         "exit": "On Exit",
+        "js": "Javascript Trigger"
+      },
+      "default_value": false,
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": ""
+    },
+    {
+      "key": "field_63e28926f3d25",
+      "label": "Trigger",
+      "name": "engrid_fsft_trigger_type",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "50",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "0": "Immediately",
         "js": "Javascript Trigger"
       },
       "default_value": false,
