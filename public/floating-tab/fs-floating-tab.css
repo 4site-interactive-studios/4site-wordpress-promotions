@@ -24,20 +24,6 @@
   white-space: unset;
 }
 
-#fs-promotion-tab:not(.no-candle)::after {
-  content: "";
-  width: 40px;
-  height: 20px;
-  position: absolute;
-  right: 25px;
-}
 #fs-promotion-tab.fixed-in-page {
   position: absolute;
-}
-#fs-promotion-tab.no-candle {
-  right: -45px;
-  padding-right: 42px;
-}
-#fs-promotion-tab.no-candle .candle {
-  display: none;
 }
