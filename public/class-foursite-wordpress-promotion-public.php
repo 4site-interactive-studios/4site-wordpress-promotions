@@ -243,7 +243,6 @@ class Foursite_Wordpress_Promotion_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
@@ -326,6 +325,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
+				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 				$engrid_js_code = <<<ENGRID
 				console.log('Wordpress Promotion ID: $lightbox_id');
 
@@ -417,6 +417,7 @@ class Foursite_Wordpress_Promotion_Public {
 				
 				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
 				} else if(trim($engrid_promotion_type) == "floating_tab") {
+					wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 					wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__));
 					
 					$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
@@ -425,6 +426,7 @@ class Foursite_Wordpress_Promotion_Public {
 					$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 					$fsft_css = get_field('engrid_css', $lightbox_id);
 					$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
+					$fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
 					$fsft_id = 'fs-donation-tab';
 
 					$style = '';
@@ -450,6 +452,10 @@ class Foursite_Wordpress_Promotion_Public {
 								$attributes .= "{$key}='{$value}' ";				
 							}
 						}
+					}
+
+					if($fsft_lightbox == "yes") {
+						$attributes .= "data-donation-lightbox";
 					}
 
 					$client_side_triggered_config[$lightbox_id] = [

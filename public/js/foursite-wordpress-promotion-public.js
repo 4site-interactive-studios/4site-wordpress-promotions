@@ -29,6 +29,10 @@ window.addEventListener("DOMContentLoaded", () => {
    * practising this, we should strive to set a better example in our own work.
    */
 
+  if (window.client_side_triggered_config == undefined) {
+    return;
+  }
+
   window.rawCodeTriggers = [];
 
   for (const property in client_side_triggered_config) {

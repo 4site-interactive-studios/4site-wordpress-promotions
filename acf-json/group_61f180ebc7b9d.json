@@ -1246,6 +1246,37 @@
       ]
     },
     {
+      "key": "field_63e3c8403f56c",
+      "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
+      "name": "engrid_use_lightbox",
+      "aria-label": "",
+      "type": "button_group",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "no": "No",
+        "yes": "Yes"
+      },
+      "default_value": "no",
+      "return_format": "value",
+      "allow_null": 0,
+      "layout": "horizontal"
+    },
+    {
       "key": "field_61f184e1c8650",
       "label": "Trigger Options",
       "name": "",
