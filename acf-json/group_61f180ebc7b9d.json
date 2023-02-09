@@ -1246,6 +1246,34 @@
       ]
     },
     {
+      "key": "field_63e570f18bffd",
+      "label": "Custom SVG",
+      "name": "engrid_custom_svg",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Add the HTML for an SVG here to have it appear next to the floating tab text.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": "",
+      "placeholder": "",
+      "new_lines": ""
+    },
+    {
       "key": "field_63e3c8403f56c",
       "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
       "name": "engrid_use_lightbox",
