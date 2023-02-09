@@ -213,12 +213,13 @@ window.addEventListener("DOMContentLoaded", () => {
       promotionConfig.html
     ) {
       const htmlContainer = document.createElement("div");
-      htmlContainer.classList.add("floating-tab-html");
-      htmlContainer.classList.add("floating-tab-element");
-      htmlContainer.classList.add("promotion-element");
-      htmlContainer.classList.add(promotionClass);
       htmlContainer.innerHTML = promotionConfig.html;
-      document.body.appendChild(htmlContainer.children[0]);
+      const floatingTabElement = htmlContainer.children[0];
+      floatingTabElement.classList.add("floating-tab-html");
+      floatingTabElement.classList.add("floating-tab-element");
+      floatingTabElement.classList.add("promotion-element");
+      floatingTabElement.classList.add(promotionClass);
+      document.body.appendChild(floatingTabElement);
 
       if (promotionConfig.css) {
         const newCSS = document.createElement("style");
@@ -351,6 +352,10 @@ window.addEventListener("DOMContentLoaded", () => {
         window.DonationLightboxOptions = promotion;
         deleteCookie(promotion.cookie_name);
         removeOldPromotions();
+        new DonationLightbox();
+      } else if (promotion.promotion_type == "floating_tab") {
+        const promotionClass = "promotion-" + promotion.id;
+        addRawCode(promotion);
         new DonationLightbox();
       } else {
         addRawCode(promotion);
