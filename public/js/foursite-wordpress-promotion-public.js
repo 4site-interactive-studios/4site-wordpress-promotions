@@ -114,12 +114,11 @@ window.addEventListener("DOMContentLoaded", () => {
         client_side_triggered_config[property].cookie_hours;
       const id = client_side_triggered_config[property].id;
       window.rawCodeTriggers[id] = false;
-      let trigger = client_side_triggered_config[property].trigger;
-      const triggerType = getTriggerType(trigger);
+      const triggerType = client_side_triggered_config[property].trigger;
 
       if (triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
-      } else if (triggerType === "seconds") {
+      } else if (triggerType == 0) {
         addRawCode(client_side_triggered_config[property]);
         if (cookieExpiration) {
           setCookie(cookie, cookieExpiration);
