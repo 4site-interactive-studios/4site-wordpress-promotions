@@ -35,18 +35,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
   window.rawCodeTriggers = [];
 
-  for (const property in client_side_triggered_config) {
-    const type = client_side_triggered_config[property].promotion_type;
+  for (const lightbox_id in client_side_triggered_config) {
+    const type = client_side_triggered_config[lightbox_id].promotion_type;
 
     if (type == "multistep_lightbox") {
       addEventListener("trigger-promotion", triggerPromotionEvent);
     } else if (type == "raw_code" || type == "pushdown") {
-      const cookie = client_side_triggered_config[property].cookie;
+      const cookie = client_side_triggered_config[lightbox_id].cookie;
       const cookieExpiration =
-        client_side_triggered_config[property].cookie_hours;
-      const id = client_side_triggered_config[property].id;
+        client_side_triggered_config[lightbox_id].cookie_hours;
+      const id = client_side_triggered_config[lightbox_id].id;
       window.rawCodeTriggers[id] = false;
-      let trigger = client_side_triggered_config[property].trigger;
+      let trigger = client_side_triggered_config[lightbox_id].trigger;
       const triggerType = getTriggerType(trigger);
 
       if (!getCookie(cookie)) {
@@ -59,7 +59,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (triggerType === "seconds" || triggerType === false) {
           window.setTimeout(() => {
-            addRawCode(client_side_triggered_config[property]);
+            addRawCode(client_side_triggered_config[lightbox_id]);
             if (cookieExpiration) {
               setCookie(cookie, cookieExpiration);
             } else {
@@ -67,13 +67,13 @@ window.addEventListener("DOMContentLoaded", () => {
             }
           }, trigger);
           window.rawCodeTriggers[
-            client_side_triggered_config[property].id
+            client_side_triggered_config[lightbox_id].id
           ] = true;
         }
         if (triggerType === "exit") {
           document.body.addEventListener("mouseout", (e) => {
             if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
-              addRawCode(client_side_triggered_config[property]);
+              addRawCode(client_side_triggered_config[lightbox_id]);
               if (cookieExpiration) {
                 setCookie(cookie, cookieExpiration);
               } else {
@@ -87,7 +87,7 @@ window.addEventListener("DOMContentLoaded", () => {
           document.addEventListener(
             "scroll",
             function () {
-              scrollTriggerPx(client_side_triggered_config[property]);
+              scrollTriggerPx(client_side_triggered_config[lightbox_id]);
             },
             true
           );
@@ -96,7 +96,7 @@ window.addEventListener("DOMContentLoaded", () => {
           document.addEventListener(
             "scroll",
             function () {
-              scrollTriggerPercent(client_side_triggered_config[property]);
+              scrollTriggerPercent(client_side_triggered_config[lightbox_id]);
             },
             true
           );
@@ -109,17 +109,17 @@ window.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
       }
     } else if (type == "floating_tab") {
-      const cookie = client_side_triggered_config[property].cookie;
+      const cookie = client_side_triggered_config[lightbox_id].cookie;
       const cookieExpiration =
-        client_side_triggered_config[property].cookie_hours;
-      const id = client_side_triggered_config[property].id;
+        client_side_triggered_config[lightbox_id].cookie_hours;
+      const id = client_side_triggered_config[lightbox_id].id;
       window.rawCodeTriggers[id] = false;
-      const triggerType = client_side_triggered_config[property].trigger;
+      const triggerType = client_side_triggered_config[lightbox_id].trigger;
 
       if (triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
       } else if (triggerType == 0) {
-        addRawCode(client_side_triggered_config[property]);
+        addRawCode(client_side_triggered_config[lightbox_id]);
         if (cookieExpiration) {
           setCookie(cookie, cookieExpiration);
         } else {
@@ -127,7 +127,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         window.rawCodeTriggers[
-          client_side_triggered_config[property].id
+          client_side_triggered_config[lightbox_id].id
         ] = true;
       }
     }
