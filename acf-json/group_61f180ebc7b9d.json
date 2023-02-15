@@ -955,41 +955,6 @@
       "new_lines": ""
     },
     {
-      "key": "field_63694962ec486",
-      "label": "CSS",
-      "name": "engrid_css",
-      "aria-label": "",
-      "type": "textarea",
-      "instructions": "Don't put style tags here as they will automatically be added when loading the CSS.",
-      "required": 0,
-      "conditional_logic": [
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "raw_code"
-          }
-        ],
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "floating_tab"
-          }
-        ]
-      ],
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": "",
-      "maxlength": "",
-      "rows": "",
-      "placeholder": "",
-      "new_lines": ""
-    },
-    {
       "key": "field_63e17c159eef3",
       "label": "Color",
       "name": "engrid_fsft_color",
@@ -1178,6 +1143,29 @@
           "append": ""
         },
         {
+          "key": "field_63ecfc3eb6f2a",
+          "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
+          "name": "engrid_use_lightbox",
+          "aria-label": "",
+          "type": "button_group",
+          "instructions": "",
+          "required": 0,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "choices": {
+            "no": "No",
+            "yes": "Yes"
+          },
+          "default_value": "no",
+          "return_format": "value",
+          "allow_null": 0,
+          "layout": "horizontal"
+        },
+        {
           "key": "field_63e18264ddd9e",
           "label": "Optional Attributes",
           "name": "attributes",
@@ -1246,12 +1234,47 @@
       ]
     },
     {
+      "key": "field_63694962ec486",
+      "label": "Custom CSS",
+      "name": "engrid_css",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Don't put style tags here as they will automatically be added when loading the CSS.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "raw_code"
+          }
+        ],
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "rows": "",
+      "placeholder": "",
+      "new_lines": ""
+    },
+    {
       "key": "field_63e570f18bffd",
-      "label": "Custom SVG",
+      "label": "Custom HTML",
       "name": "engrid_custom_svg",
       "aria-label": "",
       "type": "textarea",
-      "instructions": "Add the HTML for an SVG here to have it appear next to the floating tab text.",
+      "instructions": "Add Custom HTML that will appear after the tab label. Useful for adding an SVG that can be styled and positioned when combined with Custom CSS.",
       "required": 0,
       "conditional_logic": [
         [
@@ -1274,37 +1297,6 @@
       "new_lines": ""
     },
     {
-      "key": "field_63e3c8403f56c",
-      "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
-      "name": "engrid_use_lightbox",
-      "aria-label": "",
-      "type": "button_group",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": [
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "floating_tab"
-          }
-        ]
-      ],
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "choices": {
-        "no": "No",
-        "yes": "Yes"
-      },
-      "default_value": "no",
-      "return_format": "value",
-      "allow_null": 0,
-      "layout": "horizontal"
-    },
-    {
       "key": "field_61f184e1c8650",
       "label": "Trigger Options",
       "name": "",
@@ -1320,92 +1312,6 @@
       },
       "placement": "top",
       "endpoint": 0
-    },
-    {
-      "key": "field_61f1839713dff",
-      "label": "Cookie Hours",
-      "name": "engrid_cookie_hours",
-      "aria-label": "",
-      "type": "number",
-      "instructions": "Number of hours to not show the promotion after the user has seen it.",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": 24,
-      "placeholder": "",
-      "prepend": "",
-      "append": "",
-      "min": "",
-      "max": "",
-      "step": 1
-    },
-    {
-      "key": "field_61f185c0c8654",
-      "label": "Hide On (Individual Pages)",
-      "name": "engrid_hide_on",
-      "aria-label": "",
-      "type": "relationship",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "post_type": "",
-      "taxonomy": "",
-      "filters": ["search", "post_type", "taxonomy"],
-      "elements": ["featured_image"],
-      "min": "",
-      "max": "",
-      "return_format": "id"
-    },
-    {
-      "key": "field_6329fadd7d28c",
-      "label": "Show On (URL Pattern)",
-      "name": "engrid_whitelist",
-      "aria-label": "",
-      "type": "text",
-      "instructions": "Comma-separated word/slug list. It will show the lightbox if the URL contains any value from the list.",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": "",
-      "placeholder": "",
-      "prepend": "",
-      "append": "",
-      "maxlength": ""
-    },
-    {
-      "key": "field_61f18500c8651",
-      "label": "Show On (Individual Pages)",
-      "name": "engrid_show_on",
-      "aria-label": "",
-      "type": "relationship",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "post_type": "",
-      "taxonomy": "",
-      "filters": ["search", "post_type", "taxonomy"],
-      "elements": ["featured_image"],
-      "min": "",
-      "max": "",
-      "return_format": "id"
     },
     {
       "key": "field_61f1e7ca4d5dc",
@@ -1449,60 +1355,6 @@
       "ui": 0,
       "ajax": 0,
       "placeholder": ""
-    },
-    {
-      "key": "field_63e28926f3d25",
-      "label": "Trigger",
-      "name": "engrid_fsft_trigger_type",
-      "aria-label": "",
-      "type": "select",
-      "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
-      "required": 0,
-      "conditional_logic": [
-        [
-          {
-            "field": "field_63694582ec47e",
-            "operator": "==",
-            "value": "floating_tab"
-          }
-        ]
-      ],
-      "wrapper": {
-        "width": "50",
-        "class": "",
-        "id": ""
-      },
-      "choices": {
-        "0": "Immediately",
-        "js": "Javascript Trigger"
-      },
-      "default_value": false,
-      "return_format": "value",
-      "multiple": 0,
-      "allow_null": 0,
-      "ui": 0,
-      "ajax": 0,
-      "placeholder": ""
-    },
-    {
-      "key": "field_61f1c83ea39c4",
-      "label": "Cookie Name",
-      "name": "engrid_cookie_name",
-      "aria-label": "",
-      "type": "text",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": "HideDonationLightbox",
-      "placeholder": "",
-      "prepend": "",
-      "append": "",
-      "maxlength": ""
     },
     {
       "key": "field_61f1e8cad1f27",
@@ -1572,26 +1424,6 @@
       "append": "pixels"
     },
     {
-      "key": "field_6329fd0899134",
-      "label": "Hide On (URL Pattern)",
-      "name": "engrid_blacklist",
-      "aria-label": "",
-      "type": "text",
-      "instructions": "Comma-separated word/slug list. It will show the promotion if the URL contains any value from the list.",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "default_value": "",
-      "placeholder": "",
-      "prepend": "",
-      "append": "",
-      "maxlength": ""
-    },
-    {
       "key": "field_61f1e998d1f29",
       "label": "Percentage",
       "name": "engrid_trigger_scroll_percentage",
@@ -1620,6 +1452,166 @@
       "min": "",
       "max": "",
       "step": ""
+    },
+    {
+      "key": "field_63e28926f3d25",
+      "label": "Trigger",
+      "name": "engrid_fsft_trigger_type",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
+      "required": 0,
+      "conditional_logic": [
+        [
+          {
+            "field": "field_63694582ec47e",
+            "operator": "==",
+            "value": "floating_tab"
+          }
+        ]
+      ],
+      "wrapper": {
+        "width": "50",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "0": "Immediately",
+        "js": "Javascript Trigger"
+      },
+      "default_value": false,
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": ""
+    },
+    {
+      "key": "field_61f1839713dff",
+      "label": "Cookie Hours",
+      "name": "engrid_cookie_hours",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "Number of hours to not show the promotion after the user has seen it.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": 24,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "min": "",
+      "max": "",
+      "step": 1
+    },
+    {
+      "key": "field_61f1c83ea39c4",
+      "label": "Cookie Name",
+      "name": "engrid_cookie_name",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "HideDonationLightbox",
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "maxlength": ""
+    },
+    {
+      "key": "field_6329fadd7d28c",
+      "label": "Show On (URL Pattern)",
+      "name": "engrid_whitelist",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "Comma-separated word/slug list. It will show the lightbox if the URL contains any value from the list.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "maxlength": ""
+    },
+    {
+      "key": "field_61f18500c8651",
+      "label": "Show On (Individual Pages)",
+      "name": "engrid_show_on",
+      "aria-label": "",
+      "type": "relationship",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "post_type": "",
+      "taxonomy": "",
+      "filters": ["search", "post_type", "taxonomy"],
+      "elements": ["featured_image"],
+      "min": "",
+      "max": "",
+      "return_format": "id"
+    },
+    {
+      "key": "field_6329fd0899134",
+      "label": "Hide On (URL Pattern)",
+      "name": "engrid_blacklist",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "Comma-separated word/slug list. It will show the promotion if the URL contains any value from the list.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "maxlength": ""
+    },
+    {
+      "key": "field_61f185c0c8654",
+      "label": "Hide On (Individual Pages)",
+      "name": "engrid_hide_on",
+      "aria-label": "",
+      "type": "relationship",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "post_type": "",
+      "taxonomy": "",
+      "filters": ["search", "post_type", "taxonomy"],
+      "elements": ["featured_image"],
+      "min": "",
+      "max": "",
+      "return_format": "id"
     },
     {
       "key": "field_61f1f16c7455e",

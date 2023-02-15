@@ -426,7 +426,8 @@ class Foursite_Wordpress_Promotion_Public {
 				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 				$fsft_css = get_field('engrid_css', $lightbox_id);
 				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
-				$fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
+				// $fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
+				$fsft_lightbox = $fsft_link['engrid_use_lightbox'];
 				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
 				$fsft_id = 'fs-donation-tab';
 
