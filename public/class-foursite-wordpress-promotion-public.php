@@ -243,7 +243,6 @@ class Foursite_Wordpress_Promotion_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
@@ -326,6 +325,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
+				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 				$engrid_js_code = <<<ENGRID
 				console.log('Wordpress Promotion ID: $lightbox_id');
 
@@ -416,8 +416,60 @@ class Foursite_Wordpress_Promotion_Public {
 				$client_side_triggered_config[$lightbox_id] = "Signup lightbox";
 				
 				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
+			} else if(trim($engrid_promotion_type) == "floating_tab") {
+				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
+				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__));
+				
+				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
+				$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
+				$fsft_location = get_field('engrid_fsft_location', $lightbox_id);
+				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
+				$fsft_css = get_field('engrid_css', $lightbox_id);
+				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
+				// $fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
+				$fsft_lightbox = $fsft_link['engrid_use_lightbox'];
+				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
+				$fsft_id = 'fs-donation-tab';
+
+				$style = '';
+				if(!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";
+				if(!empty($fsft_colors['background'])) $style .= "background-color: {$fsft_colors['background']};";
+				if(!empty($fsft_radius)) $style .= "border-radius: {$fsft_radius} {$fsft_radius} 0 0;";
+
+				$classes = "{$fsft_location}";
+
+				$attributes = '';
+				if(is_array($fsft_link['attributes'])) {
+					for($i = 0; $i < count($fsft_link['attributes']); $i++) {
+						$key = $fsft_link['attributes'][$i]['key'];
+						$value = $fsft_link['attributes'][$i]['value'];
+
+						if(stripos($key, 'class') !== false) {
+							$classes .= " {$value}";				
+						} else if(stripos($key, 'id') !== false) {
+							$fsft_id = $value;
+						} else if(stripos($key, 'href') !== false) {
+							// ignore this key -- we set href via the $fsft_link['url'] field
+						} else {
+							$attributes .= "{$key}='{$value}' ";				
+						}
+					}
 				}
-				else if(trim($engrid_trigger_type) == "js") {
+
+				if($fsft_lightbox == "yes") {
+					$attributes .= "data-donation-lightbox";
+				}
+
+				$client_side_triggered_config[$lightbox_id] = [
+					'promotion_type' => $engrid_promotion_type,
+					'css' => $engrid_css,
+					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
+					'trigger' => $fsft_trigger,
+					'cookie' => $engrid_cookie_name, 
+					'cookie_hours' => $engrid_cookie_hours, 
+					'id' => $lightbox_id,
+				];
+			} else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 

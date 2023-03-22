@@ -1,0 +1,29 @@
+#fs-donation-tab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.12);
+  transition: right 0.5s;
+  transform: rotate(-90deg);
+
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  font-stretch: condensed;
+  font-family: "Amnesty Trade Gothic Condensed", Helvetica, Roboto, Arial,
+    sans-serif;
+  line-height: 18px;
+  letter-spacing: 0.04em;
+  padding: 20px 64px 20px 42px;
+
+  position: fixed;
+  top: 50%;
+  right: -70px;
+
+  white-space: unset;
+}
+
+#fs-donation-tab.fixed-in-page {
+  position: absolute;
+}

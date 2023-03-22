@@ -29,20 +29,24 @@ window.addEventListener("DOMContentLoaded", () => {
    * practising this, we should strive to set a better example in our own work.
    */
 
+  if (window.client_side_triggered_config == undefined) {
+    return;
+  }
+
   window.rawCodeTriggers = [];
 
-  for (const property in client_side_triggered_config) {
-    const type = client_side_triggered_config[property].promotion_type;
+  for (const lightbox_id in client_side_triggered_config) {
+    const type = client_side_triggered_config[lightbox_id].promotion_type;
 
     if (type == "multistep_lightbox") {
       addEventListener("trigger-promotion", triggerPromotionEvent);
     } else if (type == "raw_code" || type == "pushdown") {
-      const cookie = client_side_triggered_config[property].cookie;
+      const cookie = client_side_triggered_config[lightbox_id].cookie;
       const cookieExpiration =
-        client_side_triggered_config[property].cookie_hours;
-      const id = client_side_triggered_config[property].id;
+        client_side_triggered_config[lightbox_id].cookie_hours;
+      const id = client_side_triggered_config[lightbox_id].id;
       window.rawCodeTriggers[id] = false;
-      let trigger = client_side_triggered_config[property].trigger;
+      let trigger = client_side_triggered_config[lightbox_id].trigger;
       const triggerType = getTriggerType(trigger);
 
       if (!getCookie(cookie)) {
@@ -55,7 +59,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (triggerType === "seconds" || triggerType === false) {
           window.setTimeout(() => {
-            addRawCode(client_side_triggered_config[property]);
+            addRawCode(client_side_triggered_config[lightbox_id]);
             if (cookieExpiration) {
               setCookie(cookie, cookieExpiration);
             } else {
@@ -63,13 +67,13 @@ window.addEventListener("DOMContentLoaded", () => {
             }
           }, trigger);
           window.rawCodeTriggers[
-            client_side_triggered_config[property].id
+            client_side_triggered_config[lightbox_id].id
           ] = true;
         }
         if (triggerType === "exit") {
           document.body.addEventListener("mouseout", (e) => {
             if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
-              addRawCode(client_side_triggered_config[property]);
+              addRawCode(client_side_triggered_config[lightbox_id]);
               if (cookieExpiration) {
                 setCookie(cookie, cookieExpiration);
               } else {
@@ -83,7 +87,7 @@ window.addEventListener("DOMContentLoaded", () => {
           document.addEventListener(
             "scroll",
             function () {
-              scrollTriggerPx(client_side_triggered_config[property]);
+              scrollTriggerPx(client_side_triggered_config[lightbox_id]);
             },
             true
           );
@@ -92,7 +96,7 @@ window.addEventListener("DOMContentLoaded", () => {
           document.addEventListener(
             "scroll",
             function () {
-              scrollTriggerPercent(client_side_triggered_config[property]);
+              scrollTriggerPercent(client_side_triggered_config[lightbox_id]);
             },
             true
           );
@@ -103,6 +107,28 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       } else if (getCookie(cookie) && triggerType == "js") {
         window.addEventListener("trigger-promotion", triggerPromotionEvent);
+      }
+    } else if (type == "floating_tab") {
+      const cookie = client_side_triggered_config[lightbox_id].cookie;
+      const cookieExpiration =
+        client_side_triggered_config[lightbox_id].cookie_hours;
+      const id = client_side_triggered_config[lightbox_id].id;
+      window.rawCodeTriggers[id] = false;
+      const triggerType = client_side_triggered_config[lightbox_id].trigger;
+
+      if (triggerType == "js") {
+        window.addEventListener("trigger-promotion", triggerPromotionEvent);
+      } else if (triggerType == 0) {
+        addRawCode(client_side_triggered_config[lightbox_id]);
+        if (cookieExpiration) {
+          setCookie(cookie, cookieExpiration);
+        } else {
+          setCookie(cookie);
+        }
+
+        window.rawCodeTriggers[
+          client_side_triggered_config[lightbox_id].id
+        ] = true;
       }
     }
   }
@@ -181,6 +207,31 @@ window.addEventListener("DOMContentLoaded", () => {
       pushdownScript.classList.add(promotionClass);
 
       document.body.appendChild(pushdownScript);
+      return;
+    } else if (
+      promotionConfig.promotion_type == "floating_tab" &&
+      promotionConfig.html
+    ) {
+      const htmlContainer = document.createElement("div");
+      htmlContainer.innerHTML = promotionConfig.html;
+      const floatingTabElement = htmlContainer.children[0];
+      floatingTabElement.classList.add("floating-tab-html");
+      floatingTabElement.classList.add("floating-tab-element");
+      floatingTabElement.classList.add("promotion-element");
+      floatingTabElement.classList.add(promotionClass);
+      document.body.appendChild(floatingTabElement);
+
+      if (promotionConfig.css) {
+        const newCSS = document.createElement("style");
+        newCSS.setAttribute("type", "text/css");
+        newCSS.classList.add("floating-tab-css");
+        newCSS.classList.add("floating-tab-element");
+        newCSS.classList.add("promotion-element");
+        newCSS.classList.add(promotionClass);
+        newCSS.textContent = promotionConfig.css;
+        document.body.appendChild(newCSS);
+      }
+
       return;
     }
 
@@ -301,6 +352,10 @@ window.addEventListener("DOMContentLoaded", () => {
         window.DonationLightboxOptions = promotion;
         deleteCookie(promotion.cookie_name);
         removeOldPromotions();
+        new DonationLightbox();
+      } else if (promotion.promotion_type == "floating_tab") {
+        const promotionClass = "promotion-" + promotion.id;
+        addRawCode(promotion);
         new DonationLightbox();
       } else {
         addRawCode(promotion);
