@@ -469,7 +469,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id,
 				];
-			} else if(trim($engrid_trigger_type) == "js") {
+				else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 
