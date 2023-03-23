@@ -463,13 +463,12 @@ class Foursite_Wordpress_Promotion_Public {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type,
 					'css' => $engrid_css,
-					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes}' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
+					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
 					'trigger' => $fsft_trigger,
 					'cookie' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id,
 				];
-			}
 				else if(trim($engrid_trigger_type) == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 

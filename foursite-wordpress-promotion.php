@@ -29,7 +29,9 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-
+if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
+    error_log('fwpv already defined');
+}
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
@@ -74,9 +76,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-foursite-wordpress-promoti
  * @since    1.0.0
  */
 function run_foursite_wordpress_promotion() {
-
 	$plugin = new foursite_wordpress_promotion();
 	$plugin->run();
-
 }
 run_foursite_wordpress_promotion();
