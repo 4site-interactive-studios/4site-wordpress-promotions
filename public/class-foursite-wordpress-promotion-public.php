@@ -144,6 +144,7 @@ class Foursite_Wordpress_Promotion_Public {
 		$args = array(
 			'numberposts'	=> -1,
 			'post_type'		=> 'wordpress_promotion',
+			'post_status'   => 'publish',
 			'meta_query'	=> array(
 				'relation'		=> 'AND',
 				$show_on_args,
@@ -244,14 +245,15 @@ class Foursite_Wordpress_Promotion_Public {
 		 */
 
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
 
 		foreach($lightbox_ids as $lightbox_id){
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
-			$engrid_promotion_type = get_field('engrid_promotion_type', $lightbox_id);
-			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
+			$engrid_promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
+			$engrid_trigger_type = trim(get_field('engrid_trigger_type', $lightbox_id));
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
 			$engrid_image = ($engrid_hero_type == 'image' || $engrid_promotion_type == "signup_lightbox") ? get_field('engrid_image', $lightbox_id) : '';
 			$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
@@ -298,7 +300,7 @@ class Foursite_Wordpress_Promotion_Public {
 			}
 
 			$trigger = 0;
-			switch(trim($engrid_trigger_type)){
+			switch($engrid_trigger_type) {
 				case "0":
 					$trigger = 0;
 					break;
@@ -324,7 +326,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_confetti = json_encode($confetti);
 
 			// Only render the plugin if the donation page is set
-			if($engrid_promotion_type == "multistep_lightbox" && trim($engrid_trigger_type) != "js" && $engrid_donation_page){
+			if($engrid_promotion_type == "multistep_lightbox" && $engrid_trigger_type != "js" && $engrid_donation_page){
 				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 				$engrid_js_code = <<<ENGRID
 				console.log('Wordpress Promotion ID: $lightbox_id');
@@ -371,7 +373,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 					'trigger' => $trigger, 
 				];
-			} else if (trim($engrid_promotion_type == "pushdown")) {
+			} else if ($engrid_promotion_type == "pushdown") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_pushdown_link,
@@ -385,7 +387,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
-			} else if(trim($engrid_promotion_type == "signup_lightbox")) {
+			} else if($engrid_promotion_type == "signup_lightbox") {
 				$signup_trigger = $engrid_trigger_seconds * 1000; // Convert to milliseconds
 				wp_enqueue_script( 'foursite-wordpress-signup-lightbox', plugin_dir_url( __FILE__ ) . 'signup/js/website-lightbox.js', array( 'jquery' ), $this->version, false );
 				$engrid_js_code = <<<ENGRID
@@ -416,8 +418,7 @@ class Foursite_Wordpress_Promotion_Public {
 				$client_side_triggered_config[$lightbox_id] = "Signup lightbox";
 				
 				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
-			} else if(trim($engrid_promotion_type) == "floating_tab") {
-				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
+			} else if($engrid_promotion_type == "floating_tab") {
 				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__));
 				
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
@@ -469,7 +470,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id,
 				];
-				else if(trim($engrid_trigger_type) == "js") {
+			} else if($engrid_trigger_type == "js") {
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 

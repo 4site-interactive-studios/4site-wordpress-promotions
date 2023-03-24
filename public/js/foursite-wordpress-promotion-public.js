@@ -34,7 +34,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   window.rawCodeTriggers = [];
-
   for (const lightbox_id in client_side_triggered_config) {
     const type = client_side_triggered_config[lightbox_id].promotion_type;
 
@@ -42,22 +41,20 @@ window.addEventListener("DOMContentLoaded", () => {
       addEventListener("trigger-promotion", triggerPromotionEvent);
     } else if (type == "raw_code" || type == "pushdown") {
       const cookie = client_side_triggered_config[lightbox_id].cookie;
-      const cookieExpiration =
-        client_side_triggered_config[lightbox_id].cookie_hours;
+      const cookieExpiration = client_side_triggered_config[lightbox_id].cookie_hours;
       const id = client_side_triggered_config[lightbox_id].id;
       window.rawCodeTriggers[id] = false;
       let trigger = client_side_triggered_config[lightbox_id].trigger;
       const triggerType = getTriggerType(trigger);
 
       if (!getCookie(cookie)) {
-        if (triggerType === false) {
+        if (!triggerType) {
           trigger = 2000;
-        }
-        if (triggerType === "seconds") {
+        } else if (triggerType === "seconds") {
           trigger = Number(trigger) * 1000;
         }
 
-        if (triggerType === "seconds" || triggerType === false) {
+        if (triggerType === "seconds" || !triggerType) {
           window.setTimeout(() => {
             addRawCode(client_side_triggered_config[lightbox_id]);
             if (cookieExpiration) {
@@ -66,11 +63,8 @@ window.addEventListener("DOMContentLoaded", () => {
               setCookie(cookie);
             }
           }, trigger);
-          window.rawCodeTriggers[
-            client_side_triggered_config[lightbox_id].id
-          ] = true;
-        }
-        if (triggerType === "exit") {
+          window.rawCodeTriggers[client_side_triggered_config[lightbox_id].id] = true;
+        } else if (triggerType === "exit") {
           document.body.addEventListener("mouseout", (e) => {
             if (e.clientY < 0 && !window.rawCodeTriggers[id]) {
               addRawCode(client_side_triggered_config[lightbox_id]);
@@ -82,27 +76,17 @@ window.addEventListener("DOMContentLoaded", () => {
               window.rawCodeTriggers[id] = true;
             }
           });
-        }
-        if (triggerType === "pixels") {
-          document.addEventListener(
-            "scroll",
-            function () {
+        } else if (triggerType === "pixels") {
+          document.addEventListener("scroll", function () {
               scrollTriggerPx(client_side_triggered_config[lightbox_id]);
-            },
-            true
+            }, true
           );
-        }
-        if (triggerType === "percent") {
-          document.addEventListener(
-            "scroll",
-            function () {
+        } else if (triggerType === "percent") {
+          document.addEventListener("scroll", function () {
               scrollTriggerPercent(client_side_triggered_config[lightbox_id]);
-            },
-            true
+            }, true
           );
-        }
-
-        if (triggerType === "js") {
+        } else if (triggerType === "js") {
           window.addEventListener("trigger-promotion", triggerPromotionEvent);
         }
       } else if (getCookie(cookie) && triggerType == "js") {
@@ -110,8 +94,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     } else if (type == "floating_tab") {
       const cookie = client_side_triggered_config[lightbox_id].cookie;
-      const cookieExpiration =
-        client_side_triggered_config[lightbox_id].cookie_hours;
+      const cookieExpiration = client_side_triggered_config[lightbox_id].cookie_hours;
       const id = client_side_triggered_config[lightbox_id].id;
       window.rawCodeTriggers[id] = false;
       const triggerType = client_side_triggered_config[lightbox_id].trigger;
@@ -164,7 +147,6 @@ window.addEventListener("DOMContentLoaded", () => {
      * The word exit -> Triggers the lightbox when the mouse leaves the DOM area (exit intent).
      * With 0 as default, the lightbox will trigger as soon as the page finishes loading.
      */
-    console.log("Trigger Value: ", trigger);
 
     if (!isNaN(trigger)) {
       return "seconds";
@@ -208,10 +190,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
       document.body.appendChild(pushdownScript);
       return;
-    } else if (
-      promotionConfig.promotion_type == "floating_tab" &&
-      promotionConfig.html
-    ) {
+    } else if(promotionConfig.promotion_type == "floating_tab" && promotionConfig.html) {
+
       const htmlContainer = document.createElement("div");
       htmlContainer.innerHTML = promotionConfig.html;
       const floatingTabElement = htmlContainer.children[0];
@@ -220,6 +200,7 @@ window.addEventListener("DOMContentLoaded", () => {
       floatingTabElement.classList.add("promotion-element");
       floatingTabElement.classList.add(promotionClass);
       document.body.appendChild(floatingTabElement);
+
 
       if (promotionConfig.css) {
         const newCSS = document.createElement("style");
@@ -230,6 +211,7 @@ window.addEventListener("DOMContentLoaded", () => {
         newCSS.classList.add(promotionClass);
         newCSS.textContent = promotionConfig.css;
         document.body.appendChild(newCSS);
+
       }
 
       return;
@@ -275,7 +257,7 @@ window.addEventListener("DOMContentLoaded", () => {
             newScript.classList.add(promotionClass);
 
             child.remove();
-            document.body.appendChild(newScript);
+            document.getElementsByTagName("head")[0].appendChild(newScript);
           } else if (
             child.tagName == "LINK" &&
             child.getAttribute("href") != ""
@@ -338,12 +320,10 @@ window.addEventListener("DOMContentLoaded", () => {
       const promotion = client_side_triggered_config[e.detail.promotion_id];
 
       if (!promotion) {
-        console.log("Invalid promotion");
         return;
       }
 
       if (promotion.trigger != "js") {
-        console.log("Promotion not set to JS trigger");
         return;
       }
 
