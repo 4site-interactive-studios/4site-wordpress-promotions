@@ -245,7 +245,7 @@ class Foursite_Wordpress_Promotion_Public {
 		 */
 
 		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
+		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
@@ -327,9 +327,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			// Only render the plugin if the donation page is set
 			if($engrid_promotion_type == "multistep_lightbox" && $engrid_trigger_type != "js" && $engrid_donation_page){
-				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/donation-lightbox-parent.js', array(), $this->version, false );
 				$engrid_js_code = <<<ENGRID
-				console.log('Wordpress Promotion ID: $lightbox_id');
 
 				DonationLightboxOptions = {
 					promotion_type: "$engrid_promotion_type",
