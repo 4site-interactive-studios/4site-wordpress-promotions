@@ -229,23 +229,8 @@ class Foursite_Wordpress_Promotion_Public {
 	 */
 	public function enqueue_scripts() {
 		$lightbox_ids = $this->get_lightbox_ids();
-
 		if(!$lightbox_ids) return;
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Foursite_Wordpress_Promotion_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Foursite_Wordpress_Promotion_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
 
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
@@ -322,56 +307,56 @@ class Foursite_Wordpress_Promotion_Public {
 			}
 
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
-
 			$engrid_confetti = json_encode($confetti);
 
-			// Only render the plugin if the donation page is set
-			if($engrid_promotion_type == "multistep_lightbox" && $engrid_trigger_type != "js" && $engrid_donation_page){
-				$engrid_js_code = <<<ENGRID
+			if($engrid_promotion_type == "multistep_lightbox") {
+				$client_side_triggered_config[$lightbox_id] = [
+					'promotion_type' => $engrid_promotion_type, 
+					'url' => $engrid_donation_page, 
+					'image' => $engrid_image, 
+					'logo' => $engrid_logo, 
+					'video' => $engrid_video,
+					'autoplay' => $engrid_video_auto_play,
+					'logo_position_top' => "{$engrid_logo_position['top']}px",
+					'logo_position_left' => "{$engrid_logo_position['left']}px",
+					'logo_position_right' => "{$engrid_logo_position['right']}px",
+					'logo_position_bottom' => "{$engrid_logo_position['bottom']}px",
+					'divider' => $engrid_divider,
+					'title' => $engrid_title,
+					'paragraph' => $engrid_paragraph,
+					'footer' => $engrid_footer,
+					'bg_color' => $engrid_bg_color,
+					'txt_color' => $engrid_text_color,
+					'form_color' => $engrid_form_color,
+					'cookie_hours' => $engrid_cookie_hours,
+					'cookie_name' => $engrid_cookie_name,
+					'trigger' => $trigger,
+					'gtm_open_event_name' => $engrid_gtm_open_event_name,
+					'gtm_close_event_name' => $engrid_gtm_close_event_name,
+					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
+					'confetti' => $engrid_confetti,
+				];
 
-				DonationLightboxOptions = {
-					promotion_type: "$engrid_promotion_type",
-					url: "$engrid_donation_page",
-					image: "$engrid_image",
-					logo: "$engrid_logo",
-					video: "$engrid_video",
-					autoplay: $engrid_video_auto_play,
-					logo_position_top: "{$engrid_logo_position['top']}px",
-					logo_position_left: "{$engrid_logo_position['left']}px",
-					logo_position_right: "{$engrid_logo_position['right']}px",
-					logo_position_bottom: "{$engrid_logo_position['bottom']}px",
-					divider: "$engrid_divider",
-					title: "$engrid_title",
-					paragraph: `$engrid_paragraph`,
-					footer: `$engrid_footer`,
-					bg_color: "$engrid_bg_color",
-					txt_color: "$engrid_text_color",
-					form_color: "$engrid_form_color",
-					cookie_hours: $engrid_cookie_hours,
-					cookie_name: "$engrid_cookie_name",
-					trigger: "$trigger",
-					gtm_open_event_name: "$engrid_gtm_open_event_name",
-					gtm_close_event_name: "$engrid_gtm_close_event_name",
-					gtm_suppressed_event_name: "$engrid_gtm_suppressed_event_name",
-					confetti: $engrid_confetti,
-				};
-				ENGRID;
+				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 
-				$client_side_triggered_config[$lightbox_id] = "Multistep lightbox";
-				
-				wp_add_inline_script($this->foursite_wordpress_promotion, $engrid_js_code, 'before');
 			} else if($engrid_promotion_type == "raw_code") {
+
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'html' => $engrid_html, 
 					'js' => $engrid_js, 
 					'css' => $engrid_css, 
-					'cookie' => $engrid_cookie_name, 
+					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id, 
 					'trigger' => $trigger, 
+					'is_lightbox' => get_field('is_lightbox', $lightbox_id)
 				];
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
+
 			} else if ($engrid_promotion_type == "pushdown") {
+
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_pushdown_link,
@@ -380,17 +365,17 @@ class Foursite_Wordpress_Promotion_Public {
 					'image' => esc_url($resized_pushdown_image),
 					'gif' => $engrid_pushdown_gif,
 					'trigger' => $trigger,
-					'cookie' => $engrid_cookie_name, 
+					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id, 
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
-			} else if($engrid_promotion_type == "signup_lightbox") {
-				$signup_trigger = $engrid_trigger_seconds * 1000; // Convert to milliseconds
-				wp_enqueue_script( 'foursite-wordpress-signup-lightbox', plugin_dir_url( __FILE__ ) . 'signup/js/website-lightbox.js', array( 'jquery' ), $this->version, false );
-				$engrid_js_code = <<<ENGRID
-				console.log('Wordpress Promotion ID: $lightbox_id');
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 
+			} else if($engrid_promotion_type == "signup_lightbox") {
+
+				$signup_trigger = $engrid_trigger_seconds * 1000; // Convert to milliseconds
+				$engrid_js_code = <<<ENGRID
 				fs_signup_options = {
 					promotion_type: "$engrid_promotion_type",
 					url: "$engrid_donation_page",
@@ -413,10 +398,12 @@ class Foursite_Wordpress_Promotion_Public {
 					iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
 				};
 				ENGRID;
-				$client_side_triggered_config[$lightbox_id] = "Signup lightbox";
 				
+				wp_enqueue_script('foursite-wordpress-signup-lightbox', plugin_dir_url( __FILE__ ) . 'signup/js/website-lightbox.js', array( 'jquery' ), $this->version, false);
 				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
+
 			} else if($engrid_promotion_type == "floating_tab") {
+
 				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__));
 				
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
@@ -464,37 +451,13 @@ class Foursite_Wordpress_Promotion_Public {
 					'css' => $engrid_css,
 					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
 					'trigger' => $fsft_trigger,
-					'cookie' => $engrid_cookie_name, 
+					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id,
 				];
-			} else if($engrid_trigger_type == "js") {
-				$client_side_triggered_config[$lightbox_id] = [
-					'promotion_type' => $engrid_promotion_type, 
-					'url' => $engrid_donation_page, 
-					'image' => $engrid_image, 
-					'logo' => $engrid_logo, 
-					'video' => $engrid_video,
-					'autoplay' => $engrid_video_auto_play,
-					'logo_position_top' => "{$engrid_logo_position['top']}px",
-					'logo_position_left' => "{$engrid_logo_position['left']}px",
-					'logo_position_right' => "{$engrid_logo_position['right']}px",
-					'logo_position_bottom' => "{$engrid_logo_position['bottom']}px",
-					'divider' => $engrid_divider,
-					'title' => $engrid_title,
-					'paragraph' => $engrid_paragraph,
-					'footer' => $engrid_footer,
-					'bg_color' => $engrid_bg_color,
-					'txt_color' => $engrid_text_color,
-					'form_color' => $engrid_form_color,
-					'cookie_hours' => $engrid_cookie_hours,
-					'cookie_name' => $engrid_cookie_name,
-					'trigger' => $trigger,
-					'gtm_open_event_name' => $engrid_gtm_open_event_name,
-					'gtm_close_event_name' => $engrid_gtm_close_event_name,
-					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
-					'confetti' => $engrid_confetti,
-				];
+
+				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 			}
 		}
 		if(count($client_side_triggered_config)) {

@@ -1,7 +1,6 @@
 import "./confetti";
 export class DonationLightbox {
-  constructor() {
-    console.log("DonationLightbox: constructor");
+  constructor() { 
     window.dataLayer = window.dataLayer || [];
     this.defaultOptions = {
       name: "4Site Multi-Step Splash",
@@ -18,6 +17,7 @@ export class DonationLightbox {
       form_color: "#2375c9",
       url: null,
       cookie_hours: 24,
+      cookie_name: "HideDonationLightbox"
     };
     this.donationinfo = {};
     this.options = { ...this.defaultOptions };
@@ -40,7 +40,7 @@ export class DonationLightbox {
     }
     // Get Data Attributes
     let data = element.dataset;
-    console.log("DonationLightbox: loadOptions: data: ", data);
+
     // Set Options
     if ("name" in data) {
       this.options.name = data.name;
@@ -80,30 +80,30 @@ export class DonationLightbox {
     }
   }
   init() {
-    console.log("DonationLightbox: init");
+
     document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
       e.addEventListener(
         "click",
         (event) => {
           // Get clicked element
           let element = event.target;
-          console.log("DonationLightbox: init: clicked element: " + element);
           this.build(event);
         },
         false
       );
     });
     window.addEventListener("message", this.receiveMessage.bind(this), false);
-    if (
-      typeof window.DonationLightboxOptions !== "undefined" &&
-      window.DonationLightboxOptions.hasOwnProperty("url") &&
-      !this.getCookie()
-    ) {
+    if (typeof window.DonationLightboxOptions !== "undefined" && window.DonationLightboxOptions.hasOwnProperty("url") && !this.getCookie()) {      
       this.build(window.DonationLightboxOptions.url);
     }
   }
   build(event) {
-    console.log("DonationLightbox: build", typeof event);
+
+    // If another script has already shown a lightbox on this page, don't show another
+    if(window.lightbox_triggered) {
+      return;
+    }
+
     let href = null;
     if (typeof event === "object") {
       // Get clicked element
@@ -114,6 +114,7 @@ export class DonationLightbox {
       href = new URL(event);
       this.loadOptions();
     }
+
     // Do not build if mobile is disabled and on mobile
     if (!this.options.mobile_enabled && this.isMobile()) {
       return;
@@ -224,7 +225,9 @@ export class DonationLightbox {
     }
     this.overlay = overlay;
     document.body.appendChild(overlay);
-    this.open();
+    this.open();    
+
+    window.lightbox_triggered = true;    
   }
   open() {
     const action = window.petaGA_GenericAction_Viewed ?? "Viewed";
@@ -249,7 +252,7 @@ export class DonationLightbox {
   }
   // Receive a message from the child iframe
   receiveMessage(event) {
-    console.log("DonationLightbox: receiveMessage: event: ", event);
+
     const message = event.data;
 
     switch (message.key) {
@@ -266,10 +269,6 @@ export class DonationLightbox {
         break;
       case "donationinfo":
         this.donationinfo = JSON.parse(message.value);
-        console.log(
-          "DonationLightbox: receiveMessage: donationinfo: ",
-          this.donationinfo
-        );
         break;
       case "firstname":
         const firstname = message.value;
@@ -329,7 +328,7 @@ export class DonationLightbox {
   }
   error(error, event) {
     this.shake();
-    // console.error(error);
+
     const container = document.querySelector(
       ".foursiteDonationLightbox .right"
     );
@@ -520,7 +519,7 @@ export class DonationLightbox {
   setCookie(hours = 24, path = "/") {
     const expires = new Date(Date.now() + hours * 36e5).toUTCString();
     document.cookie =
-      "HideDonationLightbox" +
+      this.options.cookie_name +
       "=" +
       encodeURIComponent(true) +
       "; expires=" +
@@ -532,14 +531,14 @@ export class DonationLightbox {
   getCookie() {
     return document.cookie.split("; ").reduce((r, v) => {
       const parts = v.split("=");
-      return parts[0] === "HideDonationLightbox"
+      return parts[0] === this.options.cookie_name
         ? decodeURIComponent(parts[1])
         : r;
     }, "");
   }
 
   deleteCookie(path = "/") {
-    setCookie("HideDonationLightbox", "", -1, path);
+    setCookie(this.options.cookie_name, "", -1, path);
   }
   loadScript(url, callback) {
     const script = document.createElement("script");

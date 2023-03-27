@@ -4,6 +4,8 @@ import { crumbs } from "./crumbs";
 // import { fs_signup_options } from './config';
 
 document.addEventListener('DOMContentLoaded', function() {
+  window.lightbox_triggered = (window.lightbox_triggered === undefined) ? false : window.lightbox_triggered;
+
   const body = document.querySelector("body");
 
   let logo = "";
@@ -43,38 +45,37 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    if (
-      !isBetweenDates() ||
-      isBlacklisted() ||
-      !isWhitelisted() ||
-      hideSignUpForm ||
-      viewportWidth < 600 ||
-      isIE
-    ) {
+    if (!isBetweenDates() || isBlacklisted() || !isWhitelisted() || hideSignUpForm || viewportWidth < 600 || isIE) {
       return;
     } else {
+      if(window.lightbox_triggered) {
+        return;
+      } else {
+        window.lightbox_triggered = true;        
+      }
+
       body.insertAdjacentHTML(
         "afterbegin",
         `
-    <div class="fs-signup-lightbox fs-signup-hidden" style="display: none;">
-      <div class="fs-signup-container">
-        <div class="fs-signup-lightbox-content">
-          <div class="fs-signup-close-btn"></div>
-          <div class="fs-signup-logo">
-            ${logo}
-          </div>          
-          <div class="fs-signup-container-image" style="background-image: url('${fs_signup_options.imageURL}');">
-            <img src="${fs_signup_options.imageURL}" />
-          </div>
-          <div class="fs-signup-container-form">
-            ${content}
-          </div>
-        </div>
-        <div class="fs-signup-footer">
-          <p>${fs_signup_options.info}</p>                    
-        </div>
-      </div>
-    </div>`
+          <div class="fs-signup-lightbox fs-signup-hidden" style="display: none;">
+            <div class="fs-signup-container">
+              <div class="fs-signup-lightbox-content">
+                <div class="fs-signup-close-btn"></div>
+                <div class="fs-signup-logo">
+                  ${logo}
+                </div>          
+                <div class="fs-signup-container-image" style="background-image: url('${fs_signup_options.imageURL}');">
+                  <img src="${fs_signup_options.imageURL}" />
+                </div>
+                <div class="fs-signup-container-form">
+                  ${content}
+                </div>
+              </div>
+              <div class="fs-signup-footer">
+                <p>${fs_signup_options.info}</p>                    
+              </div>
+            </div>
+          </div>`
       );
     }
     const lightbox = document.querySelector(".fs-signup-lightbox");
