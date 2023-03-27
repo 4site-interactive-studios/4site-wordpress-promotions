@@ -335,6 +335,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'gtm_close_event_name' => $engrid_gtm_close_event_name,
 					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
 					'confetti' => $engrid_confetti,
+					'id' => $lightbox_id, 
 				];
 
 				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );

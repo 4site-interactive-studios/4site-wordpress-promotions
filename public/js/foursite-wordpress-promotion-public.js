@@ -157,10 +157,11 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function jsTrigger(e) {
-    if(e.detail.promotion_id) {
-      const promotion_id = Number(e.detail.promotion_id);
+    if(e.detail.promotion_id) {      
+      const promotion_id = Number(e.detail.promotion_id);      
       for(let i = js_triggered.length-1; i >= 0; i--) {
         if(js_triggered[i].id == promotion_id) {
+          deleteCookie(js_triggered[i].cookie_name);
           launchPromotion(js_triggered[i]);
           js_triggered.splice(i, 1);
           break;          
@@ -318,8 +319,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   window.triggerPromotion = function (id) {
-    window.dispatchEvent(
-      new CustomEvent("trigger-promotion", { detail: { promotion_id: id } })
-    );
+    window.dispatchEvent(new CustomEvent("trigger-promotion", { detail: { promotion_id: id } }));
   };
 });
