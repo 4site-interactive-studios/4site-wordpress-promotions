@@ -62,7 +62,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function addMultistepLightbox(promotion) {
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
-    const donationLightbox = new DonationLightbox();
+    const donationLightbox = new DonationLightbox(window.DonationLightboxOptions);    
   }
 
   function launchPromotion(promotion) {
@@ -71,8 +71,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if(window.lightbox_triggered) {
           return;
         } else {
-          // Don't set this here.  It will get set by the third-party donation lightbox script.
-          // window.lightbox_triggered = true;
+          window.lightbox_triggered = true;
           addMultistepLightbox(promotion);
         }
         break;
@@ -87,12 +86,7 @@ window.addEventListener("DOMContentLoaded", () => {
         addRawCode(promotion);
         break;
       case 'pushdown':
-        if(window.lightbox_triggered) {
-          return;
-        } else {
-          window.lightbox_triggered = true;
-          addPushdown(promotion);
-        }
+        addPushdown(promotion);
         break;
       case 'floating_tab':
         addFloatingTab(promotion);

@@ -1,6 +1,6 @@
 #fs-donation-tab {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.12);
@@ -15,7 +15,8 @@
     sans-serif;
   line-height: 18px;
   letter-spacing: 0.04em;
-  padding: 20px 64px 20px 42px;
+  /*padding: 20px 64px 20px 42px;*/
+  padding: 42px 20px 42px 42px;
 
   position: fixed;
   top: 50%;

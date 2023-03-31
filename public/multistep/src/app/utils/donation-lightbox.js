@@ -1,10 +1,11 @@
 import "./confetti";
 export class DonationLightbox {
-  constructor() { 
+  constructor(opts) { 
     window.dataLayer = window.dataLayer || [];
     this.defaultOptions = {
       name: "4Site Multi-Step Splash",
       image: "",
+      video: "",
       logo: "",
       title: "",
       paragraph: "",
@@ -20,8 +21,13 @@ export class DonationLightbox {
       cookie_name: "HideDonationLightbox"
     };
     this.donationinfo = {};
-    this.options = { ...this.defaultOptions };
+    if(opts) {
+      this.options = Object.assign(this.defaultOptions, opts);
+    } else {
+      this.options = { ...this.defaultOptions };      
+    }
     this.animationCount = 0;
+
     this.init();
   }
   setOptions(options) {
@@ -48,6 +54,18 @@ export class DonationLightbox {
     if ("image" in data) {
       this.options.image = data.image;
     }
+    if ("video" in data) {
+      this.options.video = data.video;
+    }
+    if ("autoplay" in data) {
+      this.options.autoplay = data.autoplay;
+    } else {
+      this.options.autoplay = false;
+    }
+    if ("divider" in data) {
+      this.options.divider = data.divider;
+    }
+
     if ("logo" in data) {
       this.options.logo = data.logo;
     }
@@ -80,7 +98,6 @@ export class DonationLightbox {
     }
   }
   init() {
-
     document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
       e.addEventListener(
         "click",
@@ -93,17 +110,15 @@ export class DonationLightbox {
       );
     });
     window.addEventListener("message", this.receiveMessage.bind(this), false);
-    if (typeof window.DonationLightboxOptions !== "undefined" && window.DonationLightboxOptions.hasOwnProperty("url") && !this.getCookie()) {      
+    if (
+      typeof window.DonationLightboxOptions !== "undefined" &&
+      window.DonationLightboxOptions.hasOwnProperty("url") &&
+      !this.getCookie()
+    ) {
       this.build(window.DonationLightboxOptions.url);
     }
   }
   build(event) {
-
-    // If another script has already shown a lightbox on this page, don't show another
-    if(window.lightbox_triggered) {
-      return;
-    }
-
     let href = null;
     if (typeof event === "object") {
       // Get clicked element
@@ -114,7 +129,6 @@ export class DonationLightbox {
       href = new URL(event);
       this.loadOptions();
     }
-
     // Do not build if mobile is disabled and on mobile
     if (!this.options.mobile_enabled && this.isMobile()) {
       return;
@@ -152,17 +166,32 @@ export class DonationLightbox {
                 ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}">`
                 : ""
             }
+            <a href="#" class="dl-close-viewmore" style="color: ${
+              this.options.bg_color
+            };">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <path fill="currentColor" d="M7.214.786c.434-.434 1.138-.434 1.572 0 .433.434.433 1.137 0 1.571L4.57 6.572h10.172c.694 0 1.257.563 1.257 1.257s-.563 1.257-1.257 1.257H4.229l4.557 4.557c.433.434.433 1.137 0 1.571-.434.434-1.138.434-1.572 0L0 8 7.214.786z"></path>
+              </svg>
+            </a>
             <div class="dl-container">
-              <img class="dl-hero" src="${this.options.image}" alt="${
-      this.options.title
-    }" />
-              <div class="dl-container-inner">
+              ${this.loadHero()}
+              ${
+                this.options.divider
+                  ? `<img class="dl-divider" src="${this.options.divider}" alt="Divider">`
+                  : ""
+              }
+              <div class="dl-container-inner" style="background-color: ${
+                this.options.bg_color
+              }; color: ${this.options.txt_color}">
                 <h1 class="dl-title" style="color: ${this.options.txt_color}">${
       this.options.title
     }</h1>
                 <p class="dl-paragraph" style="color: ${
                   this.options.txt_color
                 }">${this.options.paragraph}</p>
+                <a class="dl-viewmore" href="#"style="color: ${
+                  this.options.txt_color
+                }; border-color: ${this.options.txt_color}">View More</a>
               </div>
               <div class="dl-celebration">
                 <div class="frame frame1">
@@ -196,7 +225,35 @@ export class DonationLightbox {
           <p>${this.options.footer}</p>                    
         </div>
       </div>
-            `;
+    `;
+
+    const additionalStylesElement = document.head.appendChild(
+      document.createElement("style")
+    );
+
+    additionalStylesElement.innerHTML = `
+      p.dl-paragraph::after {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+
+        background: rgb(205, 228, 252);
+        background: linear-gradient(360deg, ${this.options.bg_color}, rgba(205, 228, 252, 0));
+        content: "";
+        height: 60px;
+        transition: 0.3s transform ease-in-out;
+        width: 100%;
+      }
+
+      .dl-container-inner::-webkit-scrollbar-thumb {
+        background: ${this.options.form_color};
+        border-radius: 10px;
+      }
+
+      .dl-container.playing .btn-pause:hover {
+        color: ${this.options.form_color}
+      }
+    `;
     let overlay = document.createElement("div");
     overlay.id = this.overlayID;
     overlay.classList.add("is-hidden");
@@ -209,6 +266,53 @@ export class DonationLightbox {
         this.close(e);
       }
     });
+
+    const closeViewMore = overlay.querySelector(".dl-close-viewmore");
+    closeViewMore.addEventListener("click", (e) => {
+      e.preventDefault();
+      overlay.querySelector(".left").classList.remove("view-more");
+    });
+
+    const viewmore = overlay.querySelector(".dl-viewmore");
+    viewmore.addEventListener("click", (e) => {
+      e.preventDefault();
+      overlay.querySelector(".left").classList.add("view-more");
+    });
+
+    const videoElement = overlay.querySelector("video");
+    if (videoElement) {
+      const playButton = overlay.querySelector(".btn-play");
+      const pauseButton = overlay.querySelector(".btn-pause");
+
+      if (playButton) {
+        playButton.addEventListener("click", () => {
+          videoElement.play();
+        });
+      }
+
+      if (pauseButton) {
+        pauseButton.addEventListener("click", () => {
+          videoElement.pause();
+        });
+      }
+
+      videoElement.addEventListener("play", (event) => {
+        overlay.querySelector(".dl-container").classList.add("playing");
+        overlay.querySelector(".dl-container").classList.remove("paused");
+      });
+
+      videoElement.addEventListener("pause", (event) => {
+        overlay.querySelector(".dl-container").classList.remove("playing");
+        overlay.querySelector(".dl-container").classList.add("paused");
+      });
+
+      videoElement.addEventListener("ended", (event) => {
+        overlay.querySelector(".dl-container").classList.remove("playing");
+        overlay.querySelector(".dl-container").classList.remove("paused");
+        videoElement.load();
+      });
+    }
+
     document.addEventListener("keyup", (e) => {
       if (e.key === "Escape") {
         closeButton.click();
@@ -225,9 +329,7 @@ export class DonationLightbox {
     }
     this.overlay = overlay;
     document.body.appendChild(overlay);
-    this.open();    
-
-    window.lightbox_triggered = true;    
+    this.open();
   }
   open() {
     const action = window.petaGA_GenericAction_Viewed ?? "Viewed";
@@ -242,10 +344,14 @@ export class DonationLightbox {
     const action = window.petaGA_GenericAction_Closed ?? "Closed";
     const category = window.petaGA_SplashCategory ?? "Splash Page";
     const label = window.petaGA_SplashLabel ?? this.options.name;
+    const videoElement = this.overlay.querySelector("video");
     this.sendGAEvent(category, action, label);
     e.preventDefault();
     this.overlay.classList.add("is-hidden");
     document.body.classList.remove("has-DonationLightbox");
+    if (videoElement) {
+      videoElement.pause();
+    }
     if (this.options.url) {
       this.setCookie(this.options.cookie_hours);
     }
@@ -328,7 +434,6 @@ export class DonationLightbox {
   }
   error(error, event) {
     this.shake();
-
     const container = document.querySelector(
       ".foursiteDonationLightbox .right"
     );
@@ -568,5 +673,31 @@ export class DonationLightbox {
       window.innerWidth || 0
     );
     return viewportWidth <= 799;
+  }
+  loadHero() {
+    if (!this.options.video) {
+      return `<img class="dl-hero" src="${this.options.image}" alt="${this.options.title}" />`;
+    }
+    const autoplay = this.options.autoplay || false;
+    let markup = autoplay
+      ? `<video autoplay muted loop playsinline`
+      : `<video playsinline`;
+    markup += ` poster="${this.options.image}">`;
+    markup += `<source src="${this.options.video}" type="video/mp4">`;
+    markup += `</video>`;
+    return `<div class="dl-hero">
+    ${markup}
+    ${
+      !autoplay
+        ? `<div class="btn-play">
+              <svg class="play-svg" xmlns="http://www.w3.org/2000/svg" width="26" height="31" viewBox="0 0 55.127 61.182"><g id="Group_38215" data-name="Group 38215" transform="translate(30 35)" fill="currentColor"><g id="play-button-arrowhead_1_" data-name="play-button-arrowhead (1)" transform="translate(-30 -35)"><path id="Path_18" data-name="Path 18" d="M18.095,1.349C12.579-1.815,8.107.777,8.107,7.134v46.91c0,6.363,4.472,8.952,9.988,5.791l41-23.514c5.518-3.165,5.518-8.293,0-11.457Z" transform="translate(-8.107 0)"/></g></g></svg>
+            </div>
+
+            <div class="btn-pause">
+              <svg class="pause-svg" xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31"><path d="M10 31h-6v-31h6v31zm15-31h-6v31h6v-31z" fill="currentColor" /></svg>
+            </div>`
+        : ""
+    }
+    </div>`;
   }
 }

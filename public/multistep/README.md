@@ -23,7 +23,10 @@ Every option can be set as a data attribute on the `a` tag, or as a JavaScript o
 
 - **name**: The name of the lightbox. This is used to identify the lightbox in Google Analytics. Defaults to "4Site Multi-Step Splash".
 - **image** - Main Image of the Lightbox.
+- **video** - Main Video of the Lightbox. If used, the **image** option will be used as a poster image.
+- **autoplay** - If true, the video will autoplay, be muted, and loop.
 - **logo** - Logo Image Used on the center of the Lightbox. On mobile, it will be scaled down and moved to the top.
+- **divider** - Divider Image Used between the Hero Image and Content.
 - **title** - Title of the Lightbox.
 - **mobile_enabled** - Enable the mobile version of the lightbox. Defaults to false.
 - **mobile_title** - Title of the Lightbox on mobile.
