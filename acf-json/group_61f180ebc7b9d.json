@@ -29,7 +29,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "66",
                 "class": "",
                 "id": ""
             },
@@ -39,30 +39,6 @@
                 "pushdown": "Pushdown",
                 "floating_tab": "Floating Tab",
                 "raw_code": "Raw Code"
-            },
-            "default_value": "",
-            "return_format": "value",
-            "allow_null": 0,
-            "layout": "horizontal"
-        },
-        {
-            "key": "field_630676e57bb3b",
-            "label": "Promotion Visibility",
-            "name": "engrid_lightbox_display",
-            "aria-label": "",
-            "type": "button_group",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "turned-on": "Turned On",
-                "turned-off": "Turned Off",
-                "scheduled": "Scheduled"
             },
             "default_value": "",
             "return_format": "value",
@@ -87,7 +63,7 @@
                 ]
             ],
             "wrapper": {
-                "width": "50",
+                "width": "33",
                 "class": "",
                 "id": ""
             },
@@ -96,6 +72,30 @@
             "ui_on_text": "Lightbox",
             "ui_off_text": "Not Lightbox",
             "ui": 1
+        },
+        {
+            "key": "field_630676e57bb3b",
+            "label": "Promotion Visibility",
+            "name": "engrid_lightbox_display",
+            "aria-label": "",
+            "type": "button_group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "turned-on": "Turned On",
+                "turned-off": "Turned Off",
+                "scheduled": "Scheduled"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "allow_null": 0,
+            "layout": "horizontal"
         },
         {
             "key": "field_61f1856cc8652",
@@ -110,7 +110,7 @@
                     {
                         "field": "field_630676e57bb3b",
                         "operator": "==",
-                        "value": "Scheduled"
+                        "value": "scheduled"
                     }
                 ]
             ],
@@ -136,7 +136,7 @@
                     {
                         "field": "field_630676e57bb3b",
                         "operator": "==",
-                        "value": "Scheduled"
+                        "value": "scheduled"
                     }
                 ]
             ],
@@ -1757,5 +1757,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1679874931
+    "modified": 1680550084
 }
