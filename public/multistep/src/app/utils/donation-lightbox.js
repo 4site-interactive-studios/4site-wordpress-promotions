@@ -18,7 +18,11 @@ export class DonationLightbox {
       form_color: "#2375c9",
       url: null,
       cookie_hours: 24,
-      cookie_name: "HideDonationLightbox"
+      cookie_name: "HideDonationLightbox",
+      logo_position_top: '20px',
+      logo_position_left: '50%',
+      logo_position_right: '',
+      logo_position_bottom: ''
     };
     this.donationinfo = {};
     if(opts) {
@@ -69,6 +73,19 @@ export class DonationLightbox {
     if ("logo" in data) {
       this.options.logo = data.logo;
     }
+    if ("logo_position_top" in data) {
+      this.options.logo_position_top = data.logo_position_top;
+    }
+    if ("logo_position_left" in data) {
+      this.options.logo_position_left = data.logo_position_left;
+    }
+    if ("logo_position_right" in data) {
+      this.options.logo_position_right = data.logo_position_right;
+    }
+    if ("logo_position_bottom" in data) {
+      this.options.logo_position_bottom = data.logo_position_bottom;
+    }
+
     if ("title" in data) {
       this.options.title = data.title;
     }
@@ -163,7 +180,9 @@ export class DonationLightbox {
           }; color: ${this.options.txt_color}">
             ${
               this.options.logo
-                ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}">`
+                ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}" 
+                    style="left: ${this.options.logo_position_left}; top: ${this.options.logo_position_top}; right: ${this.options.logo_position_right}; bottom: ${this.options.logo_position_bottom}; "
+                  >`
                 : ""
             }
             <a href="#" class="dl-close-viewmore" style="color: ${
@@ -509,8 +528,10 @@ export class DonationLightbox {
         logo.src = newLogo;
         logo.style.maxWidth = "98px";
         logo.style.transform = "translateX(-50%)";
-        logo.style.left = "50%";
-        logo.style.top = "20px";
+        //logo.style.right = this.options.logo_position_right;
+        //logo.style.bottom = this.options.logo_position_bottom;
+        logo.style.left = "50%"; //this.options.logo_position_left;
+        logo.style.top = "20px"; //this.options.logo_position_top;
       }
       const frame1 = leftContainer.querySelector(".frame1");
       frame1.style.bottom = "360px";

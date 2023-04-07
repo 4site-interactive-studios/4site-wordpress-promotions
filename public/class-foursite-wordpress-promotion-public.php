@@ -308,6 +308,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
 			$engrid_confetti = json_encode($confetti);
+			$logo_position_options = $engrid_logo_position['position_options'];
 
 			if($engrid_promotion_type == "multistep_lightbox") {
 				$client_side_triggered_config[$lightbox_id] = [
@@ -317,10 +318,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'logo' => $engrid_logo, 
 					'video' => $engrid_video,
 					'autoplay' => $engrid_video_auto_play,
-					'logo_position_top' => "{$engrid_logo_position['top']}px",
-					'logo_position_left' => "{$engrid_logo_position['left']}px",
-					'logo_position_right' => "{$engrid_logo_position['right']}px",
-					'logo_position_bottom' => "{$engrid_logo_position['bottom']}px",
+					'logo_position_top' => in_array('top', $logo_position_options) ? "{$engrid_logo_position['top']}px" : "unset",
+					'logo_position_left' => in_array('left', $logo_position_options) ? "{$engrid_logo_position['left']}px" : "unset",
+					'logo_position_right' => in_array('right', $logo_position_options) ? "{$engrid_logo_position['right']}px" : "unset",
+					'logo_position_bottom' => in_array('bottom', $logo_position_options) ? "{$engrid_logo_position['bottom']}px" : "unset",
 					'divider' => $engrid_divider,
 					'title' => $engrid_title,
 					'paragraph' => $engrid_paragraph,
