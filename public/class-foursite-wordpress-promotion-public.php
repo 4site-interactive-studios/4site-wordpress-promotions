@@ -449,19 +449,20 @@ class Foursite_Wordpress_Promotion_Public {
 
 				$image_url = (!empty($styles['background_image']['sizes']['large'])) ? $styles['background_image']['sizes']['large'] : '';
 				$cta_type = get_field('cta_type', $lightbox_id);
+				$submit_label = get_field('submit_button_label', $lightbox_id);
 				$client_side_triggered_config[$lightbox_id] = [
 					'id' => $lightbox_id,
 					'promotion_type' => $engrid_promotion_type, 
-					'title' => esc_attr($engrid_title),
-					'subtitle' => esc_attr(get_field('engrid_subtitle', $lightbox_id)),
-					'paragraph' => esc_attr($engrid_paragraph),
+					'title' => $engrid_title,
+					'subtitle' => get_field('engrid_subtitle', $lightbox_id),
+					'paragraph' => $engrid_paragraph,
 					'cookie_expiry' => $engrid_cookie_hours,
 					'cookie_name' => $engrid_cookie_name,
-					'logo' => esc_attr(get_field('engrid_logo', $lightbox_id)),
-					'button_label' => esc_attr(get_field('submit_button_label', $lightbox_id)),
-					'image' => esc_attr($image_url),
-					'other_label' => ($cta_type == 'fundraising') ? esc_attr(get_field('other_amount_label', $lightbox_id)) : '',
-					'donation_form' => esc_attr($engrid_donation_page),
+					'logo' => get_field('engrid_logo', $lightbox_id),
+					'button_label' => ($submit_label) ? $submit_label : 'Donate Now',
+					'image' => $image_url,
+					'other_label' => ($cta_type == 'fundraising') ? get_field('other_amount_label', $lightbox_id) : '',
+					'donation_form' => $engrid_donation_page,
 					'trigger' => $trigger,
 					'max_width' => $styles['modal_dimensions']['max_width'],
 					'max_height' => $styles['modal_dimensions']['max_height'],
