@@ -91,6 +91,14 @@ window.addEventListener("DOMContentLoaded", () => {
       case 'floating_tab':
         addFloatingTab(promotion);
         break;
+      case 'overlay':
+        if(!window.lightbox_triggered) {
+          addOverlay(promotion);
+          window.lightbox_triggered = true;
+        } else {
+          return;
+        }
+        break;
     }
 
     if(promotion.cookie_hours) {
@@ -136,7 +144,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function scrollPercentTrigger() {
     const client_height = document.documentElement.clientHeight;
-    const scroll_height = document.documentElement.scrollHeight - clientHeight;
+    const scroll_height = document.documentElement.scrollHeight - client_height;
 
     for(let i = scroll_per_triggered.length-1; i >= 0; i--) {
       const target = (scroll_per_triggered[i].trigger / 100) * scroll_height;
@@ -167,37 +175,27 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function addRawCode(promotion) {
-    if (promotion.html) {
-      const html_container = document.createElement("div");
-      html_container.classList.add("promotion-html");
-      html_container.classList.add("promotion-element");
-      html_container.classList.add("promotion-" + promotion.id);
-      html_container.innerHTML = promotion.html;
-      document.body.appendChild(html_container);
-    }
-
-    if (promotion.css) {
+  function insertCss(promotion_id, css) {
       const new_css = document.createElement("style");
       new_css.setAttribute("type", "text/css");
       new_css.classList.add("promotion-css");
       new_css.classList.add("promotion-element");
-      new_css.classList.add("promotion-" + promotion.id);
-      new_css.textContent = promotion.css;
+      new_css.classList.add("promotion-" + promotion_id);
+      new_css.textContent = css;
       document.body.appendChild(new_css);
-    }
-
-    if (promotion.js) {
-      // Remove line breaks between scripts
+  }
+  function insertJs(promotion_id, js) {
+     // Remove line breaks between scripts
       const js_container = document.createElement("div");
       js_container.classList.add("promotion-js");
       js_container.classList.add("promotion-element");
-      js_container.classList.add("promotion-" + promotion.id);
-      js_container.innerHTML = promotion.js;
+      js_container.classList.add("promotion-" + promotion_id);
+      js_container.innerHTML = js;
 
       document.body.appendChild(js_container);
       Array.from(document.querySelector(".promotion-js").children).forEach(
         (child) => {
+
           if (child.innerHTML != "") {
 
             eval(child.innerHTML);
@@ -208,7 +206,7 @@ window.addEventListener("DOMContentLoaded", () => {
             new_script.setAttribute("src", child.src);
             new_script.classList.add("promotion-js");
             new_script.classList.add("promotion-element");
-            new_script.classList.add("promotion-" + promotion.id);
+            new_script.classList.add("promotion-" + promotion_id);
 
             child.remove();
             document.getElementsByTagName("head")[0].appendChild(new_script);
@@ -224,13 +222,55 @@ window.addEventListener("DOMContentLoaded", () => {
 
             new_link.classList.add("promotion-js");
             new_link.classList.add("promotion-element");
-            new_link.classList.add("promotion-" + promotion.id);
+            new_link.classList.add("promotion-" + promotion_id);
 
             child.remove();
             document.body.appendChild(new_link);
+
           }
         }
       );
+  }
+
+  function addOverlay(promotion) {
+    let s = document.createElement('script');
+    s.setAttribute('type', 'text/javascript');
+    s.setAttribute('src', promotion.js_url);
+    s.setAttribute('data-title', promotion.title);
+    s.setAttribute('data-subtitle', promotion.subtitle);
+    s.setAttribute('data-logo', promotion.logo);
+    s.setAttribute('data-donation_form', promotion.donation_form);
+    s.setAttribute('data-paragraph', promotion.paragraph);
+    s.setAttribute('data-other_label', promotion.other_label);
+    s.setAttribute('data-button_label', promotion.button_label);
+    s.setAttribute('data-cookie_name', promotion.cookie_name);
+    s.setAttribute('data-cookie_expiry', promotion.cookie_expiry);
+    s.setAttribute('data-max_width', promotion.max_width);
+    s.setAttribute('data-max_height', promotion.max_height);
+    s.setAttribute('data-cta_type', promotion.cta_type);
+    s.setAttribute('data-image', promotion.image);
+    s.setAttribute('data-amounts', promotion.amounts);
+    document.body.appendChild(s);
+
+    insertCss(promotion.id, promotion.custom_css);
+  }
+
+  function addRawCode(promotion) {
+    if (promotion.html) {
+      const html_container = document.createElement("div");
+      html_container.classList.add("promotion-html");
+      html_container.classList.add("promotion-element");
+      html_container.classList.add("promotion-" + promotion.id);
+      html_container.innerHTML = promotion.html;
+      document.body.appendChild(html_container);
+    }
+
+    if (promotion.css) {
+      insertCss(promotion.id, promotion.css);
+    }
+
+    if (promotion.js) {
+      insertJs(promotion.id, promotion.js);
     }
   }
 

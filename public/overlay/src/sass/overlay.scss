@@ -1,0 +1,213 @@
+.button-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 50px;
+  height: 50px;
+  transition: 0.3s transform ease-in-out;
+  z-index: 1000;
+  background-color: $bg;
+  &:hover {
+    &::before {
+      transform: rotate(45deg) scale(1.5);
+    }
+    &::after {
+      transform: rotate(-45deg) scale(1.5);
+    }
+  }
+  &::before,
+  &::after {
+    position: absolute;
+    content: " ";
+    height: 19px;
+    width: 3px;
+    background-color: $txt;
+    left: 24px;
+    top: 15px;
+  }
+  &::before {
+    transform: rotate(45deg);
+  }
+  &::after {
+    transform: rotate(-45deg);
+  }
+}
+.overlay-logo {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+.overlay-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &::before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+      var(--bg-img-overlay-start-color, rgba($bg, 0.1)),
+      var(--bg-img-overlay-end-color, rgba($bg, 0.6))
+    );
+    z-index: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  .overlay-content {
+    width: 80%;
+    z-index: 1;
+    h1,
+    h2,
+    h3,
+    p {
+      color: $txt;
+      text-align: left;
+      font-family: "Lato", "Trebuchet MS", sans-serif;
+    }
+    .overlay-body {
+      max-width: 650px;
+    }
+    .overlay-title {
+      letter-spacing: 0.02em;
+      padding: 0;
+      margin-top: 25px;
+      margin-bottom: 10px;
+      color: var(--title-color, $txt);
+      font: var(
+        --title-font,
+        900 60px/60px "Good Headline Pro Condensed",
+        "Lato",
+        "Trebuchet MS",
+        sans-serif
+      );
+    }
+    .overlay-subtitle {
+      padding: 0;
+      margin-bottom: 0;
+      text-transform: none;
+      color: var(--subtitle-color, $txt);
+      font: var(
+        --subtitle-font,
+        700 50px/50px "Lato",
+        "Trebuchet MS",
+        sans-serif
+      );
+    }
+    .overlay-paragraph {
+      padding: 0;
+      margin-bottom: 0;
+      color: var(--paragraph-color, $txt);
+      font: var(
+        --paragraph-font,
+        700 30px/44px "Good Headline Pro Condensed",
+        "Lato",
+        "Trebuchet MS",
+        sans-serif
+      );
+    }
+    .overlay-form {
+      margin-top: 25px;
+      .overlay-amounts {
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .form-item {
+        width: auto;
+        input[type="radio"] {
+          display: none;
+          &:checked + label {
+            background-color: var(--amount-button-selected-bg-color, $accent);
+            color: var(--amount-button-selected-color, $txt);
+            border: var(--amount-button-selected-border, 3px solid $bg);
+            border-radius: var(--amount-button-selected-border-radius, 50%);
+          }
+        }
+        label {
+          padding: 0;
+          font-weight: 700;
+          height: 66px;
+          width: 66px;
+          font-size: 1.1rem;
+          text-align: center;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          box-sizing: border-box;
+          transition: all 0.3s ease-in-out;
+          background-color: var(--amount-button-bg-color, #1e2022);
+          color: var(--amount-button-color, $accent);
+          border: var(--amount-button-border, 3px solid transparent);
+          border-radius: var(--amount-button-border-radius, 50%);
+
+          &:hover {
+            background-color: var(--amount-button-hover-bg-color, #1e2022);
+            color: var(--amount-button-hover-color, $accent);
+            border: var(--amount-button-hover-border, 3px solid transparent);
+            border-radius: var(--amount-button-hover-border-radius, 50%);
+          }
+        }
+        .form-text {
+          font-family: "Lato", "Trebuchet MS", sans-serif;
+          font-size: 1.1rem;
+          font-weight: 700;
+          height: 50px;
+          width: 100%;
+          padding: 10px 15px;
+          border: 3px solid transparent;
+          background-color: $txt;
+          color: $bg;
+          box-sizing: border-box;
+          transition: 0.3s border-color ease-in-out;
+          &:focus {
+            border-color: $accent;
+          }
+        }
+      }
+      button {
+        width: 100%;
+        min-height: 50px;
+        font-size: 1.1rem;
+        line-height: 1;
+        box-sizing: border-box;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        background-color: var(--submit-button-bg-color, $bg);
+        color: var(--submit-button-color, $txt);
+        border: var(--submit-button-border, none);
+        border-radius: var(--submit-button-border-radius, 0);
+        &:hover {
+          background-color: var(--submit-button-hover-bg-color, $accent);
+          color: var(--submit-button-hover-color, $txt);
+          border: var(--submit-button-hover-border, none);
+          border-radius: var(--submit-button-hover-border-radius, 0);
+        }
+      }
+
+      button.general-cta {
+        width: auto;
+      }
+    }
+    hr {
+      margin: 25px 0;
+      padding: 0;
+      border: none;
+      border-top: var(--divider-border, 5px solid $txt);
+      width: 200px;
+    }
+  }
+}

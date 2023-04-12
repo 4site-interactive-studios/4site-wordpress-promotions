@@ -231,7 +231,6 @@ class Foursite_Wordpress_Promotion_Public {
 		$lightbox_ids = $this->get_lightbox_ids();
 		if(!$lightbox_ids) return;
 
-
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
 
@@ -309,6 +308,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
 			$engrid_confetti = json_encode($confetti);
 			$logo_position_options = $engrid_logo_position['position_options'];
+			if(!$logo_position_options) $logo_position_options = [];
 
 			if($engrid_promotion_type == "multistep_lightbox") {
 				$client_side_triggered_config[$lightbox_id] = [
@@ -340,7 +340,136 @@ class Foursite_Wordpress_Promotion_Public {
 				];
 
 				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
-				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
+
+			} else if($engrid_promotion_type == 'overlay') {
+
+				$styles = get_field('modal_overlay', $lightbox_id);
+				$formatted_styles = [];
+				if(!empty($styles['screen_overlay_background_color'])) {
+					$formatted_styles['--bg-overlay-color'] = $styles['screen_overlay_background_color'];
+				}
+
+				if(!empty($styles['background_image_overlay']['gradient_start_color'])) {
+					$formatted_styles['--bg-img-overlay-start-color'] = $styles['background_image_overlay']['gradient_start_color'];
+				}
+				if(!empty($styles['background_image_overlay']['gradient_end_color'])) {
+					$formatted_styles['--bg-img-overlay-end-color'] = $styles['background_image_overlay']['gradient_end_color'];
+				}
+								
+				if(!empty($styles['title']['color'])) {
+					$formatted_styles['--title-color'] = $styles['title']['color'];
+				}
+				if(!empty($styles['title']['font'])) {
+					$formatted_styles['--title-font'] = $styles['title']['font'];
+				}
+				if(!empty($styles['subtitle']['color'])) {
+					$formatted_styles['--subtitle-color'] = $styles['subtitle']['color'];
+				}
+				if(!empty($styles['subtitle']['font'])) {
+					$formatted_styles['--subtitle-font'] = $styles['subtitle']['font'];
+				}
+				if(!empty($styles['paragraph']['color'])) {
+					$formatted_styles['--paragraph-color'] = $styles['paragraph']['color'];
+				}
+				if(!empty($styles['paragraph']['font'])) {
+					$formatted_styles['--paragraph-font'] = $styles['paragraph']['font'];
+				}
+				if(!empty($styles['divider_line'])) {
+					$formatted_styles['--divider-border'] = $styles['divider_line'];
+				}
+
+				if(!empty($styles['amount_button']['background_color'])) {
+					$formatted_styles['--amount-button-bg-color'] = $styles['amount_button']['background_color'];
+				}
+				if(!empty($styles['amount_button']['text_color'])) {
+					$formatted_styles['--amount-button-color'] = $styles['amount_button']['text_color'];
+				}
+				if(!empty($styles['amount_button']['border'])) {
+					$formatted_styles['--amount-button-border'] = $styles['amount_button']['border'];
+				}
+				if(!empty($styles['amount_button']['border_radius'])) {
+					$formatted_styles['--amount-button-border-radius'] = $styles['amount_button']['border_radius'];
+				}
+
+				if(!empty($styles['amount_button_hover']['background_color'])) {
+					$formatted_styles['--amount-button-hover-bg-color'] = $styles['amount_button_hover']['background_color'];
+				}
+				if(!empty($styles['amount_button_hover']['text_color'])) {
+					$formatted_styles['--amount-button-hover-color'] = $styles['amount_button_hover']['text_color'];
+				}
+				if(!empty($styles['amount_button_hover']['border'])) {
+					$formatted_styles['--amount-button-hover-border'] = $styles['amount_button_hover']['border'];
+				}
+				if(!empty($styles['amount_button_hover']['border_radius'])) {
+					$formatted_styles['--amount-button-hover-border-radius'] = $styles['amount_button_hover']['border_radius'];
+				}
+
+				if(!empty($styles['amount_button_selected']['background_color'])) {
+					$formatted_styles['--amount-button-selected-bg-color'] = $styles['amount_button_selected']['background_color'];
+				}
+				if(!empty($styles['amount_button_selected']['text_color'])) {
+					$formatted_styles['--amount-button-selected-color'] = $styles['amount_button_selected']['text_color'];
+				}
+				if(!empty($styles['amount_button_selected']['border'])) {
+					$formatted_styles['--amount-button-selected-border'] = $styles['amount_button_selected']['border'];
+				}
+				if(!empty($styles['amount_button_selected']['border_radius'])) {
+					$formatted_styles['--amount-button-selected-border-radius'] = $styles['amount_button_selected']['border_radius'];
+				}
+
+				if(!empty($styles['submit_button']['background_color'])) {
+					$formatted_styles['--submit-button-bg-color'] = $styles['submit_button']['background_color'];
+				}
+				if(!empty($styles['submit_button']['text_color'])) {
+					$formatted_styles['--submit-button-color'] = $styles['submit_button']['text_color'];
+				}
+				if(!empty($styles['submit_button']['border'])) {
+					$formatted_styles['--submit-button-border'] = $styles['submit_button']['border'];
+				}
+				if(!empty($styles['submit_button']['border_radius'])) {
+					$formatted_styles['--submit-button-border-radius'] = $styles['submit_button']['border_radius'];
+				}
+
+				if(!empty($styles['submit_button_hover']['background_color'])) {
+					$formatted_styles['--submit-button-hover-bg-color'] = $styles['submit_button_hover']['background_color'];
+				}
+				if(!empty($styles['submit_button_hover']['text_color'])) {
+					$formatted_styles['--submit-button-hover-color'] = $styles['submit_button_hover']['text_color'];
+				}
+				if(!empty($styles['submit_button_hover']['border'])) {
+					$formatted_styles['--submit-button-hover-border'] = $styles['submit_button_hover']['border'];
+				}
+				if(!empty($styles['submit_button_hover']['border_radius'])) {
+					$formatted_styles['--submit-button-hover-border-radius'] = $styles['submit_button_hover']['border_radius'];
+				}
+
+				foreach($formatted_styles as $key => $value) {
+					$formated_styles_string .= "{$key}: {$value};";
+				}
+
+				$image_url = (!empty($styles['background_image']['sizes']['large'])) ? $styles['background_image']['sizes']['large'] : '';
+				$cta_type = get_field('cta_type', $lightbox_id);
+				$client_side_triggered_config[$lightbox_id] = [
+					'id' => $lightbox_id,
+					'promotion_type' => $engrid_promotion_type, 
+					'title' => esc_attr($engrid_title),
+					'subtitle' => esc_attr(get_field('engrid_subtitle', $lightbox_id)),
+					'paragraph' => esc_attr($engrid_paragraph),
+					'cookie_expiry' => $engrid_cookie_hours,
+					'cookie_name' => $engrid_cookie_name,
+					'logo' => esc_attr(get_field('engrid_logo', $lightbox_id)),
+					'button_label' => esc_attr(get_field('submit_button_label', $lightbox_id)),
+					'image' => esc_attr($image_url),
+					'other_label' => ($cta_type == 'fundraising') ? esc_attr(get_field('other_amount_label', $lightbox_id)) : '',
+					'donation_form' => esc_attr($engrid_donation_page),
+					'trigger' => $trigger,
+					'max_width' => $styles['modal_dimensions']['max_width'],
+					'max_height' => $styles['modal_dimensions']['max_height'],
+					'cta_type' => $cta_type,
+					'amounts' => ($cta_type == 'fundraising') ? str_replace(' ', '', get_field('amount_options', $lightbox_id)) : '',
+					'custom_css' => ".foursite-en-overlay { {$formated_styles_string} }",
+					'js_url' => plugin_dir_url( __FILE__ ) . 'overlay/dist/foursite-en-overlay.js'
+				];
 
 			} else if($engrid_promotion_type == "raw_code") {
 
@@ -355,7 +484,6 @@ class Foursite_Wordpress_Promotion_Public {
 					'trigger' => $trigger, 
 					'is_lightbox' => get_field('is_lightbox', $lightbox_id)
 				];
-				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 
 			} else if ($engrid_promotion_type == "pushdown") {
 
@@ -372,7 +500,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 				];
-				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
+				
 
 			} else if($engrid_promotion_type == "signup_lightbox") {
 
@@ -459,11 +587,12 @@ class Foursite_Wordpress_Promotion_Public {
 				];
 
 				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
-				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 			}
 		}
+
 		if(count($client_side_triggered_config)) {
-			wp_localize_script($this->foursite_wordpress_promotion, 'client_side_triggered_config', $client_side_triggered_config);
+			wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', [], $this->version, false );
+			wp_localize_script( 'foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config );
 		}
 	}
 }
