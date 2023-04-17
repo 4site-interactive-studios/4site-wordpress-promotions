@@ -309,6 +309,9 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
 			$engrid_confetti = json_encode($confetti);
 			$logo_position_options = $engrid_logo_position['position_options'];
+			if(!is_array($logo_position_options)) {
+				$logo_position_options = [];
+			}
 
 			if($engrid_promotion_type == "multistep_lightbox") {
 				$client_side_triggered_config[$lightbox_id] = [

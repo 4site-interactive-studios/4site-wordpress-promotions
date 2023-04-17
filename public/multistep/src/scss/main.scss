@@ -586,7 +586,7 @@ body.has-DonationLightbox {
       }
       @include mq(desktop) {
         max-width: 100%;
-        max-height: 0;
+        //max-height: 0;
         display: block;
       }
       p {
