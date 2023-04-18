@@ -105,7 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("scroll", scrollPercentTrigger); 
   }
   if(exit_triggered.length) {
-    document.body.addEventListener("mouseout", exitTrigger);
+    document.body.addEventListener("mouseleave", exitTrigger);
   }
   if(js_triggered.length) {
     addEventListener("trigger-promotion", jsTrigger);
@@ -118,7 +118,7 @@ window.addEventListener("DOMContentLoaded", () => {
       break;
     }
     if(scroll_px_triggered.length == 0) {
-      document.body.removeEventListener("mouseout", exitTrigger);
+      document.body.removeEventListener("mouseleave", exitTrigger);
     }
   }
 
