@@ -117,7 +117,7 @@ window.addEventListener("DOMContentLoaded", () => {
       exit_triggered.splice(i, 1);
       break;
     }
-    if(scroll_px_triggered.length == 0) {
+    if(exit_triggered.length == 0) {
       document.body.removeEventListener("mouseleave", exitTrigger);
     }
   }
