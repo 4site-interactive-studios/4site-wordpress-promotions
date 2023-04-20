@@ -10,20 +10,16 @@
  */
 function engrid_wordpress_promotion_menu_pages()
 {
-    acf_add_options_page(array(
-        'page_title' => 'Promotions',
-        'menu_title' => 'Promotions',
-        'menu_slug' => 'wordpress-promotions',
-        'capability' => 'manage_options',
-        'position' => 61.1,
-        'redirect' => true,
-        'icon_url' => 'dashicons-admin-customizer',
+    acf_add_options_sub_page(array(
+        'page_title' => 'Promotions Settings',
+        'menu_title' => 'Settings',
+        'parent_slug' => 'edit.php?post_type=wordpress_promotion',
         'update_button' => 'Save',
-        'updated_message' => 'Promotion Saved',
+        'updated_message' => 'Global Promotions Settings Saved',
     ));
 }
-
-
+add_action( 'acf/init', 'engrid_wordpress_promotion_menu_pages', 1 );
+//wp-admin/edit.php?post_type=wordpress_promotion
 /**
  * Hook: acf/init.
  *

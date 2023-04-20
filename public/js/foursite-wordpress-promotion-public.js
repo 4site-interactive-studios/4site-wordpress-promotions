@@ -50,9 +50,13 @@ window.addEventListener("DOMContentLoaded", () => {
         break;
       case 'seconds':
         // set a timeout and launch
-        window.setTimeout(() => {
+        if(trigger > 0) {
+          window.setTimeout(() => {
+            launchPromotion(client_side_triggered_config[lightbox_id]);
+          }, trigger);  
+        } else {
           launchPromotion(client_side_triggered_config[lightbox_id]);
-        }, trigger);
+        }
         break;
       default:
         break;
@@ -60,12 +64,19 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addMultistepLightbox(promotion) {
+    if(window.donationLightboxObj) {
+      delete window.donationLightboxObj;
+    }
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
-    const donationLightbox = new DonationLightbox(window.DonationLightboxOptions);    
+    // if a floating tab is on the page, the donation lightbox parent script has likely already set up click event listeners.
+    // so, let's clear those and let this latest copy of the lightbox create its own click event listeners
+    clearEventsForFloatingTab();
+    window.donationLightboxObj = new DonationLightbox();
   }
 
   function launchPromotion(promotion) {
+    console.log('launchPromotion: ', promotion.promotion_type);
     switch(promotion.promotion_type) {
       case 'multistep_lightbox':
         if(window.lightbox_triggered) {
@@ -120,6 +131,14 @@ window.addEventListener("DOMContentLoaded", () => {
     if(exit_triggered.length == 0) {
       document.body.removeEventListener("mouseleave", exitTrigger);
     }
+  }
+
+
+  function clearEventsForFloatingTab() {
+    document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
+      let new_tab = e.cloneNode(true);
+      e.parentNode.replaceChild(new_tab, e);  
+    });
   }
 
   function scrollPxTrigger() {
@@ -252,7 +271,8 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addFloatingTab(promotion) {
-      const html_container = document.createElement("div");
+
+    const html_container = document.createElement("div");
       html_container.innerHTML = promotion.html;
       const floating_tab_element = html_container.children[0];
       floating_tab_element.classList.add("floating-tab-html");
@@ -270,6 +290,10 @@ window.addEventListener("DOMContentLoaded", () => {
         new_css.classList.add("promotion-" + promotion.id);
         new_css.textContent = promotion.css;
         document.body.appendChild(new_css);
+      }
+
+      if(promotion.open_lightbox) {
+        window.donationLightboxObj = new DonationLightbox();
       }
   }
 

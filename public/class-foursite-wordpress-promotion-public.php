@@ -235,6 +235,8 @@ class Foursite_Wordpress_Promotion_Public {
 		// populate this with raw html configs & js-triggered multisteps
 		$client_side_triggered_config = [];
 
+		$multistep_script_url = get_field('promotion_lightbox_script', 'options');
+
 		foreach($lightbox_ids as $lightbox_id){
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
 			$engrid_promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
@@ -314,6 +316,7 @@ class Foursite_Wordpress_Promotion_Public {
 			}
 
 			if($engrid_promotion_type == "multistep_lightbox") {
+
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 
@@ -342,7 +345,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 				];
 
-				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
+				wp_enqueue_script( $this->foursite_wordpress_promotion, $multistep_script_url, $this->version, false );
 				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 
 			} else if($engrid_promotion_type == "raw_code") {
@@ -417,8 +420,7 @@ class Foursite_Wordpress_Promotion_Public {
 				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 				$fsft_css = get_field('engrid_css', $lightbox_id);
 				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
-				// $fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
-				$fsft_lightbox = $fsft_link['engrid_use_lightbox'];
+				//$fsft_lightbox = get_field('engrid_use_lightbox', $lightbox_id);
 				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
 				$fsft_id = 'fs-donation-tab';
 
@@ -430,6 +432,7 @@ class Foursite_Wordpress_Promotion_Public {
 				$classes = "{$fsft_location}";
 
 				$attributes = '';
+
 				if(is_array($fsft_link['attributes'])) {
 					for($i = 0; $i < count($fsft_link['attributes']); $i++) {
 						$key = $fsft_link['attributes'][$i]['key'];
@@ -447,7 +450,7 @@ class Foursite_Wordpress_Promotion_Public {
 					}
 				}
 
-				if($fsft_lightbox == "yes") {
+				if($fsft_link['engrid_use_lightbox'] == 'yes') {
 					$attributes .= "data-donation-lightbox";
 				}
 
@@ -459,9 +462,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'id' => $lightbox_id,
+					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false
 				];
 
-				wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'multistep/dist/donation-lightbox-parent.js', array(), $this->version, false );
+				wp_enqueue_script( $this->foursite_wordpress_promotion, $multistep_script_url, array(), $this->version, false );
 				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 			}
 		}
