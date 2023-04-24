@@ -142,13 +142,16 @@ document.addEventListener('DOMContentLoaded', function() {
         })[0];
     }
 
-    window.onmessage = (e) => {
+    window.addEventListener('message', (e) => {
+      console.log('message', e);
       var iframe = getFrameByEvent(e);
-      if (iframe) {
+      if (iframe) {        
         if (e.data.hasOwnProperty("frameHeight")) {
           iframe.style.display = "block";
+          console.log('frameHeight', e.data.frameHeight);
           if (e.data.frameHeight) {
-            iframe.style.height = `${e.data.frameHeight}px`;            
+            iframe.style.height = `${e.data.frameHeight}px`;
+            console.log('setting frameHeight to ', e.data.frameHeight);
           }
         } else if (e.data.hasOwnProperty("scroll") && e.data.scroll > 0) {
           const elDistanceToTop =
@@ -182,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
           closeLightbox(lightbox);
         }
       }
-    };
+    });
   };
   setLightbox();
 
