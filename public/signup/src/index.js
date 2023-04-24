@@ -10,7 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let logo = "";
   if (fs_signup_options.logoURL) {
-    logo += `<img src="${fs_signup_options.logoURL}" />`;
+    logo += `<div class="fs-signup-logo"><img src="${fs_signup_options.logoURL}" /></div>`;
+  }
+
+  let css = "";
+  if (fs_signup_options.css) {
+    css += `<style>${fs_signup_options.css}</style>`;
   }
 
   let content = "";
@@ -23,9 +28,24 @@ document.addEventListener('DOMContentLoaded', function() {
   if (fs_signup_options.iframe) {
     content += `${fs_signup_options.iframe.replace("data-src", "src")}`;
   }
-  // if (fs_signup_options.info) {
-  //   content += `<p class="italic fs-signup-footer">${fs_signup_options.info}</p>`;
-  // }
+
+  let footer = "";
+  if (fs_signup_options.footer) {
+    footer += `
+      <div class="fs-signup-footer">
+      <p>${fs_signup_options.info}</p>
+      </div>
+    `;
+  }
+
+  let image = "";
+  if (fs_signup_options.imageURL) {
+    image += `
+      <div class="fs-signup-container-image" style="background-image: url('${fs_signup_options.imageURL}');">
+        <img src="${fs_signup_options.imageURL}" />
+      </div>    
+    `;
+  }
 
   const hideSignUpForm = !!parseInt(crumbs.get(fs_signup_options.cookie_name)); // Get cookie
 
@@ -61,21 +81,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="fs-signup-container">
               <div class="fs-signup-lightbox-content">
                 <div class="fs-signup-close-btn"></div>
-                <div class="fs-signup-logo">
-                  ${logo}
-                </div>          
-                <div class="fs-signup-container-image" style="background-image: url('${fs_signup_options.imageURL}');">
-                  <img src="${fs_signup_options.imageURL}" />
-                </div>
+                ${logo}
+                ${image}
                 <div class="fs-signup-container-form">
                   ${content}
                 </div>
               </div>
-              <div class="fs-signup-footer">
-                <p>${fs_signup_options.info}</p>                    
-              </div>
+              ${footer}
             </div>
-          </div>`
+          </div>
+          ${css}
+        `
       );
     }
     const lightbox = document.querySelector(".fs-signup-lightbox");

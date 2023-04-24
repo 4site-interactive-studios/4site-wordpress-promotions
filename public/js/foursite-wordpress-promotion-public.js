@@ -12,7 +12,8 @@ window.addEventListener("DOMContentLoaded", () => {
   let scroll_per_triggered = [];
   let exit_triggered = [];  
   let js_triggered = [];
-
+  let time_triggered = [];
+ 
   window.rawCodeTriggers = [];
 
   for (const lightbox_id in client_side_triggered_config) {
@@ -49,21 +50,14 @@ window.addEventListener("DOMContentLoaded", () => {
         js_triggered.push(client_side_triggered_config[lightbox_id]);
         break;
       case 'seconds':
-        // set a timeout and launch
-        if(trigger > 0) {
-          window.setTimeout(() => {
-            launchPromotion(client_side_triggered_config[lightbox_id]);
-          }, trigger);  
-        } else {
-          launchPromotion(client_side_triggered_config[lightbox_id]);
-        }
+        time_triggered.push({ seconds: trigger, promo: client_side_triggered_config[lightbox_id] });
         break;
       default:
         break;
     }
   }
 
-  function addMultistepLightbox(promotion) {
+  function addMultistepLightbox(promotion) { 
     if(window.donationLightboxObj) {
       delete window.donationLightboxObj;
     }
@@ -76,7 +70,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function launchPromotion(promotion) {
-    console.log('launchPromotion: ', promotion.promotion_type);
     switch(promotion.promotion_type) {
       case 'multistep_lightbox':
         if(window.lightbox_triggered) {
@@ -120,6 +113,21 @@ window.addEventListener("DOMContentLoaded", () => {
   }
   if(js_triggered.length) {
     addEventListener("trigger-promotion", jsTrigger);
+  }
+  if(time_triggered.length) {
+    let zero_counter = 0;
+    for(let i = 0; i < time_triggered.length; i++) {
+      if(time_triggered[i].seconds == 0 && zero_counter == 0) {
+        launchPromotion(time_triggered[i].promo);
+      } else {
+        window.setTimeout(() => {
+          launchPromotion(time_triggered[i].promo);
+        }, time_triggered[i].seconds + (zero_counter * .5));
+      }
+      if(time_triggered[i].seconds == 0) {
+        zero_counter++;
+      }
+    }
   }
 
   function exitTrigger() {
@@ -273,28 +281,34 @@ window.addEventListener("DOMContentLoaded", () => {
   function addFloatingTab(promotion) {
 
     const html_container = document.createElement("div");
-      html_container.innerHTML = promotion.html;
-      const floating_tab_element = html_container.children[0];
-      floating_tab_element.classList.add("floating-tab-html");
-      floating_tab_element.classList.add("floating-tab-element");
-      floating_tab_element.classList.add("promotion-element");
-      floating_tab_element.classList.add("promotion-" + promotion.id);
-      document.body.appendChild(floating_tab_element);
+    html_container.innerHTML = promotion.html;
+    const floating_tab_element = html_container.children[0];
+    floating_tab_element.classList.add("floating-tab-html");
+    floating_tab_element.classList.add("floating-tab-element");
+    floating_tab_element.classList.add("promotion-element");
+    floating_tab_element.classList.add("promotion-" + promotion.id);
+    document.body.appendChild(floating_tab_element);
 
-      if (promotion.css) {
-        const new_css = document.createElement("style");
-        new_css.setAttribute("type", "text/css");
-        new_css.classList.add("floating-tab-css");
-        new_css.classList.add("floating-tab-element");
-        new_css.classList.add("promotion-element");
-        new_css.classList.add("promotion-" + promotion.id);
-        new_css.textContent = promotion.css;
-        document.body.appendChild(new_css);
-      }
+    if (promotion.css) {
+      const new_css = document.createElement("style");
+      new_css.setAttribute("type", "text/css");
+      new_css.classList.add("floating-tab-css");
+      new_css.classList.add("floating-tab-element");
+      new_css.classList.add("promotion-element");
+      new_css.classList.add("promotion-" + promotion.id);
+      new_css.textContent = promotion.css;
+      document.body.appendChild(new_css);
+    }
 
-      if(promotion.open_lightbox) {
-        window.donationLightboxObj = new DonationLightbox();
+    if(promotion.open_lightbox) {
+      if(window.DonationLightboxOptions) {
+        delete window.DonationLightboxOptions;
       }
+      if(window.donationLightboxObj) {
+        delete window.donationLightboxObj;
+      }
+      window.donationLightboxObj = new DonationLightbox();
+    }
   }
 
   function setCookie(cookie, hours = 24, path = "/") {
