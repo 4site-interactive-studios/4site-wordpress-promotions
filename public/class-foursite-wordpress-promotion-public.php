@@ -88,68 +88,16 @@ class Foursite_Wordpress_Promotion_Public {
 		$current_page_url = get_permalink();
 		// Get the current page ID
 		$current_page_id = url_to_postid( $current_page_url );
-		$show_on_args = array(
-			'relation' => 'OR',
-			array(
-					'key' => 'engrid_show_on',
-					'value' => '"'.$current_page_id.'"',
-					'compare' => 'LIKE',
-				),
-				array(
-					'key' => 'engrid_show_on',
-					'value' => '',
-					'compare' => '=',
-				),
-			);
-			
-		$hide_on_args = array(
-			'relation' => 'OR',
-			array(
-					'key' => 'engrid_hide_on',
-					'value' => '"'.$current_page_id.'"',
-					'compare' => 'NOT LIKE',
-				),
-				array(
-					'key' => 'engrid_hide_on',
-					'value' => '',
-					'compare' => '=',
-				),
-			);
-		$hide_on_args = array(
-			'relation' => 'OR',
-			array(
-					'key' => 'engrid_hide_on',
-					'value' => '"'.$current_page_id.'"',
-					'compare' => 'NOT LIKE',
-				),
-				array(
-					'key' => 'engrid_hide_on',
-					'value' => '',
-					'compare' => '=',
-				),
-			);
-		$display_args = array(
-			'relation' => 'OR',
-			array(
-				'key' => 'engrid_lightbox_display',
-				'value' => 'turned-off',
-				'compare' => '!=',
-			),
-			array(
-				'key' => 'engrid_lightbox_display',
-				'value' => '',
-				'compare' => '=',
-			),
-		);
 		$args = array(
 			'numberposts'	=> -1,
 			'post_type'		=> 'wordpress_promotion',
 			'post_status'   => 'publish',
 			'meta_query'	=> array(
-				'relation'		=> 'AND',
-				$show_on_args,
-				$hide_on_args,
-				$display_args,
+				array(
+					'key' => 'engrid_lightbox_display',
+					'value' => 'turned-off',
+					'compare' => '!='
+				),
 			)
 		);
 
@@ -164,7 +112,15 @@ class Foursite_Wordpress_Promotion_Public {
 				$lightbox_start = get_field('engrid_start_date', $lightbox_id);
 				$lightbox_end = get_field('engrid_end_date', $lightbox_id);
 				$lightbox_display = get_field("engrid_lightbox_display", $lightbox_id);
-				
+				$hide_on = get_field('engrid_hide_on', $lightbox_id);
+				$show_on = get_field('engrid_show_on', $lightbox_id);
+				if(is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
+					continue;
+				}
+				if(is_array($show_on) && count($show_on) && !in_array($current_page_id, $show_on)) {
+					continue;
+				}
+
 				if($whitelist){
 					// Explode the whitelist into an array
 					$whitelist_array = explode(',', $whitelist);
