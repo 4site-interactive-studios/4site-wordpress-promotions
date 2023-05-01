@@ -227,13 +227,6 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$confetti = array();
-			$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
-			$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
-			$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
-			$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
-			$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
-			$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
-			$engrid_signup_info = get_field('engrid_signup_info', $lightbox_id);
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
@@ -266,7 +259,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
 			$engrid_confetti = json_encode($confetti);
-			$logo_position_options = $engrid_logo_position['position_options'];
+			$logo_position_options = isset($engrid_logo_position['position_options']) ? $engrid_logo_position['position_options'] : [];
 			if(!is_array($logo_position_options)) {
 				$logo_position_options = [];
 			}
@@ -320,7 +313,13 @@ class Foursite_Wordpress_Promotion_Public {
 				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 
 			} else if ($engrid_promotion_type == "pushdown") {
-
+				$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
+				$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
+				$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
+				$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
+				$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
+				$resized_pushdown_image = isset($engrid_pushdown_image["sizes"]["2048x2048"]) ? $engrid_pushdown_image["sizes"]["2048x2048"] : '';
+				
 				$client_side_triggered_config[$lightbox_id] = [
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_pushdown_link,

@@ -163,7 +163,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function scrollPercentTrigger() {
     const client_height = document.documentElement.clientHeight;
-    const scroll_height = document.documentElement.scrollHeight - clientHeight;
+    const scroll_height = document.documentElement.scrollHeight - client_height;
 
     for(let i = scroll_per_triggered.length-1; i >= 0; i--) {
       const target = (scroll_per_triggered[i].trigger / 100) * scroll_height;
