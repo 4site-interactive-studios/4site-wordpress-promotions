@@ -348,6 +348,7 @@ class Foursite_Wordpress_Promotion_Public {
 						.fs-signup-container {
 							max-width: {$max_width};
 							width: 100%;
+							overflow-y: scroll;
 						}
 						.fs-signup-lightbox .fs-signup-lightbox-content,
 						.fs-signup-container-form {
