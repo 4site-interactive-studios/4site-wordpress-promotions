@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
   }
 
+  let layout_class = "";
+  if (fs_signup_options.layout) {
+    layout_class += fs_signup_options.layout;
+  }
+
   const hideSignUpForm = !!parseInt(crumbs.get(fs_signup_options.cookie_name)); // Get cookie
 
   // This is for disable mobile view
@@ -77,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
       body.insertAdjacentHTML(
         "afterbegin",
         `
-          <div class="fs-signup-lightbox fs-signup-hidden" style="display: none;">
+          <div class="fs-signup-lightbox fs-signup-hidden ${layout_class}" style="display: none;">
             <div class="fs-signup-container">
               <div class="fs-signup-lightbox-content">
                 <div class="fs-signup-close-btn"></div>

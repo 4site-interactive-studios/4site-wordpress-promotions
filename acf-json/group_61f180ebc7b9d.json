@@ -151,6 +151,70 @@
                 "first_day": 1
             },
             {
+                "key": "field_6445bdb9e43f7",
+                "label": "Layout",
+                "name": "layout",
+                "aria-label": "",
+                "type": "button_group",
+                "instructions": "One Column - Tall Embedded Form <br>\r\nTwo Column - Wide Image and Short Embedded Form",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "one-col": "One Column",
+                    "two-col": "Two Column"
+                },
+                "default_value": "two-col",
+                "return_format": "value",
+                "allow_null": 0,
+                "layout": "horizontal"
+            },
+            {
+                "key": "field_6445d7ea53385",
+                "label": "Max Width",
+                "name": "max_width",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "one-col"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
                 "key": "field_61f1829913df9",
                 "label": "Title",
                 "name": "engrid_title",
@@ -171,6 +235,11 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "two-col"
                         }
                     ]
                 ],
@@ -442,6 +511,11 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "two-col"
                         }
                     ]
                 ],
@@ -772,6 +846,11 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "two-col"
                         }
                     ]
                 ],
@@ -812,6 +891,11 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "two-col"
                         }
                     ]
                 ],
@@ -925,6 +1009,11 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "two-col"
                         }
                     ]
                 ],
@@ -1346,6 +1435,18 @@
                             "field": "field_63694582ec47e",
                             "operator": "==",
                             "value": "floating_tab"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_6445bdb9e43f7",
+                            "operator": "==",
+                            "value": "one-col"
                         }
                     ]
                 ],

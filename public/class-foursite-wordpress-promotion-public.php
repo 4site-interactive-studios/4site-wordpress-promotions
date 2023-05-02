@@ -358,8 +358,6 @@ class Foursite_Wordpress_Promotion_Public {
 						$engrid_css = "
 						.fs-signup-container {
 							max-width: {$max_width};
-							width: 100%;
-							overflow-y: auto;
 						}
 						.fs-signup-lightbox .fs-signup-lightbox-content,
 						.fs-signup-container-form {
@@ -382,6 +380,7 @@ class Foursite_Wordpress_Promotion_Public {
 						dates: [],
 						blacklist: [],
 						whitelist: [],
+						layout: "$layout",
 						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
 					};
 					ENGRID;

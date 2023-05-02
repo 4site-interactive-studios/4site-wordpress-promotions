@@ -220,3 +220,19 @@ img {
 .fs-signup-lightbox {
   height: calc(max(100%, 100vh));
 }
+
+// Overrides for one-column signup
+.fs-signup-lightbox.one-col {
+  .fs-signup-container-form iframe {
+    margin-bottom: 0;
+  }
+  .fs-signup-container {
+    margin: 0;
+    width: 100%;
+    overflow-y: auto;
+  }
+  .fs-signup-lightbox-content {
+    padding: 0;
+  }
+}
+
