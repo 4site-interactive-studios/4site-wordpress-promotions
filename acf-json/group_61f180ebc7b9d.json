@@ -1,1862 +1,1825 @@
-{
-    "key": "group_61f180ebc7b9d",
-    "title": "Foursite Wordpress Promotions",
-    "fields": [
-        {
-            "key": "field_61f184a2c864f",
-            "label": "Content & Styles",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0
-        },
-        {
-            "key": "field_63694582ec47e",
-            "label": "Promotion Type",
-            "name": "engrid_promotion_type",
-            "aria-label": "",
-            "type": "button_group",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "100",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "multistep_lightbox": "EN Multistep Lightbox",
-                "signup_lightbox": "EN Lightbox",
-                "pushdown": "Pushdown",
-                "floating_tab": "Floating Tab",
-                "raw_code": "Raw Code"
-            },
-            "default_value": "",
-            "return_format": "value",
-            "allow_null": 0,
-            "layout": "horizontal"
-        },
-        {
-            "key": "field_6420da53c4965",
-            "label": "Is Lightbox",
-            "name": "is_lightbox",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "raw_code"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "100",
-                "class": "",
-                "id": ""
-            },
-            "message": "If checked, this promotion will be treated as a lightbox insofar as the 1\/per-page limit is concerned.",
-            "default_value": 0,
-            "ui_on_text": "Lightbox",
-            "ui_off_text": "Not Lightbox",
-            "ui": 1
-        },
-        {
-            "key": "field_630676e57bb3b",
-            "label": "Promotion Visibility",
-            "name": "engrid_lightbox_display",
-            "aria-label": "",
-            "type": "button_group",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "100",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "turned-on": "Turned On",
-                "turned-off": "Turned Off",
-                "scheduled": "Scheduled"
-            },
-            "default_value": "",
-            "return_format": "value",
-            "allow_null": 0,
-            "layout": "horizontal"
-        },
-        {
-            "key": "field_61f1856cc8652",
-            "label": "Start Date",
-            "name": "engrid_start_date",
-            "aria-label": "",
-            "type": "date_picker",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_630676e57bb3b",
-                        "operator": "==",
-                        "value": "scheduled"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "display_format": "m\/d\/Y",
-            "return_format": "m\/d\/Y",
-            "first_day": 1
-        },
-        {
-            "key": "field_61f185aac8653",
-            "label": "End Date",
-            "name": "engrid_end_date",
-            "aria-label": "",
-            "type": "date_picker",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_630676e57bb3b",
-                        "operator": "==",
-                        "value": "scheduled"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "display_format": "m\/d\/Y",
-            "return_format": "m\/d\/Y",
-            "first_day": 1
-        },
-        {
-            "key": "field_6445bdb9e43f7",
-            "label": "Layout",
-            "name": "layout",
-            "aria-label": "",
-            "type": "button_group",
-            "instructions": "One Column - Tall Embedded Form <br>\r\nTwo Column - Wide Image and Short Embedded Form",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "one-col": "One Column",
-                "two-col": "Two Column"
-            },
-            "default_value": "two-col",
-            "return_format": "value",
-            "allow_null": 0,
-            "layout": "horizontal"
-        },
-        {
-            "key": "field_6445d7ea53385",
-            "label": "Max Width",
-            "name": "max_width",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "one-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_61f1829913df9",
-            "label": "Title",
-            "name": "engrid_title",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Title of the Lightbox.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "two-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_61f180fb94e9c",
-            "label": "Engaging Networks Page",
-            "name": "engrid_donation_page",
-            "aria-label": "",
-            "type": "url",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": ""
-        },
-        {
-            "key": "field_63bc637c4661c",
-            "label": "Pushdown Type",
-            "name": "engrid_pushdown_type",
-            "aria-label": "",
-            "type": "radio",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "pushdown"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "image": "Image",
-                "text": "Text"
-            },
-            "default_value": "",
-            "return_format": "value",
-            "allow_null": 0,
-            "other_choice": 0,
-            "layout": "vertical",
-            "save_other_choice": 0
-        },
-        {
-            "key": "field_63bc64544661d",
-            "label": "Pushdown Link",
-            "name": "engrid_pushdown_link",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "pushdown"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_63bdc41e5682c",
-            "label": "Pushdown Title",
-            "name": "engrid_pushdown_title",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "pushdown"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_63bc6d8161fe4",
-            "label": "Pushdown Image",
-            "name": "engrid_pushdown_image",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "pushdown"
-                    },
-                    {
-                        "field": "field_63bc637c4661c",
-                        "operator": "==",
-                        "value": "image"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "array",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_63bee8909b82f",
-            "label": "Pushdown Gif",
-            "name": "engrid_pushdown_gif",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "Use this field to upload a gif for the pushdown.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "pushdown"
-                    },
-                    {
-                        "field": "field_63bc637c4661c",
-                        "operator": "==",
-                        "value": "image"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_6243ac17400c8",
-            "label": "Hero Type",
-            "name": "engrid_hero_type",
-            "aria-label": "",
-            "type": "radio",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "image": "Image",
-                "autoplay-video": "Auto play Video",
-                "click-to-play-video": "Click to Play Video"
-            },
-            "default_value": "",
-            "return_format": "value",
-            "allow_null": 0,
-            "other_choice": 0,
-            "layout": "vertical",
-            "save_other_choice": 0
-        },
-        {
-            "key": "field_61f181cf13df7",
-            "label": "Image",
-            "name": "engrid_image",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "Main Image of the Lightbox.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_6243ac17400c8",
-                        "operator": "==",
-                        "value": "image"
-                    },
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "two-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_6243ab00400c7",
-            "label": "Video",
-            "name": "engrid_video",
-            "aria-label": "",
-            "type": "file",
-            "instructions": "Main Video of the Lightbox.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_6243ac17400c8",
-                        "operator": "==",
-                        "value": "autoplay-video"
-                    },
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_6243ac17400c8",
-                        "operator": "==",
-                        "value": "click-to-play-video"
-                    },
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_size": "",
-            "max_size": "",
-            "mime_types": "mp4"
-        },
-        {
-            "key": "field_6243b14305fca",
-            "label": "Divider",
-            "name": "engrid_divider",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "SVG Image Used Between the Hero and the Content Area",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "100",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "svg",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_624ca8da9a726",
-            "label": "Use Logo",
-            "name": "engrid_use_logo",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "",
-            "default_value": 1,
-            "ui_on_text": "Yes",
-            "ui_off_text": "No",
-            "ui": 1
-        },
-        {
-            "key": "field_6243ad93bd622",
-            "label": "Logo Position",
-            "name": "engrid_logo_position",
-            "aria-label": "",
-            "type": "group",
-            "instructions": "The video will be muted and auto-play with an infinite loop if true.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_624ca8da9a726",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "layout": "block",
-            "sub_fields": [
-                {
-                    "key": "field_6243ade2bd623",
-                    "label": "Top",
-                    "name": "top",
-                    "aria-label": "",
-                    "type": "number",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": 25,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "px",
-                    "min": "",
-                    "max": "",
-                    "step": ""
+[
+    {
+        "key": "group_61f180ebc7b9d",
+        "title": "Foursite Wordpress Promotions",
+        "fields": [
+            {
+                "key": "field_61f184a2c864f",
+                "label": "Content & Styles",
+                "name": "",
+                "aria-label": "",
+                "type": "tab",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
                 },
-                {
-                    "key": "field_6243ae45bd624",
-                    "label": "Bottom",
-                    "name": "bottom",
-                    "aria-label": "",
-                    "type": "number",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": 0,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "px",
-                    "min": "",
-                    "max": "",
-                    "step": ""
+                "placement": "top",
+                "endpoint": 0
+            },
+            {
+                "key": "field_63694582ec47e",
+                "label": "Promotion Type",
+                "name": "engrid_promotion_type",
+                "aria-label": "",
+                "type": "button_group",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "100",
+                    "class": "",
+                    "id": ""
                 },
-                {
-                    "key": "field_6243b0ee68cd8",
-                    "label": "Left",
-                    "name": "left",
-                    "aria-label": "",
-                    "type": "number",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": 25,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "px",
-                    "min": "",
-                    "max": "",
-                    "step": ""
+                "choices": {
+                    "multistep_lightbox": "EN Multistep Lightbox",
+                    "signup_lightbox": "EN Signup Lightbox",
+                    "pushdown": "Pushdown",
+                    "floating_tab": "Floating Tab",
+                    "raw_code": "Raw Code"
                 },
-                {
-                    "key": "field_6243b0fd68cd9",
-                    "label": "Right",
-                    "name": "right",
-                    "aria-label": "",
-                    "type": "number",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": 0,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "px",
-                    "min": "",
-                    "max": "",
-                    "step": ""
-                }
-            ]
-        },
-        {
-            "key": "field_61f1822313df8",
-            "label": "Logo",
-            "name": "engrid_logo",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "Logo Image Used on the center of the Lightbox. On mobile, it will be scaled down and moved to the top.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_624ca8da9a726",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "two-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
+                "default_value": "",
+                "return_format": "value",
+                "allow_null": 0,
+                "layout": "horizontal"
             },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_61f182a213dfa",
-            "label": "Paragraph",
-            "name": "engrid_paragraph",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "Content of the Lightbox.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "two-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": 4,
-            "placeholder": "",
-            "new_lines": "br"
-        },
-        {
-            "key": "field_61f1833c13dfc",
-            "label": "Text Color",
-            "name": "engrid_text_color",
-            "aria-label": "",
-            "type": "color_picker",
-            "instructions": "HEX color of the left column text.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "33",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "#FFFFFF",
-            "enable_opacity": 0,
-            "return_format": "string"
-        },
-        {
-            "key": "field_61f182b413dfb",
-            "label": "Background Color",
-            "name": "engrid_bg_color",
-            "aria-label": "",
-            "type": "color_picker",
-            "instructions": "HEX color of the left column background.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "33",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "#000000",
-            "enable_opacity": 0,
-            "return_format": "string"
-        },
-        {
-            "key": "field_61f1835413dfd",
-            "label": "Form Theme Color",
-            "name": "engrid_form_color",
-            "aria-label": "",
-            "type": "color_picker",
-            "instructions": "HEX color for the form theme.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "33",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "#000000",
-            "enable_opacity": 0,
-            "return_format": "string"
-        },
-        {
-            "key": "field_61f1837e13dfe",
-            "label": "Footer",
-            "name": "engrid_footer",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "Content of the footer.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "two-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": 4,
-            "placeholder": "",
-            "new_lines": "br"
-        },
-        {
-            "key": "field_6243b2605a3e1",
-            "label": "Celebration Confetti Colors",
-            "name": "engrid_confetti",
-            "aria-label": "",
-            "type": "repeater",
-            "instructions": "Colors for the celebration confetti. Remove all to disable the confetti.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "table",
-            "pagination": 0,
-            "min": 0,
-            "max": 0,
-            "collapsed": "",
-            "button_label": "Add Color",
-            "rows_per_page": 20,
-            "sub_fields": [
-                {
-                    "key": "field_6243b2945a3e2",
-                    "label": "Color",
-                    "name": "color",
-                    "aria-label": "",
-                    "type": "color_picker",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "enable_opacity": 0,
-                    "return_format": "string",
-                    "parent_repeater": "field_6243b2605a3e1"
-                }
-            ]
-        },
-        {
-            "key": "field_6369483fec484",
-            "label": "Javascript",
-            "name": "engrid_javascript",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "Add your own script tags as needed",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "raw_code"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_63694921ec485",
-            "label": "HTML",
-            "name": "engrid_html",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "raw_code"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_63e17c159eef3",
-            "label": "Color",
-            "name": "engrid_fsft_color",
-            "aria-label": "",
-            "type": "group",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "block",
-            "sub_fields": [
-                {
-                    "key": "field_63e17c159eef4",
-                    "label": "Foreground",
-                    "name": "foreground",
-                    "aria-label": "",
-                    "type": "color_picker",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "enable_opacity": 0,
-                    "return_format": "string"
-                },
-                {
-                    "key": "field_63e17c159eef5",
-                    "label": "Background",
-                    "name": "background",
-                    "aria-label": "",
-                    "type": "color_picker",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "enable_opacity": 0,
-                    "return_format": "string"
-                }
-            ]
-        },
-        {
-            "key": "field_63e17c4184c93",
-            "label": "Radius",
-            "name": "engrid_fsft_radius",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_63e17c5184c94",
-            "label": "Location",
-            "name": "engrid_fsft_location",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "fixed-in-page": "Fixed on Page",
-                "scrolls-with-page": "Scrolls with page"
-            },
-            "default_value": "scrolls",
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "ui": 0,
-            "ajax": 0,
-            "placeholder": ""
-        },
-        {
-            "key": "field_63e18264ddd9b",
-            "label": "Link",
-            "name": "engrid_fsft_link",
-            "aria-label": "",
-            "type": "group",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "block",
-            "sub_fields": [
-                {
-                    "key": "field_63e18264ddd9c",
-                    "label": "Label",
-                    "name": "label",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
-                    "key": "field_63e18264ddd9d",
-                    "label": "URL",
-                    "name": "url",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "50",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
-                    "key": "field_63ecfc3eb6f2a",
-                    "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
-                    "name": "engrid_use_lightbox",
-                    "aria-label": "",
-                    "type": "button_group",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "choices": {
-                        "no": "No",
-                        "yes": "Yes"
-                    },
-                    "default_value": "no",
-                    "return_format": "value",
-                    "allow_null": 0,
-                    "layout": "horizontal"
-                },
-                {
-                    "key": "field_63e18264ddd9e",
-                    "label": "Optional Attributes",
-                    "name": "attributes",
-                    "aria-label": "",
-                    "type": "repeater",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "layout": "table",
-                    "pagination": 0,
-                    "min": 0,
-                    "max": 0,
-                    "collapsed": "",
-                    "button_label": "Add Row",
-                    "rows_per_page": 20,
-                    "sub_fields": [
+            {
+                "key": "field_6420da53c4965",
+                "label": "Is Lightbox",
+                "name": "is_lightbox",
+                "aria-label": "",
+                "type": "true_false",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
                         {
-                            "key": "field_63e18264ddd9f",
-                            "label": "Key",
-                            "name": "key",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "33",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "parent_repeater": "field_63e18264ddd9e"
-                        },
-                        {
-                            "key": "field_63e18264ddda0",
-                            "label": "Value",
-                            "name": "value",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "parent_repeater": "field_63e18264ddd9e"
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "raw_code"
                         }
                     ]
+                ],
+                "wrapper": {
+                    "width": "100",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "If checked, this promotion will be treated as a lightbox insofar as the 1\/per-page limit is concerned.",
+                "default_value": 0,
+                "ui_on_text": "Lightbox",
+                "ui_off_text": "Not Lightbox",
+                "ui": 1
+            },
+            {
+                "key": "field_630676e57bb3b",
+                "label": "Promotion Visibility",
+                "name": "engrid_lightbox_display",
+                "aria-label": "",
+                "type": "button_group",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "100",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "turned-on": "Turned On",
+                    "turned-off": "Turned Off",
+                    "scheduled": "Scheduled"
+                },
+                "default_value": "",
+                "return_format": "value",
+                "allow_null": 0,
+                "layout": "horizontal"
+            },
+            {
+                "key": "field_61f1856cc8652",
+                "label": "Start Date",
+                "name": "engrid_start_date",
+                "aria-label": "",
+                "type": "date_picker",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_630676e57bb3b",
+                            "operator": "==",
+                            "value": "scheduled"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "display_format": "m\/d\/Y",
+                "return_format": "m\/d\/Y",
+                "first_day": 1
+            },
+            {
+                "key": "field_61f185aac8653",
+                "label": "End Date",
+                "name": "engrid_end_date",
+                "aria-label": "",
+                "type": "date_picker",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_630676e57bb3b",
+                            "operator": "==",
+                            "value": "scheduled"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "display_format": "m\/d\/Y",
+                "return_format": "m\/d\/Y",
+                "first_day": 1
+            },
+            {
+                "key": "field_61f1829913df9",
+                "label": "Title",
+                "name": "engrid_title",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Title of the Lightbox.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
+                "key": "field_61f180fb94e9c",
+                "label": "Engaging Networks Page",
+                "name": "engrid_donation_page",
+                "aria-label": "",
+                "type": "url",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": ""
+            },
+            {
+                "key": "field_63bc637c4661c",
+                "label": "Pushdown Type",
+                "name": "engrid_pushdown_type",
+                "aria-label": "",
+                "type": "radio",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "pushdown"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "image": "Image",
+                    "text": "Text"
+                },
+                "default_value": "",
+                "return_format": "value",
+                "allow_null": 0,
+                "other_choice": 0,
+                "layout": "vertical",
+                "save_other_choice": 0
+            },
+            {
+                "key": "field_63bc64544661d",
+                "label": "Pushdown Link",
+                "name": "engrid_pushdown_link",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "pushdown"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
+                "key": "field_63bdc41e5682c",
+                "label": "Pushdown Title",
+                "name": "engrid_pushdown_title",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "pushdown"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
+                "key": "field_63bc6d8161fe4",
+                "label": "Pushdown Image",
+                "name": "engrid_pushdown_image",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "pushdown"
+                        },
+                        {
+                            "field": "field_63bc637c4661c",
+                            "operator": "==",
+                            "value": "image"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "array",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "",
+                "preview_size": "medium"
+            },
+            {
+                "key": "field_63bee8909b82f",
+                "label": "Pushdown Gif",
+                "name": "engrid_pushdown_gif",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "Use this field to upload a gif for the pushdown.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "pushdown"
+                        },
+                        {
+                            "field": "field_63bc637c4661c",
+                            "operator": "==",
+                            "value": "image"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "url",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "",
+                "preview_size": "medium"
+            },
+            {
+                "key": "field_6243ac17400c8",
+                "label": "Hero Type",
+                "name": "engrid_hero_type",
+                "aria-label": "",
+                "type": "radio",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "image": "Image",
+                    "autoplay-video": "Auto play Video",
+                    "click-to-play-video": "Click to Play Video"
+                },
+                "default_value": "",
+                "return_format": "value",
+                "allow_null": 0,
+                "other_choice": 0,
+                "layout": "vertical",
+                "save_other_choice": 0
+            },
+            {
+                "key": "field_61f181cf13df7",
+                "label": "Image",
+                "name": "engrid_image",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "Main Image of the Lightbox.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_6243ac17400c8",
+                            "operator": "==",
+                            "value": "image"
+                        },
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "url",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "",
+                "preview_size": "medium"
+            },
+            {
+                "key": "field_6243ab00400c7",
+                "label": "Video",
+                "name": "engrid_video",
+                "aria-label": "",
+                "type": "file",
+                "instructions": "Main Video of the Lightbox.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_6243ac17400c8",
+                            "operator": "==",
+                            "value": "autoplay-video"
+                        },
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_6243ac17400c8",
+                            "operator": "==",
+                            "value": "click-to-play-video"
+                        },
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "url",
+                "library": "all",
+                "min_size": "",
+                "max_size": "",
+                "mime_types": "mp4"
+            },
+            {
+                "key": "field_6243b14305fca",
+                "label": "Divider",
+                "name": "engrid_divider",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "SVG Image Used Between the Hero and the Content Area",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "100",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "url",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "svg",
+                "preview_size": "medium"
+            },
+            {
+                "key": "field_624ca8da9a726",
+                "label": "Use Logo",
+                "name": "engrid_use_logo",
+                "aria-label": "",
+                "type": "true_false",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "",
+                "default_value": 1,
+                "ui_on_text": "Yes",
+                "ui_off_text": "No",
+                "ui": 1
+            },
+            {
+                "key": "field_6243ad93bd622",
+                "label": "Logo Position",
+                "name": "engrid_logo_position",
+                "aria-label": "",
+                "type": "group",
+                "instructions": "The video will be muted and auto-play with an infinite loop if true.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_624ca8da9a726",
+                            "operator": "==",
+                            "value": "1"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "layout": "block",
+                "sub_fields": [
+                    {
+                        "key": "field_643044cbfe84c",
+                        "label": "Position Options",
+                        "name": "position_options",
+                        "aria-label": "",
+                        "type": "checkbox",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "choices": {
+                            "left": "left",
+                            "right": "right",
+                            "top": "top",
+                            "bottom": "bottom"
+                        },
+                        "default_value": [
+                            "left",
+                            "top"
+                        ],
+                        "return_format": "value",
+                        "allow_custom": 0,
+                        "layout": "horizontal",
+                        "toggle": 0,
+                        "save_custom": 0,
+                        "custom_choice_button_text": "Add new choice"
+                    },
+                    {
+                        "key": "field_6243ade2bd623",
+                        "label": "Top",
+                        "name": "top",
+                        "aria-label": "",
+                        "type": "number",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": [
+                            [
+                                {
+                                    "field": "field_643044cbfe84c",
+                                    "operator": "==",
+                                    "value": "top"
+                                }
+                            ]
+                        ],
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": 25,
+                        "min": "",
+                        "max": "",
+                        "placeholder": "",
+                        "step": "",
+                        "prepend": "",
+                        "append": "px"
+                    },
+                    {
+                        "key": "field_6243ae45bd624",
+                        "label": "Bottom",
+                        "name": "bottom",
+                        "aria-label": "",
+                        "type": "number",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": [
+                            [
+                                {
+                                    "field": "field_643044cbfe84c",
+                                    "operator": "==",
+                                    "value": "bottom"
+                                }
+                            ]
+                        ],
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": 0,
+                        "min": "",
+                        "max": "",
+                        "placeholder": "",
+                        "step": "",
+                        "prepend": "",
+                        "append": "px"
+                    },
+                    {
+                        "key": "field_6243b0ee68cd8",
+                        "label": "Left",
+                        "name": "left",
+                        "aria-label": "",
+                        "type": "number",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": [
+                            [
+                                {
+                                    "field": "field_643044cbfe84c",
+                                    "operator": "==",
+                                    "value": "left"
+                                }
+                            ]
+                        ],
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": 25,
+                        "min": "",
+                        "max": "",
+                        "placeholder": "",
+                        "step": "",
+                        "prepend": "",
+                        "append": "px"
+                    },
+                    {
+                        "key": "field_6243b0fd68cd9",
+                        "label": "Right",
+                        "name": "right",
+                        "aria-label": "",
+                        "type": "number",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": [
+                            [
+                                {
+                                    "field": "field_643044cbfe84c",
+                                    "operator": "==",
+                                    "value": "right"
+                                }
+                            ]
+                        ],
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": 0,
+                        "min": "",
+                        "max": "",
+                        "placeholder": "",
+                        "step": "",
+                        "prepend": "",
+                        "append": "px"
+                    }
+                ]
+            },
+            {
+                "key": "field_61f1822313df8",
+                "label": "Logo",
+                "name": "engrid_logo",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "Logo Image Used on the center of the Lightbox. On mobile, it will be scaled down and moved to the top.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_624ca8da9a726",
+                            "operator": "==",
+                            "value": "1"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "url",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "",
+                "preview_size": "medium"
+            },
+            {
+                "key": "field_61f182a213dfa",
+                "label": "Paragraph",
+                "name": "engrid_paragraph",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "Content of the Lightbox.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": 4,
+                "placeholder": "",
+                "new_lines": "br"
+            },
+            {
+                "key": "field_61f1833c13dfc",
+                "label": "Text Color",
+                "name": "engrid_text_color",
+                "aria-label": "",
+                "type": "color_picker",
+                "instructions": "HEX color of the left column text.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "#FFFFFF",
+                "enable_opacity": 0,
+                "return_format": "string"
+            },
+            {
+                "key": "field_61f182b413dfb",
+                "label": "Background Color",
+                "name": "engrid_bg_color",
+                "aria-label": "",
+                "type": "color_picker",
+                "instructions": "HEX color of the left column background.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "#000000",
+                "enable_opacity": 0,
+                "return_format": "string"
+            },
+            {
+                "key": "field_61f1835413dfd",
+                "label": "Form Theme Color",
+                "name": "engrid_form_color",
+                "aria-label": "",
+                "type": "color_picker",
+                "instructions": "HEX color for the form theme.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "#000000",
+                "enable_opacity": 0,
+                "return_format": "string"
+            },
+            {
+                "key": "field_61f1837e13dfe",
+                "label": "Footer",
+                "name": "engrid_footer",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "Content of the footer.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": 4,
+                "placeholder": "",
+                "new_lines": "br"
+            },
+            {
+                "key": "field_6243b2605a3e1",
+                "label": "Celebration Confetti Colors",
+                "name": "engrid_confetti",
+                "aria-label": "",
+                "type": "repeater",
+                "instructions": "Colors for the celebration confetti. Remove all to disable the confetti.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "layout": "table",
+                "pagination": 0,
+                "min": 0,
+                "max": 0,
+                "collapsed": "",
+                "button_label": "Add Color",
+                "rows_per_page": 20,
+                "sub_fields": [
+                    {
+                        "key": "field_6243b2945a3e2",
+                        "label": "Color",
+                        "name": "color",
+                        "aria-label": "",
+                        "type": "color_picker",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "enable_opacity": 0,
+                        "return_format": "string",
+                        "parent_repeater": "field_6243b2605a3e1"
+                    }
+                ]
+            },
+            {
+                "key": "field_6369483fec484",
+                "label": "Javascript",
+                "name": "engrid_javascript",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "Add your own script tags as needed",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "raw_code"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": "",
+                "placeholder": "",
+                "new_lines": ""
+            },
+            {
+                "key": "field_63694921ec485",
+                "label": "HTML",
+                "name": "engrid_html",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "raw_code"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": "",
+                "placeholder": "",
+                "new_lines": ""
+            },
+            {
+                "key": "field_63e17c159eef3",
+                "label": "Color",
+                "name": "engrid_fsft_color",
+                "aria-label": "",
+                "type": "group",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "layout": "block",
+                "sub_fields": [
+                    {
+                        "key": "field_63e17c159eef4",
+                        "label": "Foreground",
+                        "name": "foreground",
+                        "aria-label": "",
+                        "type": "color_picker",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "enable_opacity": 0,
+                        "return_format": "string"
+                    },
+                    {
+                        "key": "field_63e17c159eef5",
+                        "label": "Background",
+                        "name": "background",
+                        "aria-label": "",
+                        "type": "color_picker",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "enable_opacity": 0,
+                        "return_format": "string"
+                    }
+                ]
+            },
+            {
+                "key": "field_63e17c4184c93",
+                "label": "Radius",
+                "name": "engrid_fsft_radius",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
+                "key": "field_63e17c5184c94",
+                "label": "Location",
+                "name": "engrid_fsft_location",
+                "aria-label": "",
+                "type": "select",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "fixed-in-page": "Fixed on Page",
+                    "scrolls-with-page": "Scrolls with page"
+                },
+                "default_value": "scrolls",
+                "return_format": "value",
+                "multiple": 0,
+                "allow_null": 0,
+                "ui": 0,
+                "ajax": 0,
+                "placeholder": ""
+            },
+            {
+                "key": "field_63e18264ddd9b",
+                "label": "Link",
+                "name": "engrid_fsft_link",
+                "aria-label": "",
+                "type": "group",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "layout": "block",
+                "sub_fields": [
+                    {
+                        "key": "field_63e18264ddd9c",
+                        "label": "Label",
+                        "name": "label",
+                        "aria-label": "",
+                        "type": "text",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "maxlength": "",
+                        "placeholder": "",
+                        "prepend": "",
+                        "append": ""
+                    },
+                    {
+                        "key": "field_63e18264ddd9d",
+                        "label": "URL",
+                        "name": "url",
+                        "aria-label": "",
+                        "type": "text",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "50",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "maxlength": "",
+                        "placeholder": "",
+                        "prepend": "",
+                        "append": ""
+                    },
+                    {
+                        "key": "field_63ecfc3eb6f2a",
+                        "label": "Open this page in a Multistep Lightbox (requires compatible ENgrid page)",
+                        "name": "engrid_use_lightbox",
+                        "aria-label": "",
+                        "type": "button_group",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "choices": {
+                            "no": "No",
+                            "yes": "Yes"
+                        },
+                        "default_value": "no",
+                        "return_format": "value",
+                        "allow_null": 0,
+                        "layout": "horizontal"
+                    },
+                    {
+                        "key": "field_63e18264ddd9e",
+                        "label": "Optional Attributes",
+                        "name": "attributes",
+                        "aria-label": "",
+                        "type": "repeater",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "layout": "table",
+                        "pagination": 0,
+                        "min": 0,
+                        "max": 0,
+                        "collapsed": "",
+                        "button_label": "Add Row",
+                        "rows_per_page": 20,
+                        "sub_fields": [
+                            {
+                                "key": "field_63e18264ddd9f",
+                                "label": "Key",
+                                "name": "key",
+                                "aria-label": "",
+                                "type": "text",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "33",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
+                                "parent_repeater": "field_63e18264ddd9e"
+                            },
+                            {
+                                "key": "field_63e18264ddda0",
+                                "label": "Value",
+                                "name": "value",
+                                "aria-label": "",
+                                "type": "text",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
+                                "parent_repeater": "field_63e18264ddd9e"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "field_63694962ec486",
+                "label": "Custom CSS",
+                "name": "engrid_css",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "Don't put style tags here as they will automatically be added when loading the CSS.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "raw_code"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": "",
+                "placeholder": "",
+                "new_lines": ""
+            },
+            {
+                "key": "field_63e570f18bffd",
+                "label": "Custom HTML",
+                "name": "engrid_custom_svg",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "Add Custom HTML that will appear after the tab label. Useful for adding an SVG that can be styled and positioned when combined with Custom CSS.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "rows": "",
+                "placeholder": "",
+                "new_lines": ""
+            },
+            {
+                "key": "field_61f184e1c8650",
+                "label": "Trigger Options",
+                "name": "",
+                "aria-label": "",
+                "type": "tab",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "placement": "top",
+                "endpoint": 0
+            },
+            {
+                "key": "field_61f1e7ca4d5dc",
+                "label": "Trigger",
+                "name": "engrid_trigger_type",
+                "aria-label": "",
+                "type": "select",
+                "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "!=",
+                            "value": "signup_lightbox"
+                        },
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "!=",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "0": "Immediately",
+                    "seconds": "Seconds Later",
+                    "px": "On Pixel Scroll",
+                    "%": "On Percentage Scroll",
+                    "exit": "On Exit",
+                    "js": "Javascript Trigger"
+                },
+                "default_value": false,
+                "return_format": "value",
+                "multiple": 0,
+                "allow_null": 0,
+                "ui": 0,
+                "ajax": 0,
+                "placeholder": ""
+            },
+            {
+                "key": "field_61f1e8cad1f27",
+                "label": "Seconds",
+                "name": "engrid_trigger_seconds",
+                "aria-label": "",
+                "type": "number",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_61f1e7ca4d5dc",
+                            "operator": "==",
+                            "value": "seconds"
+                        }
+                    ],
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "signup_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": 2,
+                "min": "",
+                "max": "",
+                "placeholder": "",
+                "step": 1,
+                "prepend": "Trigger after",
+                "append": "seconds"
+            },
+            {
+                "key": "field_61f1e946d1f28",
+                "label": "Scroll",
+                "name": "engrid_trigger_scroll_pixels",
+                "aria-label": "",
+                "type": "number",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_61f1e7ca4d5dc",
+                            "operator": "==",
+                            "value": "px"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": 500,
+                "min": "",
+                "max": "",
+                "placeholder": "",
+                "step": 1,
+                "prepend": "Trigger after scrolling",
+                "append": "pixels"
+            },
+            {
+                "key": "field_61f1e998d1f29",
+                "label": "Percentage",
+                "name": "engrid_trigger_scroll_percentage",
+                "aria-label": "",
+                "type": "number",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_61f1e7ca4d5dc",
+                            "operator": "==",
+                            "value": "%"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": 50,
+                "placeholder": "",
+                "prepend": "Trigger after scrolling",
+                "append": "% of the page",
+                "min": "",
+                "max": "",
+                "step": ""
+            },
+            {
+                "key": "field_63e28926f3d25",
+                "label": "Trigger",
+                "name": "engrid_fsft_trigger_type",
+                "aria-label": "",
+                "type": "select",
+                "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "floating_tab"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "0": "Immediately",
+                    "js": "Javascript Trigger"
+                },
+                "default_value": false,
+                "return_format": "value",
+                "multiple": 0,
+                "allow_null": 0,
+                "ui": 0,
+                "ajax": 0,
+                "placeholder": ""
+            },
+            {
+                "key": "field_61f1839713dff",
+                "label": "Cookie Hours",
+                "name": "engrid_cookie_hours",
+                "aria-label": "",
+                "type": "number",
+                "instructions": "Number of hours to not show the promotion after the user has seen it.",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": 24,
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "min": "",
+                "max": "",
+                "step": 1
+            },
+            {
+                "key": "field_61f1c83ea39c4",
+                "label": "Cookie Name",
+                "name": "engrid_cookie_name",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "HideDonationLightbox",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_6329fadd7d28c",
+                "label": "Show On (URL Pattern)",
+                "name": "engrid_whitelist",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Comma-separated word\/slug list. It will show the lightbox if the URL contains any value from the list.",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_61f18500c8651",
+                "label": "Show On (Individual Pages)",
+                "name": "engrid_show_on",
+                "aria-label": "",
+                "type": "relationship",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "post_type": "",
+                "taxonomy": "",
+                "filters": [
+                    "search",
+                    "post_type",
+                    "taxonomy"
+                ],
+                "elements": [
+                    "featured_image"
+                ],
+                "min": "",
+                "max": "",
+                "return_format": "id"
+            },
+            {
+                "key": "field_6329fd0899134",
+                "label": "Hide On (URL Pattern)",
+                "name": "engrid_blacklist",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Comma-separated word\/slug list. It will show the promotion if the URL contains any value from the list.",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_61f185c0c8654",
+                "label": "Hide On (Individual Pages)",
+                "name": "engrid_hide_on",
+                "aria-label": "",
+                "type": "relationship",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "post_type": "",
+                "taxonomy": "",
+                "filters": [
+                    "search",
+                    "post_type",
+                    "taxonomy"
+                ],
+                "elements": [
+                    "featured_image"
+                ],
+                "min": "",
+                "max": "",
+                "return_format": "id"
+            },
+            {
+                "key": "field_61f1f16c7455e",
+                "label": "Google Tag Manager",
+                "name": "",
+                "aria-label": "",
+                "type": "tab",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_63694582ec47e",
+                            "operator": "==",
+                            "value": "multistep_lightbox"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "placement": "top",
+                "endpoint": 0
+            },
+            {
+                "key": "field_61f1f17a7455f",
+                "label": "Open Event Name",
+                "name": "engrid_gtm_open_event_name",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Name of the event to send when the lightbox is displayed.",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "donation_lightbox_display",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_61f1f1c774560",
+                "label": "Close Event Name",
+                "name": "engrid_gtm_close_event_name",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Name of the event to send when the lightbox is closed.",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "donation_lightbox_closed",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_61f1f1f474561",
+                "label": "Supression Event Name",
+                "name": "engrid_gtm_suppressed_event_name",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "Name of the event to send when the lightbox is suppressed (cookie found).",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "donation_lightbox_supressed",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "wordpress_promotion"
                 }
             ]
-        },
-        {
-            "key": "field_63694962ec486",
-            "label": "Custom CSS",
-            "name": "engrid_css",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "Don't put style tags here as they will automatically be added when loading the CSS.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "raw_code"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_6445bdb9e43f7",
-                        "operator": "==",
-                        "value": "one-col"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_63e570f18bffd",
-            "label": "Custom HTML",
-            "name": "engrid_custom_svg",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "Add Custom HTML that will appear after the tab label. Useful for adding an SVG that can be styled and positioned when combined with Custom CSS.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_61f184e1c8650",
-            "label": "Trigger Options",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0
-        },
-        {
-            "key": "field_61f1e7ca4d5dc",
-            "label": "Trigger",
-            "name": "engrid_trigger_type",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "!=",
-                        "value": "signup_lightbox"
-                    },
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "!=",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "0": "Immediately",
-                "seconds": "Seconds Later",
-                "px": "On Pixel Scroll",
-                "%": "On Percentage Scroll",
-                "exit": "On Exit",
-                "js": "Javascript Trigger"
-            },
-            "default_value": false,
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "ui": 0,
-            "ajax": 0,
-            "placeholder": ""
-        },
-        {
-            "key": "field_61f1e8cad1f27",
-            "label": "Seconds",
-            "name": "engrid_trigger_seconds",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_61f1e7ca4d5dc",
-                        "operator": "==",
-                        "value": "seconds"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "signup_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": 2,
-            "min": "",
-            "max": "",
-            "placeholder": "",
-            "step": 1,
-            "prepend": "Trigger after",
-            "append": "seconds"
-        },
-        {
-            "key": "field_61f1e946d1f28",
-            "label": "Scroll",
-            "name": "engrid_trigger_scroll_pixels",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_61f1e7ca4d5dc",
-                        "operator": "==",
-                        "value": "px"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": 500,
-            "min": "",
-            "max": "",
-            "placeholder": "",
-            "step": 1,
-            "prepend": "Trigger after scrolling",
-            "append": "pixels"
-        },
-        {
-            "key": "field_61f1e998d1f29",
-            "label": "Percentage",
-            "name": "engrid_trigger_scroll_percentage",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_61f1e7ca4d5dc",
-                        "operator": "==",
-                        "value": "%"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": 50,
-            "placeholder": "",
-            "prepend": "Trigger after scrolling",
-            "append": "% of the page",
-            "min": "",
-            "max": "",
-            "step": ""
-        },
-        {
-            "key": "field_63e28926f3d25",
-            "label": "Trigger",
-            "name": "engrid_fsft_trigger_type",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "For Javascript Trigger, open the promotion with triggerPromotion(id); \r\nReplace \"id\" with your promotion id.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "floating_tab"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "0": "Immediately",
-                "js": "Javascript Trigger"
-            },
-            "default_value": false,
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "ui": 0,
-            "ajax": 0,
-            "placeholder": ""
-        },
-        {
-            "key": "field_61f1839713dff",
-            "label": "Cookie Hours",
-            "name": "engrid_cookie_hours",
-            "aria-label": "",
-            "type": "number",
-            "instructions": "Number of hours to not show the promotion after the user has seen it.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": 24,
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "min": "",
-            "max": "",
-            "step": 1
-        },
-        {
-            "key": "field_61f1c83ea39c4",
-            "label": "Cookie Name",
-            "name": "engrid_cookie_name",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "HideDonationLightbox",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_6329fadd7d28c",
-            "label": "Show On (URL Pattern)",
-            "name": "engrid_whitelist",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Comma-separated word\/slug list. It will show the lightbox if the URL contains any value from the list.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_61f18500c8651",
-            "label": "Show On (Individual Pages)",
-            "name": "engrid_show_on",
-            "aria-label": "",
-            "type": "relationship",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "post_type": "",
-            "taxonomy": "",
-            "filters": [
-                "search",
-                "post_type",
-                "taxonomy"
-            ],
-            "elements": [
-                "featured_image"
-            ],
-            "min": "",
-            "max": "",
-            "return_format": "id"
-        },
-        {
-            "key": "field_6329fd0899134",
-            "label": "Hide On (URL Pattern)",
-            "name": "engrid_blacklist",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Comma-separated word\/slug list. It will show the promotion if the URL contains any value from the list.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_61f185c0c8654",
-            "label": "Hide On (Individual Pages)",
-            "name": "engrid_hide_on",
-            "aria-label": "",
-            "type": "relationship",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "post_type": "",
-            "taxonomy": "",
-            "filters": [
-                "search",
-                "post_type",
-                "taxonomy"
-            ],
-            "elements": [
-                "featured_image"
-            ],
-            "min": "",
-            "max": "",
-            "return_format": "id"
-        },
-        {
-            "key": "field_61f1f16c7455e",
-            "label": "Google Tag Manager",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_63694582ec47e",
-                        "operator": "==",
-                        "value": "multistep_lightbox"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0
-        },
-        {
-            "key": "field_61f1f17a7455f",
-            "label": "Open Event Name",
-            "name": "engrid_gtm_open_event_name",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Name of the event to send when the lightbox is displayed.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "donation_lightbox_display",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_61f1f1c774560",
-            "label": "Close Event Name",
-            "name": "engrid_gtm_close_event_name",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Name of the event to send when the lightbox is closed.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "donation_lightbox_closed",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_61f1f1f474561",
-            "label": "Supression Event Name",
-            "name": "engrid_gtm_suppressed_event_name",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Name of the event to send when the lightbox is suppressed (cookie found).",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "donation_lightbox_supressed",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        }
-    ],
-    "location": [
-        [
-            {
-                "param": "post_type",
-                "operator": "==",
-                "value": "wordpress_promotion"
-            }
-        ]
-    ],
-    "menu_order": 0,
-    "position": "normal",
-    "style": "default",
-    "label_placement": "top",
-    "instruction_placement": "label",
-    "hide_on_screen": "",
-    "active": true,
-    "description": "",
-    "show_in_rest": 0,
-    "modified": 1682299202
-}
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "default",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": true,
+        "description": "",
+        "show_in_rest": 0
+    }
+]

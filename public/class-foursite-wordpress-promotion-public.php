@@ -294,6 +294,17 @@ class Foursite_Wordpress_Promotion_Public {
 					'id' => $lightbox_id, 
 				];
 
+				if(count($logo_position_options)) {
+					$client_side_triggered_config[$lightbox_id]['logo_fix_css'] = "
+						.foursiteDonationLightbox .foursiteDonationLightbox-container .dl-content .dl-logo {
+							top: {$client_side_triggered_config[$lightbox_id]['logo_position_top']};
+							left: {$client_side_triggered_config[$lightbox_id]['logo_position_left']};
+							right: {$client_side_triggered_config[$lightbox_id]['logo_position_right']};
+							bottom: {$client_side_triggered_config[$lightbox_id]['logo_position_bottom']};
+						}
+					";
+				}
+
 				wp_enqueue_script( $this->foursite_wordpress_promotion, $multistep_script_url, $this->version, false );
 				wp_enqueue_script( 'foursite-wordpress-promotion-public', plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-public.js', array( 'jquery', $this->foursite_wordpress_promotion ), $this->version, false );
 

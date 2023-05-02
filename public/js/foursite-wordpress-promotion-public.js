@@ -61,6 +61,23 @@ window.addEventListener("DOMContentLoaded", () => {
     if(window.donationLightboxObj) {
       delete window.donationLightboxObj;
     }
+
+    // remove previously set logo fix CSS
+    const existing_logo_fix_css = document.querySelectorAll('.multistep-logo-fix');
+    for(let i = 0; i < existing_logo_fix_css.length; i++) {
+      existing_logo_fix_css[i].remove();
+    }
+
+    // add new logo fix CSS (the external multistep script doesn't seem to respect the values we pass in)
+    if(promotion.hasOwnProperty('logo_fix_css')) {
+      const new_css = document.createElement("style");
+      new_css.setAttribute("type", "text/css");
+      new_css.classList.add("multistep-logo-fix");
+      new_css.textContent = promotion.logo_fix_css;
+      console.log('setting new_css', promotion.logo_fix_css);
+      document.body.appendChild(new_css);
+    }
+
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
     // if a floating tab is on the page, the donation lightbox parent script has likely already set up click event listeners.
