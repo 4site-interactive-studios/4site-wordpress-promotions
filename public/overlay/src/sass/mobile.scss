@@ -1,0 +1,32 @@
+@media (max-width: 650px), (max-device-width: 650px) {
+  .overlay-container {
+    .overlay-content {
+      width: 95%;
+      padding-top: 35px;
+      .overlay-body {
+        max-width: 100%;
+        margin: auto;
+      }
+      .overlay-title {
+        font-size: 50px;
+        line-height: 1.2;
+        padding: 0;
+      }
+      .overlay-subtitle {
+        font-size: 40px;
+        line-height: 1.2;
+        padding: 0;
+      }
+      .overlay-paragraph {
+        font-size: 30px;
+        line-height: 30px;
+        padding: 0;
+      }
+      .overlay-form {
+        .overlay-amounts {
+          justify-content: center;
+        }
+      }
+    }
+  }
+}

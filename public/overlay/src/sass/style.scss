@@ -1,0 +1,28 @@
+$bg: #1e2022;
+$txt: #fff;
+$accent: #007cf9;
+$cta: #058ceb;
+
+body.has-modal {
+  overflow: hidden;
+}
+.foursite-en-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2147483645;
+  background-color: var(--bg-overlay-color, rgba($bg, 0.7));
+  width: 100vw;
+  height: 100vh;
+  transition: top 0.4s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.is-hidden {
+    top: -100vh;
+  }
+  @import "./overlay.scss";
+  @import "./mobile.scss";
+}
