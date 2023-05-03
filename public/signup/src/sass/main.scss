@@ -230,9 +230,16 @@ img {
     margin: 0;
     width: 100%;
     overflow-y: auto;
+    @media (max-width: 839px) {
+      max-height: 557px;
+    }
   }
   .fs-signup-lightbox-content {
     padding: 0;
+    margin: 0;
+
+    @media (max-width: 839px) {
+      max-height: unset;
+    }
   }
 }
-
