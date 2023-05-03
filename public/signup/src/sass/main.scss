@@ -223,6 +223,12 @@ img {
 
 // Overrides for one-column signup
 .fs-signup-lightbox.one-col {
+  .fs-signup-container-form {
+    margin: 0;
+    @media (min-width: 840px) {
+      margin: 0;
+    }
+  }
   .fs-signup-container-form iframe {
     margin-bottom: 0;
   }
