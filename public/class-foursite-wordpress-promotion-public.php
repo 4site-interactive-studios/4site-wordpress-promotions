@@ -307,8 +307,6 @@ class Foursite_Wordpress_Promotion_Public {
 
 				$client_side_triggered_config[] = $promo_config;
 
-				wp_enqueue_script( 'multistep-lightbox', $multistep_script_url, $script_ver, false );
-
 			} else if($engrid_promotion_type == "raw_code") {
 
 				$client_side_triggered_config[] = [
@@ -600,13 +598,11 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_hours' => $engrid_cookie_hours, 
 					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false
 				];
-
-				wp_enqueue_script( 'multistep-lightbox', $multistep_script_url, array(), $script_ver, false );
-
 			}
 		}
 
 		if(count($client_side_triggered_config)) {
+			wp_enqueue_script( 'multistep-lightbox', $multistep_script_url, array(), $script_ver, false );
 			wp_enqueue_script( 'foursite-wordpress-promotion-public', $main_script_url, array( 'multistep-lightbox' ), $script_ver, false );
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
 		}
