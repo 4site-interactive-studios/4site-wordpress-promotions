@@ -1,10 +1,10 @@
 window.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
-  if (window.client_side_triggered_config == undefined) {
+  if (client_side_triggered_config == undefined) {
     return;
   }
-
+ 
   // lightboxes are limited to 1/page, and can be launched from a few different scripts that set this variable
   window.lightbox_triggered = (window.lightbox_triggered === undefined) ? false : window.lightbox_triggered;
 
@@ -16,16 +16,15 @@ window.addEventListener("DOMContentLoaded", () => {
  
   window.rawCodeTriggers = [];
 
-  for (const lightbox_id in client_side_triggered_config) {
-
+  for (let i = 0; i < client_side_triggered_config.length; i++) {
     // skip if there is already a cookie set for this promo
-    const cookie = client_side_triggered_config[lightbox_id].cookie_name;
+    const cookie = client_side_triggered_config[i].cookie_name;
     if(getCookie(cookie)) {
       continue;
     }
 
     // add our promo to the appropriate array
-    let trigger = client_side_triggered_config[lightbox_id].trigger;
+    let trigger = client_side_triggered_config[i].trigger;
     const trigger_type = getTriggerType(trigger);
     if (!trigger_type) {
       trigger_type = 'seconds';
@@ -36,21 +35,21 @@ window.addEventListener("DOMContentLoaded", () => {
 
     switch(trigger_type) {
       case 'exit':
-        exit_triggered.push(client_side_triggered_config[lightbox_id]);
+        exit_triggered.push(client_side_triggered_config[i]);
         break;
       case 'pixels':
-        client_side_triggered_config[lightbox_id].trigger = Number(client_side_triggered_config[lightbox_id].trigger.replace("px", ""));
-        scroll_px_triggered.push(client_side_triggered_config[lightbox_id]);
+        client_side_triggered_config[i].trigger = Number(client_side_triggered_config[i].trigger.replace("px", ""));
+        scroll_px_triggered.push(client_side_triggered_config[i]);
         break;
       case 'percent':
-        client_side_triggered_config[lightbox_id].trigger = Number(client_side_triggered_config[lightbox_id].trigger.replace("%", ""));
-        scroll_per_triggered.push(client_side_triggered_config[lightbox_id]);
+        client_side_triggered_config[i].trigger = Number(client_side_triggered_config[i].trigger.replace("%", ""));
+        scroll_per_triggered.push(client_side_triggered_config[i]);
         break;
       case 'js':
-        js_triggered.push(client_side_triggered_config[lightbox_id]);
+        js_triggered.push(client_side_triggered_config[i]);
         break;
       case 'seconds':
-        time_triggered.push({ seconds: trigger, promo: client_side_triggered_config[lightbox_id] });
+        time_triggered.push({ seconds: trigger, promo: client_side_triggered_config[i] });
         break;
       default:
         break;
@@ -74,7 +73,6 @@ window.addEventListener("DOMContentLoaded", () => {
       new_css.setAttribute("type", "text/css");
       new_css.classList.add("multistep-logo-fix");
       new_css.textContent = promotion.logo_fix_css;
-      console.log('setting new_css', promotion.logo_fix_css);
       document.body.appendChild(new_css);
     }
 
@@ -322,51 +320,48 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function insertJs(promotion_id, js) {
-    // Remove line breaks between scripts
-      const js_container = document.createElement("div");
-      js_container.classList.add("promotion-js");
-      js_container.classList.add("promotion-element");
-      js_container.classList.add("promotion-" + promotion_id);
-      js_container.innerHTML = js;
+    const js_container_id = "promotion-" + promotion_id;
+    const js_container = document.createElement("div");
+    js_container.classList.add("promotion-js");
+    js_container.classList.add("promotion-element");
+    js_container.setAttribute("id", js_container_id);
+    js_container.innerHTML = js;
+    document.body.appendChild(js_container);
 
-      document.body.appendChild(js_container);
-      Array.from(document.querySelector(".promotion-js").children).forEach(
-        (child) => {
+    Array.from(document.getElementById(js_container_id).children).forEach((child) => {
+        if (child.innerHTML != "") {
 
-          if (child.innerHTML != "") {
+          eval(child.innerHTML);
 
-            eval(child.innerHTML);
+        } else if (child.tagName == "SCRIPT" && child.src != "") {
 
-          } else if (child.tagName == "SCRIPT" && child.src != "") {
+          const new_script = document.createElement("script");
+          [...child.attributes].forEach(attr => { 
+            new_script.setAttribute(attr.nodeName, attr.nodeValue);
+          });
+          new_script.classList.add("promotion-js");
+          new_script.classList.add("promotion-element");
+          new_script.classList.add("promotion-" + promotion_id);
 
-            const new_script = document.createElement("script");
-            new_script.setAttribute("src", child.src);
-            new_script.classList.add("promotion-js");
-            new_script.classList.add("promotion-element");
-            new_script.classList.add("promotion-" + promotion_id);
+          child.remove();
+          document.getElementsByTagName("head")[0].appendChild(new_script);
 
-            child.remove();
-            document.getElementsByTagName("head")[0].appendChild(new_script);
+        } else if (child.tagName == "LINK") {
 
-          } else if (child.tagName == "LINK" && child.getAttribute("href") != "") {
+          const new_link = document.createElement("link");
+          [...child.attributes].forEach(attr => { 
+            new_link.setAttribute(attr.nodeName, attr.nodeValue);
+          });
+          new_link.classList.add("promotion-js");
+          new_link.classList.add("promotion-element");
+          new_link.classList.add("promotion-" + promotion_id);
 
-            const new_link = document.createElement("link");
-            new_link.setAttribute("href", child.getAttribute("href"));
+          child.remove();
+          document.body.appendChild(new_link);
 
-            if (child.getAttribute("rel")) {
-              new_link.setAttribute("rel", child.getAttribute("rel"));
-            }
-
-            new_link.classList.add("promotion-js");
-            new_link.classList.add("promotion-element");
-            new_link.classList.add("promotion-" + promotion_id);
-
-            child.remove();
-            document.body.appendChild(new_link);
-
-          }
         }
-      );
+      }
+    );
   }
 
   function setCookie(cookie, hours = 24, path = "/") {
