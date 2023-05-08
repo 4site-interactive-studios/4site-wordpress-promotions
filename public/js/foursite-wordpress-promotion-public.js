@@ -78,9 +78,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
-    // if a floating tab is on the page, the donation lightbox parent script has likely already set up click event listeners.
-    // so, let's clear those and let this latest copy of the lightbox create its own click event listeners
-    clearEventsForFloatingTab();
+
     window.donationLightboxObj = new DonationLightbox();
   }
 
@@ -163,7 +161,6 @@ window.addEventListener("DOMContentLoaded", () => {
       document.body.removeEventListener("mouseleave", exitTrigger);
     }
   }
-
 
   function clearEventsForFloatingTab() {
     document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
@@ -284,6 +281,17 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       window.donationLightboxObj = new DonationLightbox();
     }
+
+    // if a lightbox has already been shown on the page, we'll end up with too many lightbox containers on the page for this to function.
+    const floating_tab = document.getElementById('fs-donation-tab');
+    floating_tab.addEventListener('click', function(e) {
+       if(window.lightbox_triggered) {
+        let lightboxes = document.querySelectorAll('.foursiteDonationLightbox');
+        if(lightboxes.length) {
+          lightboxes[0].remove();
+        }
+       }
+    });
   }
 
   function addOverlay(promotion) {
