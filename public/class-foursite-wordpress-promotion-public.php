@@ -611,8 +611,12 @@ class Foursite_Wordpress_Promotion_Public {
 		}
 
 		if(count($client_side_triggered_config)) {
-			wp_enqueue_script( 'multistep-lightbox', $multistep_script_url, array(), $script_ver, false );
-			wp_enqueue_script( 'foursite-wordpress-promotion-public', $main_script_url, array( 'multistep-lightbox' ), $script_ver, false );
+			if($multistep_script_url) {
+				wp_enqueue_script( 'multistep-lightbox', $multistep_script_url, array(), $script_ver, false );
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', $main_script_url, array( 'multistep-lightbox' ), $script_ver, false );	
+			} else {
+				wp_enqueue_script( 'foursite-wordpress-promotion-public', $main_script_url, array(), $script_ver, false );
+			}
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
 		}
 	}
