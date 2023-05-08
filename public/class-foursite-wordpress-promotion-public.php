@@ -100,15 +100,20 @@ class Foursite_Wordpress_Promotion_Public {
 				),
 			),
 			'orderby' => 'date',
-			'order' => 'DESC'
+			'order' => 'DESC',
+			'suppress_filters' => true
 		);
 
-		$lightbox = new WP_Query( $args );
+		$lightbox_query = new WP_Query( $args );
+
+		// give the scheduled lightboxes priority by prepending it to the list of "on" lightboxes
+		$scheduled_lightbox_ids = [];
 		$lightbox_ids = [];
 
-		if($lightbox->posts){
-			foreach($lightbox->posts as $lightbox){
+		if($lightbox_query->posts){
+			foreach($lightbox_query->posts as $lightbox){
 				$lightbox_id = $lightbox->ID;
+				$test[] = $lightbox_id;
 				$whitelist = get_field('engrid_whitelist', $lightbox_id);
 				$blacklist = get_field('engrid_blacklist', $lightbox_id);
 				$lightbox_start = get_field('engrid_start_date', $lightbox_id);
@@ -133,7 +138,7 @@ class Foursite_Wordpress_Promotion_Public {
 						// Check if the current page URL contains the whitelist item
 						if(strpos($current_page_url, $whitelist_item) !== false){
 							// If it does, show the lightbox
-							$lightbox_ids[] = $lightbox_id;
+							$lightbox_ids[$lightbox->post_date] = $lightbox_id;
 						}
 
 					}
@@ -153,7 +158,7 @@ class Foursite_Wordpress_Promotion_Public {
 						}
 					}
 					// If blacklist is not empty and the current page URL does not contain any of the blacklist items, show the lightbox
-					$lightbox_ids[] = $lightbox_id;
+					$lightbox_ids[$lightbox->post_date] = $lightbox_id;
 				}
 
 				// Check if scheduled lightbox is in date range
@@ -161,17 +166,21 @@ class Foursite_Wordpress_Promotion_Public {
 					$today_date = date("Ymd");
 
 					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
-						$lightbox_ids[] = $lightbox_id;
+						$scheduled_lightbox_ids[$lightbox->post_date] = $lightbox_id;
 					} 
 				}
 
 				else{
 					// If whitelist and blacklist are empty, show the lightbox
-					$lightbox_ids[] = $lightbox_id;
+					$lightbox_ids[$lightbox->post_date] = $lightbox_id;
 				}
 			}
 		}
 
+		// the WP_Query above doesn't perfectly sort the dates when it comes to the times.  Two on the same 
+		rsort($lightbox_ids);
+		rsort($scheduled_lightbox_ids);
+		$lightbox_ids = array_merge(array_values($scheduled_lightbox_ids), array_values($lightbox_ids));
 		return $lightbox_ids;
 	}
 
