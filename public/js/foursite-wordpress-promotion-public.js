@@ -4,6 +4,12 @@ window.addEventListener("DOMContentLoaded", () => {
   if (client_side_triggered_config == undefined) {
     return;
   }
+
+  document.addEventListener('multistep-lightbox', e => {
+    if(e.detail.action == 'closed' && e.detail.context !== 'object') {
+      document.getElementById(e.detail.id).remove();
+    }
+  });
  
   // lightboxes are limited to 1/page, and can be launched from a few different scripts that set this variable
   window.lightbox_triggered = (window.lightbox_triggered === undefined) ? false : window.lightbox_triggered;
@@ -281,17 +287,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       window.donationLightboxObj = new DonationLightbox();
     }
-
-    // if a lightbox has already been shown on the page, we'll end up with too many lightbox containers on the page for this to function.
-    const floating_tab = document.getElementById('fs-donation-tab');
-    floating_tab.addEventListener('click', function(e) {
-       if(window.lightbox_triggered) {
-        let lightboxes = document.querySelectorAll('.foursiteDonationLightbox');
-        if(lightboxes.length) {
-          lightboxes[0].remove();
-        }
-       }
-    });
   }
 
   function addOverlay(promotion) {

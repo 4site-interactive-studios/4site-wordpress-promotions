@@ -302,18 +302,6 @@ class Foursite_Wordpress_Promotion_Public {
 					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
 					'confetti' => $engrid_confetti
 				];
-
-				if(count($logo_position_options)) {
-					$promo_config['logo_fix_css'] = "
-						.foursiteDonationLightbox .foursiteDonationLightbox-container .dl-content .dl-logo {
-							top: {$promo_config['logo_position_top']};
-							left: {$promo_config['logo_position_left']};
-							right: {$promo_config['logo_position_right']};
-							bottom: {$promo_config['logo_position_bottom']};
-						}
-					";
-				}
-
 				$client_side_triggered_config[] = $promo_config;
 
 			} else if($engrid_promotion_type == "raw_code") {
