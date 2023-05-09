@@ -668,11 +668,6 @@
             "conditional_logic": [
                 [
                     {
-                        "field": "field_6243ac17400c8",
-                        "operator": "==",
-                        "value": "image"
-                    },
-                    {
                         "field": "field_63694582ec47e",
                         "operator": "==",
                         "value": "multistep_lightbox"
@@ -3007,5 +3002,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1683093022
+    "modified": 1683605649
 }

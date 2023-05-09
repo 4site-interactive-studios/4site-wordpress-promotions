@@ -207,8 +207,8 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
 			$engrid_trigger_type = trim(get_field('engrid_trigger_type', $lightbox_id));
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
-			$engrid_image = ($engrid_hero_type == 'image' || $engrid_promotion_type == "signup_lightbox") ? get_field('engrid_image', $lightbox_id) : '';
-			$engrid_video = ($engrid_hero_type != 'image') ? get_field('engrid_video', $lightbox_id) : '';
+			$engrid_image = get_field('engrid_image', $lightbox_id);
+			$engrid_video = get_field('engrid_video', $lightbox_id);
 			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
 			$engrid_logo = ($engrid_use_logo || $engrid_promotion_type == 'signup_lightbox') ? get_field('engrid_logo', $lightbox_id) : '';
 			$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
