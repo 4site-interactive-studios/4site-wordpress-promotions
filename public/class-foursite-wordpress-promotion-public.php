@@ -266,7 +266,7 @@ class Foursite_Wordpress_Promotion_Public {
 					break;
 			}
 
-			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video') ? 'true' : 'false';
+			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video');
 			$engrid_confetti = json_encode($confetti);
 			$logo_position_options = isset($engrid_logo_position['position_options']) ? $engrid_logo_position['position_options'] : [];
 			if(!is_array($logo_position_options)) {

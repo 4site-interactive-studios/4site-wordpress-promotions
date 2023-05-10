@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.0.9' );
+define( 'foursite_wordpress_promotion_VERSION', '1.0.10' );
 
 /**
  * The code that runs during plugin activation.
