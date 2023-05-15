@@ -285,6 +285,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if(window.donationLightboxObj) {
         delete window.donationLightboxObj;
       }
+      clearEventsForFloatingTab();
       window.donationLightboxObj = new DonationLightbox();
     }
   }
