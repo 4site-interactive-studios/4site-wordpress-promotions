@@ -129,27 +129,38 @@ class Foursite_Wordpress_Promotion_Public {
 					continue;
 				}
 
-				if($whitelist){
+				$is_scheduled  = false;
+				if($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
+					$today_date = date("Ymd");
+					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
+						$is_scheduled = true;
+					} else {
+						continue;
+					}
+				}
+
+				if($whitelist) {
 					// Explode the whitelist into an array
 					$whitelist_array = explode(',', strtolower($whitelist));
 					$compare_url = strtolower($current_page_url);
+					$is_whitelisted = false;
 					foreach($whitelist_array as $whitelist_item){
 						// Trim the whitespace from the whitelist item
 						$whitelist_item = trim($whitelist_item);
 						// Check if the current page URL contains the whitelist item
 						if(strpos($compare_url, $whitelist_item) !== false){
 							// If it does, show the lightbox
-							$lightbox_ids[$lightbox->post_date] = $lightbox_id;
+							$is_whitelisted = true;
 						}
-
 					}
 					// If whitelist is not empty and the current page URL does not contain any of the whitelist items, do not show the lightbox
-					continue;
-				}
-				elseif($blacklist){
+					if(!$is_whitelisted) {
+						continue;
+					}
+				} elseif($blacklist) {
 					// Explode the blacklist into an array
 					$blacklist_array = explode(',', strtolower($blacklist));
-					$blacklisted = false;
+					$is_blacklisted = false;
 					$compare_url = strtolower($current_page_url);
 					foreach($blacklist_array as $blacklist_item){
 						// Trim the whitespace from the blacklist item
@@ -157,27 +168,20 @@ class Foursite_Wordpress_Promotion_Public {
 						// Check if the current page URL contains the blacklist item
 						if(strpos($compare_url, $blacklist_item) !== false){
 							// If it does, do not show the lightbox
-							$blacklisted = true;
-							continue;
+							$is_blacklisted = true;
+							break;
 						}
 					}
 					// If blacklist is not empty and the current page URL does not contain any of the blacklist items, show the lightbox
-					if(!$blacklisted) {
-						$lightbox_ids[$lightbox->post_date] = $lightbox_id;
+					if($is_blacklisted) {
+						continue;
 					}
 				}
 
-				// Check if scheduled lightbox is in date range
-				elseif($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
-					$today_date = date("Ymd");
-
-					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
-						$scheduled_lightbox_ids[$lightbox->post_date] = $lightbox_id;
-					} 
-				}
-
-				else{
-					// If whitelist and blacklist are empty, show the lightbox
+				// If we made it this far, we're okay to show
+				if($is_scheduled) {
+					$scheduled_lightbox_ids[$lightbox->post_date] = $lightbox_id;
+				} else {
 					$lightbox_ids[$lightbox->post_date] = $lightbox_id;
 				}
 			}
