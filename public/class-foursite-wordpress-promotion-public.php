@@ -481,6 +481,8 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
+					'bg_color' => $engrid_bg_color,
+					'fg_color' => $engrid_text_color
 				];
 
 			} else if($engrid_promotion_type == "signup_lightbox") {

@@ -247,6 +247,8 @@ window.addEventListener("DOMContentLoaded", () => {
       pushdownScript.setAttribute("data-pushdown-mode", promotion.pushdown_type);
       pushdownScript.setAttribute("data-pushdown-link", promotion.url);
       pushdownScript.setAttribute("data-pushdown-image", promotion.image);
+      pushdownScript.setAttribute("data-pushdown-fg-color", promotion.fg_color);
+      pushdownScript.setAttribute("data-pushdown-bg-color", promotion.bg_color);
       if (promotion.gif != "") {
         pushdownScript.setAttribute("data-pushdown-gif", promotion.gif);
       }
