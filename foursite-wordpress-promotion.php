@@ -71,7 +71,7 @@ function generate_en_multistep_shortcode($atts) {
     $append_url_params = $shortcode_atts['append-url-params'];
 
     // Generate the iframe shortcode string
-    $shortcode = '<iframe id="dm-iframe" ';
+    $shortcode = '<iframe id="promo-multistep-iframe" ';
     $shortcode .= 'data-src="' . esc_url($url) . '" ';
     $shortcode .= 'data-form_color="' . esc_attr($form_color) . '" ';
     $shortcode .= 'data-height="' . esc_attr($height) . '" ';
