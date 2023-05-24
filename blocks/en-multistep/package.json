@@ -1,0 +1,15 @@
+{
+  "name": "en-multistep",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "author": "Fernando Santos (fernando@4sitestudios.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "26.4.0"
+  }
+}
