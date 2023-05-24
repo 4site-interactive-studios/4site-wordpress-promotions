@@ -48,7 +48,7 @@ registerBlockType("promotions/en-multistep", {
     },
     appendUrlParams: {
       type: "boolean",
-      default: false,
+      default: true,
     },
   },
   supports: {

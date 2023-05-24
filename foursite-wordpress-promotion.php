@@ -55,7 +55,7 @@ function generate_en_multistep_shortcode($atts) {
             'border-radius' => '5px',
             'loading-color' => '#E5E6E8',
             'bounce-color' => '#16233f',
-            'append-url-params' => 'false',
+            'append-url-params' => 'true',
         ),
         $atts,
         'en-multistep'
