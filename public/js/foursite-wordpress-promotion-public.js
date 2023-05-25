@@ -85,6 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
 
+    clearEventsForFloatingTab();
     window.donationLightboxObj = new DonationLightbox();
   }
 
