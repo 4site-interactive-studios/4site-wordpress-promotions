@@ -17,8 +17,8 @@ import {
  */
 import "./style.scss";
 
-registerBlockType("promotions/en-multistep", {
-  title: __("Engaging Networks Multistep Form", "promotions"),
+registerBlockType("promotions/en-form", {
+  title: __("Engaging Networks Embedded Form", "promotions"),
   icon: "embed-generic",
   category: "embed",
   attributes: {
@@ -69,7 +69,7 @@ registerBlockType("promotions/en-multistep", {
 
     const blockProps = useBlockProps();
     // Add a class to the block wrapper
-    blockProps.className = blockProps.className + " promotions-en-multistep";
+    blockProps.className = blockProps.className + " promotions-en-form";
 
     return (
       <div {...blockProps}>
@@ -141,7 +141,7 @@ registerBlockType("promotions/en-multistep", {
       appendUrlParams,
     } = attributes;
 
-    const shortcode = `[en-multistep
+    const shortcode = `[en-form
       url="${escapeHTML(url)}"
       form-color="${escapeHTML(formColor)}"
       height="${escapeHTML(height)}"

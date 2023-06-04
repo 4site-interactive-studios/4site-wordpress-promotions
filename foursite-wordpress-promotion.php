@@ -40,13 +40,13 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
 define( 'foursite_wordpress_promotion_VERSION', '1.0.10' );
 
 // Gutenberg Block
-function promotions_en_multistep_block() {
-	register_block_type(__DIR__ . '/blocks/en-multistep');
+function promotions_en_form_block() {
+	register_block_type(__DIR__ . '/blocks/en-form');
 }
-add_action( 'init', 'promotions_en_multistep_block' );
+add_action( 'init', 'promotions_en_form_block' );
 
-function generate_en_multistep_shortcode($atts) {
-	wp_enqueue_script('donation-multistep-parent'); // Only load the script when the shortcode is used
+function generate_en_form_shortcode($atts) {
+	wp_enqueue_script('en-form-parent'); // Only load the script when the shortcode is used
     $shortcode_atts = shortcode_atts(
         array(
             'url' => '',
@@ -58,7 +58,7 @@ function generate_en_multistep_shortcode($atts) {
             'append-url-params' => 'true',
         ),
         $atts,
-        'en-multistep'
+        'en-form'
     );
 
     // Extract the shortcode attributes
@@ -71,7 +71,7 @@ function generate_en_multistep_shortcode($atts) {
     $append_url_params = $shortcode_atts['append-url-params'];
 
     // Generate the iframe shortcode string
-    $shortcode = '<iframe id="promo-multistep-iframe" ';
+    $shortcode = '<iframe class="promo-form-iframe" ';
     $shortcode .= 'data-src="' . esc_url($url) . '" ';
     $shortcode .= 'data-form_color="' . esc_attr($form_color) . '" ';
     $shortcode .= 'data-height="' . esc_attr($height) . '" ';
@@ -82,12 +82,12 @@ function generate_en_multistep_shortcode($atts) {
 
     return $shortcode;
 }
-add_shortcode('en-multistep', 'generate_en_multistep_shortcode');
+add_shortcode('en-form', 'generate_en_form_shortcode');
 
-function promotions_multistep_wp_enqueue_scripts() {
-    wp_register_script( 'donation-multistep-parent', plugins_url( '/public/js/donation-multistep-parent.js', __FILE__ ), array(), foursite_wordpress_promotion_VERSION, 'all' );
+function promotions_en_form_wp_enqueue_scripts() {
+    wp_register_script( 'en-form-parent', plugins_url( '/en-form/dist/en-form-parent.js', __FILE__ ), array(), foursite_wordpress_promotion_VERSION, 'all' );
 }
-add_action( 'wp_enqueue_scripts', 'promotions_multistep_wp_enqueue_scripts' );
+add_action( 'wp_enqueue_scripts', 'promotions_en_form_wp_enqueue_scripts' );
 
 
 /**

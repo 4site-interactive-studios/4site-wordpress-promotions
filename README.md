@@ -39,3 +39,9 @@ Pushdown
 Signup Lightbox
 
 > Creates a lightbox that displays a sign up page for campaigns or newsletters.
+
+## Blocks & Shortcodes
+
+This plugin provides a Gutenberg block and a shortcode to embed an Engaging Networks form. The block can be found under the "Embeds" category.
+
+The shortcode is `[en-form]`. Check out the [en-form/README.md](en-form/README.md) for more information.
