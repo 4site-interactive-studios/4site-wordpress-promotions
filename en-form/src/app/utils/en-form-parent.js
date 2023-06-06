@@ -85,7 +85,7 @@ export class ENFormParent {
                 <div class="double-bounce2" style="background-color: ${this.options[key].bounce_color}"></div>
               </div>
             </div>
-            <iframe style='height: ${height}; min-height: ${height};' allow='payment' loading='lazy' width='100%' scrolling='no' class='promo-form-iframe' src='${src}' data-key='${key}' frameborder='0' allowfullscreen></iframe>
+            <iframe style='height: ${height}; max-height: ${height};' allow='payment' loading='lazy' width='100%' scrolling='no' class='promo-form-iframe' src='${src}' data-key='${key}' frameborder='0' allowfullscreen></iframe>
         </div>
             `;
       container.innerHTML = markup;
