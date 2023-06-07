@@ -117,7 +117,8 @@ export class ENFormParent {
     // console.log("ENFormParent: receiveMessage: event: ", event.data);
     const message = event.data;
     const iframe = this.getFrameByEvent(event);
-    const key = iframe.dataset.key ?? 0;
+    if (!iframe.hasAttribute("data-key")) return;
+    const key = iframe.dataset.key;
 
     if (message && "frameHeight" in message) {
       iframe.style.height = message.frameHeight + "px";
