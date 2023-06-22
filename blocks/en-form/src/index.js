@@ -53,7 +53,7 @@ registerBlockType("promotions/en-form", {
   },
   supports: {
     align: true, // Enables alignment options
-    alignWide: true, // Enables full-width alignment
+    alignWide: false, // Enables wide alignment options
   },
 
   edit: ({ attributes, setAttributes }) => {
@@ -141,6 +141,8 @@ registerBlockType("promotions/en-form", {
       appendUrlParams,
     } = attributes;
 
+    const blockProps = useBlockProps.save();
+
     const shortcode = `[en-form
       url="${escapeHTML(url)}"
       form-color="${escapeHTML(formColor)}"
@@ -151,6 +153,6 @@ registerBlockType("promotions/en-form", {
       append-url-params="${appendUrlParams}"
     ]`;
 
-    return <div>{shortcode}</div>;
+    return <div {...blockProps}>{shortcode}</div>;
   }, // The save function is optional for this block as we're using the shortcode.
 });

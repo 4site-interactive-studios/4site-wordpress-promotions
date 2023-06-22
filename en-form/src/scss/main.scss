@@ -66,8 +66,8 @@ $content-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
     color: #fff;
     display: flex;
     align-items: center;
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    backface-visibility: hidden;
     overflow: hidden;
     &::before {
       content: "";
@@ -141,5 +141,23 @@ $content-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
     iframe {
       width: 100% !important;
     }
+  }
+}
+.wp-block-promotions-en-form {
+  &.alignleft {
+    float: left;
+    margin-right: 1.5em;
+  }
+
+  &.alignright {
+    float: right;
+    margin-left: 1.5em;
+  }
+
+  &.aligncenter,
+  &.alignfull {
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
