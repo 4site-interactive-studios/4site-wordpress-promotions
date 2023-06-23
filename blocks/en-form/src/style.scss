@@ -1,0 +1,20 @@
+.promotions-en-form {
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  input {
+    max-width: 400px;
+  }
+}
+.color-control {
+  display: flex;
+  align-items: flex-end;
+}
+.promotions-color-picker {
+  border-radius: 0;
+  height: 25px;
+  width: 25px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}

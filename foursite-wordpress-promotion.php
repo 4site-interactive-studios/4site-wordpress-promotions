@@ -39,6 +39,57 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  */
 define( 'foursite_wordpress_promotion_VERSION', '1.0.11' );
 
+// Gutenberg Block
+function promotions_en_form_block() {
+	register_block_type(__DIR__ . '/blocks/en-form');
+}
+add_action( 'init', 'promotions_en_form_block' );
+
+function generate_en_form_shortcode($atts) {
+	wp_enqueue_script('en-form-parent'); // Only load the script when the shortcode is used
+    $shortcode_atts = shortcode_atts(
+        array(
+            'url' => '',
+            'form-color' => '#f26722',
+            'height' => '500px',
+            'border-radius' => '5px',
+            'loading-color' => '#E5E6E8',
+            'bounce-color' => '#16233f',
+            'append-url-params' => 'true',
+        ),
+        $atts,
+        'en-form'
+    );
+
+    // Extract the shortcode attributes
+    $url = $shortcode_atts['url'];
+    $form_color = $shortcode_atts['form-color'];
+    $height = $shortcode_atts['height'];
+    $border_radius = $shortcode_atts['border-radius'];
+    $loading_color = $shortcode_atts['loading-color'];
+    $bounce_color = $shortcode_atts['bounce-color'];
+    $append_url_params = $shortcode_atts['append-url-params'];
+
+    // Generate the iframe shortcode string
+    $shortcode = '<iframe class="promo-form-iframe" ';
+    $shortcode .= 'data-src="' . esc_url($url) . '" ';
+    $shortcode .= 'data-form_color="' . esc_attr($form_color) . '" ';
+    $shortcode .= 'data-height="' . esc_attr($height) . '" ';
+    $shortcode .= 'data-border_radius="' . esc_attr($border_radius) . '" ';
+    $shortcode .= 'data-loading_color="' . esc_attr($loading_color) . '" ';
+    $shortcode .= 'data-bounce_color="' . esc_attr($bounce_color) . '" ';
+    $shortcode .= 'data-append_url_params="' . esc_attr($append_url_params) . '"></iframe>';
+
+    return $shortcode;
+}
+add_shortcode('en-form', 'generate_en_form_shortcode');
+
+function promotions_en_form_wp_enqueue_scripts() {
+    wp_register_script( 'en-form-parent', plugins_url( '/en-form/dist/en-form-parent.js', __FILE__ ), array(), foursite_wordpress_promotion_VERSION, 'all' );
+}
+add_action( 'wp_enqueue_scripts', 'promotions_en_form_wp_enqueue_scripts' );
+
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-foursite-wordpress-promotion-activator.php
@@ -65,6 +116,8 @@ register_deactivation_hook( __FILE__, 'deactivate_foursite_wordpress_promotion' 
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-foursite-wordpress-promotion.php';
+
+
 
 /**
  * Begins execution of the plugin.

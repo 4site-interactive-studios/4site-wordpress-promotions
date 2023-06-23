@@ -1,0 +1,163 @@
+@import "animation";
+
+$title-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+$content-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
+.foursiteENFormParent-container {
+  width: 100%;
+  height: auto;
+  color: #4f606c;
+  font-family: $content-font;
+  line-height: 1;
+  z-index: 1;
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+  .dm-content {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    min-height: 400px;
+    overflow: hidden;
+    background-color: #fff;
+    display: flex;
+    margin: auto;
+    box-sizing: border-box;
+    .dm-loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #2375c9;
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 1s linear, opacity 1s linear;
+      &.is-loaded {
+        visibility: hidden;
+        opacity: 0;
+        // & + iframe {
+        //   min-height: auto !important;
+        // }
+      }
+    }
+    iframe {
+      width: 350px;
+      height: 100%;
+      margin: auto;
+      transition: 0.3s height ease-in-out;
+    }
+  }
+  .error-message {
+    position: absolute;
+    transition: bottom 0.3s ease-in-out;
+    bottom: -100px;
+    left: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100px;
+    background-color: rgb(167, 8, 8);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    overflow: hidden;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background-color: rgba(255, 255, 255, 0.597);
+      animation: roundtime 5.3s linear forwards;
+      z-index: 6;
+    }
+    p {
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.5;
+      letter-spacing: normal;
+      text-align: left;
+      padding: 10px 20px;
+      width: 100%;
+      margin: 0;
+    }
+    .close {
+      position: relative;
+      display: block;
+      width: 35px;
+      height: 35px;
+      padding-right: 10px;
+      text-indent: -100vw;
+      overflow: hidden;
+      box-sizing: content-box;
+      &:hover {
+        &::before {
+          transform: rotate(45deg) scale(1.5);
+        }
+        &::after {
+          transform: rotate(-45deg) scale(1.5);
+        }
+      }
+      &::before,
+      &::after {
+        transition: 0.3s transform ease-in-out,
+          0.3s background-color ease-in-out;
+        position: absolute;
+        content: " ";
+        height: 19px;
+        width: 2px;
+        background-color: #fff;
+        left: 15px;
+        top: 8px;
+      }
+      &::before {
+        transform: rotate(45deg);
+      }
+      &::after {
+        transform: rotate(-45deg);
+      }
+    }
+    &.dm-is-visible {
+      bottom: 0;
+    }
+  }
+  @media only screen and (max-width: 380px) {
+    .error-message {
+      border-radius: 0;
+    }
+  }
+  &.thank-you {
+    iframe {
+      width: 100% !important;
+    }
+  }
+}
+.wp-block-promotions-en-form {
+  &.alignleft {
+    float: left;
+    margin-right: 1.5em;
+  }
+
+  &.alignright {
+    float: right;
+    margin-left: 1.5em;
+  }
+
+  &.aligncenter,
+  &.alignfull {
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
