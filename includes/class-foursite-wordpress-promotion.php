@@ -99,12 +99,12 @@ class Foursite_Wordpress_Promotion {
 	 */
 	private function load_dependencies() {
 
-		add_filter('acf/settings/load_json', 'foursite_wordpress_promotion_json_load_point');
-		function foursite_wordpress_promotion_json_load_point( $paths ) {        			
-			$paths[] = plugin_dir_path( dirname( __FILE__ ) ) . 'acf-json';
-			return $paths;
-		}
 
+		/**
+		 * The ACF field registration
+		 * 
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/includes/acf-fields.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
