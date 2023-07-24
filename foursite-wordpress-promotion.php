@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.0.11
+ * Version:           1.0.12
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+

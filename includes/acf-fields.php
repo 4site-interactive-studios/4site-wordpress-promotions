@@ -7,7 +7,7 @@ add_action( 'acf/include_fields', function() {
 
 	acf_add_local_field_group( array(
 		'key' => 'group_61f180ebc7b9d',
-		'title' => 'Foursite Wordpress Promotions',
+		'title' => 'Foursite Wordpress Promotions Plugin',
 		'fields' => array(
 			array(
 				'key' => 'field_61f184a2c864f',
@@ -25,6 +25,30 @@ add_action( 'acf/include_fields', function() {
 				),
 				'placement' => 'top',
 				'endpoint' => 0,
+			),
+			array(
+				'key' => 'field_630676e57bb3b',
+				'label' => 'Promotion Visibility',
+				'name' => 'engrid_lightbox_display',
+				'aria-label' => '',
+				'type' => 'button_group',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '100',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(
+					'turned-on' => 'Turned On',
+					'turned-off' => 'Turned Off',
+					'scheduled' => 'Scheduled',
+				),
+				'default_value' => '',
+				'return_format' => 'value',
+				'allow_null' => 0,
+				'layout' => 'horizontal',
 			),
 			array(
 				'key' => 'field_63694582ec47e',
@@ -55,7 +79,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_6420da53c4965',
-				'label' => 'Promotion Type',
+				'label' => 'Promotion Subtype',
 				'name' => 'is_lightbox',
 				'aria-label' => '',
 				'type' => 'radio',
@@ -85,30 +109,6 @@ add_action( 'acf/include_fields', function() {
 				'other_choice' => 0,
 				'layout' => 'horizontal',
 				'save_other_choice' => 0,
-			),
-			array(
-				'key' => 'field_630676e57bb3b',
-				'label' => 'Promotion Visibility',
-				'name' => 'engrid_lightbox_display',
-				'aria-label' => '',
-				'type' => 'button_group',
-				'instructions' => '',
-				'required' => 0,
-				'conditional_logic' => 0,
-				'wrapper' => array(
-					'width' => '100',
-					'class' => '',
-					'id' => '',
-				),
-				'choices' => array(
-					'turned-on' => 'Turned On',
-					'turned-off' => 'Turned Off',
-					'scheduled' => 'Scheduled',
-				),
-				'default_value' => '',
-				'return_format' => 'value',
-				'allow_null' => 0,
-				'layout' => 'horizontal',
 			),
 			array(
 				'key' => 'field_61f1856cc8652',
@@ -1310,7 +1310,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_javascript',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => 'Add your own script tags as needed',
+				'instructions' => 'Add Script Tags to your page markup',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1339,7 +1339,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_html',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => '',
+				'instructions' => 'Add HTML to your page markup',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1660,7 +1660,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_css',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => 'Don\'t put style tags here as they will automatically be added when loading the CSS.',
+				'instructions' => 'Insert CSS rules here.  Do not insert <style> tags.',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1682,11 +1682,6 @@ add_action( 'acf/include_fields', function() {
 							'field' => 'field_63694582ec47e',
 							'operator' => '==',
 							'value' => 'signup_lightbox',
-						),
-						array(
-							'field' => 'field_6445bdb9e43f7',
-							'operator' => '==',
-							'value' => 'one-col',
 						),
 					),
 				),
@@ -1733,7 +1728,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f184e1c8650',
-				'label' => 'Trigger Options',
+				'label' => 'Display Settings',
 				'name' => '',
 				'aria-label' => '',
 				'type' => 'tab',
@@ -1930,7 +1925,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1839713dff',
-				'label' => 'Cookie Hours',
+				'label' => 'Suppression Cookie Hours',
 				'name' => 'engrid_cookie_hours',
 				'aria-label' => '',
 				'type' => 'number',
@@ -1952,11 +1947,11 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1c83ea39c4',
-				'label' => 'Cookie Name',
+				'label' => 'Suppression Cookie Name',
 				'name' => 'engrid_cookie_name',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => '',
+				'instructions' => 'The name of the Cookie',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -1976,7 +1971,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_whitelist',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => 'Comma-separated word/slug list. It will show the lightbox if the URL contains any value from the list.',
+				'instructions' => 'Comma-separated word/slug list. The promotion will be eligible for display on URLs containing any value from the list.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -1996,7 +1991,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_show_on',
 				'aria-label' => '',
 				'type' => 'relationship',
-				'instructions' => '',
+				'instructions' => 'The promotion will be eligible for display on any pages added to this list.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2024,7 +2019,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_blacklist',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => 'Comma-separated word/slug list. It will show the promotion if the URL contains any value from the list.',
+				'instructions' => 'Comma-separated word/slug list. The promotion will be ineligible for display on URLs containing any value from the list. Matches to hide a promotion will always supersede matches to show a promotion.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2044,7 +2039,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_hide_on',
 				'aria-label' => '',
 				'type' => 'relationship',
-				'instructions' => '',
+				'instructions' => 'The promotion will be ineligible for display on any pages added to this list. Matches to hide a promotion will always supersede matches to show a promotion.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2133,7 +2128,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1f1f474561',
-				'label' => 'Supression Event Name',
+				'label' => 'Suppression Event Name',
 				'name' => 'engrid_gtm_suppressed_event_name',
 				'aria-label' => '',
 				'type' => 'text',
