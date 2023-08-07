@@ -8,6 +8,8 @@ export class Pushdown {
     this.gif = scriptTag.getAttribute("data-pushdown-gif") || "";
     this.bg_color = scriptTag.getAttribute("data-pushdown-bg-color");
     this.fg_color = scriptTag.getAttribute("data-pushdown-fg-color");
+    this.paragraph = scriptTag.getAttribute("data-pushdown-paragraph") || "";
+    this.button_label = scriptTag.getAttribute("data-pushdown-button-label") || "";
     if (this.link) {
       this.init();
       return;
@@ -24,20 +26,41 @@ export class Pushdown {
     const body = document.querySelector("body");
     body.insertBefore(container, body.firstChild);
   }
-  hexToHSL(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  lightOrDark(hex_color) {
+    hex_color = +("0x" + hex_color.slice(1).replace( 
+      hex_color.length < 5 && /./g, '$&$&'
+    ));
+
+    let r = hex_color >> 16;
+    let g = hex_color >> 8 & 255;
+    let b = hex_color & 255;
+
+    let hsp = Math.sqrt(
+      0.299 * (r * r) +
+      0.587 * (g * g) +
+      0.114 * (b * b)
+    );
+
+    if (hsp > 127.5) {
+      return 'light';
+    } else {
+      return 'dark';
+    }
+  }
+  hexToHSL(hex_color) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex_color);
   
     if (!result) {
       throw new Error("Could not parse Hex Color");
     }
   
-    const rHex = parseInt(result[1], 16);
-    const gHex = parseInt(result[2], 16);
-    const bHex = parseInt(result[3], 16);
+    const r_hex = parseInt(result[1], 16);
+    const g_hex = parseInt(result[2], 16);
+    const b_hex = parseInt(result[3], 16);
   
-    const r = rHex / 255;
-    const g = gHex / 255;
-    const b = bHex / 255;
+    const r = r_hex / 255;
+    const g = g_hex / 255;
+    const b = b_hex / 255;
   
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
@@ -103,6 +126,49 @@ export class Pushdown {
         #pushdown.pushdown-mode-text .pushdown-link:hover svg {
           background-color: ${this.fg_color};
           color: ${this.bg_color};
+        }
+      `;
+    } else if (this.mode === "full") {
+      let button_style_css = "";
+      let button_hover_style_css = "";
+      const dark_fg_color = (this.lightOrDark(this.fg_color) === 'dark');
+      if(this.fg_color) {
+        button_style_css += `background-color:${this.fg_color}!important;`;
+        button_style_css += `border-color:${this.fg_color}!important;`;
+        button_hover_style_css += `color:${this.fg_color}!important;`;
+
+        if(dark_fg_color) {
+          button_style_css += `color:white!important;`;
+        }
+      }
+      if(this.bg_color) {
+        button_hover_style_css += `background-color:${this.bg_color}!important;`;
+        if(!dark_fg_color) {
+          button_style_css += `color:${this.bg_color}!important;`;
+        }
+      }
+
+      content = `
+      <div class="pushdown-wrapper" style="background-image: url('${this.image}');">
+        <img class="pushdown-mobile-image" src="${this.image}" />
+        <div class="pushdown-overlay" style="${style_css}">
+          <h2 class="pushdown-title">${this.content}</h2>
+          <div class="pushdown-paragraph">
+            ${this.paragraph}
+          </div>
+          <a class="pushdown-overlay-button" href="${this.link}" target="_blank">
+            ${this.button_label}
+          </a>
+        </div>
+      </div>
+      `;
+
+      style = `
+        .pushdown-overlay-button {
+          ${button_style_css}
+        }
+        .pushdown-overlay-button:hover {
+          ${button_hover_style_css}
         }
       `;
     } else {

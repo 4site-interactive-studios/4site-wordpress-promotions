@@ -7,7 +7,7 @@ add_action( 'acf/include_fields', function() {
 
 	acf_add_local_field_group( array(
 		'key' => 'group_61f180ebc7b9d',
-		'title' => 'Foursite Wordpress Promotions Plugin',
+		'title' => 'Foursite Wordpress Promotions',
 		'fields' => array(
 			array(
 				'key' => 'field_61f184a2c864f',
@@ -25,30 +25,6 @@ add_action( 'acf/include_fields', function() {
 				),
 				'placement' => 'top',
 				'endpoint' => 0,
-			),
-			array(
-				'key' => 'field_630676e57bb3b',
-				'label' => 'Promotion Visibility',
-				'name' => 'engrid_lightbox_display',
-				'aria-label' => '',
-				'type' => 'button_group',
-				'instructions' => '',
-				'required' => 0,
-				'conditional_logic' => 0,
-				'wrapper' => array(
-					'width' => '100',
-					'class' => '',
-					'id' => '',
-				),
-				'choices' => array(
-					'turned-on' => 'Turned On',
-					'turned-off' => 'Turned Off',
-					'scheduled' => 'Scheduled',
-				),
-				'default_value' => '',
-				'return_format' => 'value',
-				'allow_null' => 0,
-				'layout' => 'horizontal',
 			),
 			array(
 				'key' => 'field_63694582ec47e',
@@ -79,7 +55,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_6420da53c4965',
-				'label' => 'Promotion Subtype',
+				'label' => 'Promotion Type',
 				'name' => 'is_lightbox',
 				'aria-label' => '',
 				'type' => 'radio',
@@ -109,6 +85,30 @@ add_action( 'acf/include_fields', function() {
 				'other_choice' => 0,
 				'layout' => 'horizontal',
 				'save_other_choice' => 0,
+			),
+			array(
+				'key' => 'field_630676e57bb3b',
+				'label' => 'Promotion Visibility',
+				'name' => 'engrid_lightbox_display',
+				'aria-label' => '',
+				'type' => 'button_group',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '100',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(
+					'turned-on' => 'Turned On',
+					'turned-off' => 'Turned Off',
+					'scheduled' => 'Scheduled',
+				),
+				'default_value' => '',
+				'return_format' => 'value',
+				'allow_null' => 0,
+				'layout' => 'horizontal',
 			),
 			array(
 				'key' => 'field_61f1856cc8652',
@@ -169,7 +169,7 @@ add_action( 'acf/include_fields', function() {
 				'aria-label' => '',
 				'type' => 'button_group',
 				'instructions' => 'One Column - Tall Embedded Form <br>
-	Two Column - Wide Image and Short Embedded Form',
+		Two Column - Wide Image and Short Embedded Form',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -492,6 +492,7 @@ add_action( 'acf/include_fields', function() {
 				'choices' => array(
 					'image' => 'Image',
 					'text' => 'Text',
+					'full' => 'Full',
 				),
 				'default_value' => '',
 				'return_format' => 'value',
@@ -501,9 +502,9 @@ add_action( 'acf/include_fields', function() {
 				'save_other_choice' => 0,
 			),
 			array(
-				'key' => 'field_63bc64544661d',
-				'label' => 'Pushdown Link',
-				'name' => 'engrid_pushdown_link',
+				'key' => 'field_63bdc41e5682c',
+				'label' => 'Pushdown Title',
+				'name' => 'engrid_pushdown_title',
 				'aria-label' => '',
 				'type' => 'text',
 				'instructions' => '',
@@ -529,9 +530,78 @@ add_action( 'acf/include_fields', function() {
 				'append' => '',
 			),
 			array(
-				'key' => 'field_63bdc41e5682c',
-				'label' => 'Pushdown Title',
-				'name' => 'engrid_pushdown_title',
+				'key' => 'field_64d01a9d50104',
+				'label' => 'Pushdown Paragraph',
+				'name' => 'pushdown_paragraph',
+				'aria-label' => '',
+				'type' => 'textarea',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_63694582ec47e',
+							'operator' => '==',
+							'value' => 'pushdown',
+						),
+						array(
+							'field' => 'field_63bc637c4661c',
+							'operator' => '==',
+							'value' => 'full',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'acfe_save_meta' => 0,
+				'default_value' => '',
+				'acfe_textarea_code' => 0,
+				'maxlength' => '',
+				'rows' => '',
+				'placeholder' => '',
+				'new_lines' => '',
+			),
+			array(
+				'key' => 'field_64d01b32ea10e',
+				'label' => 'Pushdown Button',
+				'name' => 'pushdown_button_label',
+				'aria-label' => '',
+				'type' => 'text',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_63694582ec47e',
+							'operator' => '==',
+							'value' => 'pushdown',
+						),
+						array(
+							'field' => 'field_63bc637c4661c',
+							'operator' => '==',
+							'value' => 'full',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'acfe_save_meta' => 0,
+				'default_value' => '',
+				'maxlength' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+			),
+			array(
+				'key' => 'field_63bc64544661d',
+				'label' => 'Pushdown Link',
+				'name' => 'engrid_pushdown_link',
 				'aria-label' => '',
 				'type' => 'text',
 				'instructions' => '',
@@ -577,14 +647,28 @@ add_action( 'acf/include_fields', function() {
 							'value' => 'image',
 						),
 					),
+					array(
+						array(
+							'field' => 'field_63694582ec47e',
+							'operator' => '==',
+							'value' => 'pushdown',
+						),
+						array(
+							'field' => 'field_63bc637c4661c',
+							'operator' => '==',
+							'value' => 'full',
+						),
+					),
 				),
 				'wrapper' => array(
 					'width' => '',
 					'class' => '',
 					'id' => '',
 				),
+				'acfe_save_meta' => 0,
+				'uploader' => '',
 				'return_format' => 'array',
-				'library' => 'all',
+				'acfe_thumbnail' => 0,
 				'min_width' => '',
 				'min_height' => '',
 				'min_size' => '',
@@ -593,8 +677,7 @@ add_action( 'acf/include_fields', function() {
 				'max_size' => '',
 				'mime_types' => '',
 				'preview_size' => 'medium',
-				'uploader' => '',
-				'acfe_thumbnail' => 0,
+				'library' => 'all',
 			),
 			array(
 				'key' => 'field_63bee8909b82f',
@@ -1310,7 +1393,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_javascript',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => 'Add Script Tags to your page markup',
+				'instructions' => 'Add your own script tags as needed',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1339,7 +1422,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_html',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => 'Add HTML to your page markup',
+				'instructions' => '',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1660,7 +1743,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_css',
 				'aria-label' => '',
 				'type' => 'textarea',
-				'instructions' => 'Insert CSS rules here.  Do not insert <style> tags.',
+				'instructions' => 'Don\'t put style tags here as they will automatically be added when loading the CSS.',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1682,6 +1765,11 @@ add_action( 'acf/include_fields', function() {
 							'field' => 'field_63694582ec47e',
 							'operator' => '==',
 							'value' => 'signup_lightbox',
+						),
+						array(
+							'field' => 'field_6445bdb9e43f7',
+							'operator' => '==',
+							'value' => 'one-col',
 						),
 					),
 				),
@@ -1728,7 +1816,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f184e1c8650',
-				'label' => 'Display Settings',
+				'label' => 'Trigger Options',
 				'name' => '',
 				'aria-label' => '',
 				'type' => 'tab',
@@ -1750,7 +1838,7 @@ add_action( 'acf/include_fields', function() {
 				'aria-label' => '',
 				'type' => 'select',
 				'instructions' => 'For Javascript Trigger, open the promotion with triggerPromotion(id); 
-	Replace "id" with your promotion id.',
+		Replace "id" with your promotion id.',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1893,7 +1981,7 @@ add_action( 'acf/include_fields', function() {
 				'aria-label' => '',
 				'type' => 'select',
 				'instructions' => 'For Javascript Trigger, open the promotion with triggerPromotion(id); 
-	Replace "id" with your promotion id.',
+		Replace "id" with your promotion id.',
 				'required' => 0,
 				'conditional_logic' => array(
 					array(
@@ -1925,7 +2013,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1839713dff',
-				'label' => 'Suppression Cookie Hours',
+				'label' => 'Cookie Hours',
 				'name' => 'engrid_cookie_hours',
 				'aria-label' => '',
 				'type' => 'number',
@@ -1947,11 +2035,11 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1c83ea39c4',
-				'label' => 'Suppression Cookie Name',
+				'label' => 'Cookie Name',
 				'name' => 'engrid_cookie_name',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => 'The name of the Cookie',
+				'instructions' => '',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -1971,7 +2059,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_whitelist',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => 'Comma-separated word/slug list. The promotion will be eligible for display on URLs containing any value from the list.',
+				'instructions' => 'Comma-separated word/slug list. It will show the lightbox if the URL contains any value from the list.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -1991,7 +2079,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_show_on',
 				'aria-label' => '',
 				'type' => 'relationship',
-				'instructions' => 'The promotion will be eligible for display on any pages added to this list.',
+				'instructions' => '',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2019,7 +2107,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_blacklist',
 				'aria-label' => '',
 				'type' => 'text',
-				'instructions' => 'Comma-separated word/slug list. The promotion will be ineligible for display on URLs containing any value from the list. Matches to hide a promotion will always supersede matches to show a promotion.',
+				'instructions' => 'Comma-separated word/slug list. It will show the promotion if the URL contains any value from the list.',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2039,7 +2127,7 @@ add_action( 'acf/include_fields', function() {
 				'name' => 'engrid_hide_on',
 				'aria-label' => '',
 				'type' => 'relationship',
-				'instructions' => 'The promotion will be ineligible for display on any pages added to this list. Matches to hide a promotion will always supersede matches to show a promotion.',
+				'instructions' => '',
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -2128,7 +2216,7 @@ add_action( 'acf/include_fields', function() {
 			),
 			array(
 				'key' => 'field_61f1f1f474561',
-				'label' => 'Suppression Event Name',
+				'label' => 'Supression Event Name',
 				'name' => 'engrid_gtm_suppressed_event_name',
 				'aria-label' => '',
 				'type' => 'text',
@@ -3128,52 +3216,6 @@ add_action( 'acf/include_fields', function() {
 		'acfe_form' => 0,
 		'acfe_meta' => '',
 		'acfe_note' => '',
-	) );
-
-	acf_add_local_field_group( array(
-		'key' => 'group_6440a98b14614',
-		'title' => 'Promotions Settings',
-		'fields' => array(
-			array(
-				'key' => 'field_6440a98b6c3dd',
-				'label' => 'Promotion Lightbox Script',
-				'name' => 'promotion_lightbox_script',
-				'aria-label' => '',
-				'type' => 'text',
-				'instructions' => '',
-				'required' => 0,
-				'conditional_logic' => 0,
-				'wrapper' => array(
-					'width' => '',
-					'class' => '',
-					'id' => '',
-				),
-				'default_value' => '',
-				'maxlength' => '',
-				'placeholder' => '',
-				'prepend' => '',
-				'append' => '',
-			),
-		),
-		'location' => array(
-			array(
-				array(
-					'param' => 'options_page',
-					'operator' => '==',
-					'value' => 'acf-options-settings',
-				),
-			),
-		),
-		'menu_order' => 0,
-		'position' => 'normal',
-		'style' => 'seamless',
-		'label_placement' => 'top',
-		'instruction_placement' => 'label',
-		'hide_on_screen' => '',
-		'active' => true,
-		'description' => '',
-		'show_in_rest' => 0,
-		'modified' => 1682299198,
 	) );
 } );
 
