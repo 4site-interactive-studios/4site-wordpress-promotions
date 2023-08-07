@@ -467,7 +467,9 @@ class Foursite_Wordpress_Promotion_Public {
 				$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
 				$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
 				$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
-				$resized_pushdown_image = isset($engrid_pushdown_image["sizes"]["2048x2048"]) ? $engrid_pushdown_image["sizes"]["2048x2048"] : '';
+				$engrid_pushdown_paragraph = get_field('pushdown_paragraph', $lightbox_id);
+				$engrid_pushdown_button = get_field('pushdown_button_label', $lightbox_id);
+				$resized_pushdown_image = isset($engrid_pushdown_image["sizes"]["2048x2048"]) ? $engrid_pushdown_image["sizes"]["2048x2048"] : $engrid_pushdown_image["url"];
 				
 				$client_side_triggered_config[] = [
 					'id' => $lightbox_id, 
@@ -475,6 +477,8 @@ class Foursite_Wordpress_Promotion_Public {
 					'url' => $engrid_pushdown_link,
 					'pushdown_type' => $engrid_pushdown_type,
 					'pushdown_title' => $engrid_pushdown_title,
+					'pushdown_paragraph' => $engrid_pushdown_paragraph,
+					'pushdown_button' => $engrid_pushdown_button,
 					'image' => esc_url($resized_pushdown_image),
 					'gif' => $engrid_pushdown_gif,
 					'trigger' => $trigger,
