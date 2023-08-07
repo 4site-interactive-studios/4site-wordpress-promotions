@@ -128,6 +128,9 @@ window.addEventListener("DOMContentLoaded", () => {
     if(promotion.cookie_hours) {
       setCookie(promotion.cookie_name, promotion.cookie_hours);
     }
+
+    // notify the page for any third-party listeners that want to react
+    window.dispatchEvent(new CustomEvent('fs_promo_launch', { detail: { promo: promotion } }));
   }
 
   if(scroll_px_triggered.length) {
