@@ -23,11 +23,45 @@
       padding: 0;
       border: 0;
       margin: 0;
+
+      .pushdown-close {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        cursor: pointer;
+        transition: top 0.5s;
+
+        .pushdown-close-inner {
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.20);
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.5s;
+
+          .close-icon {
+            height: 28px;
+            width: 28px;
+            margin: 16px;
+          }
+        }
+
+        &:hover {
+          top: 23px;
+          .pushdown-close-inner {
+            background-color: rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+
       .pushdown-overlay {
         width: 100%;
         padding: 40px 32px;
         margin: 0;
         border: 0;
+        border-radius: 0;
+
 
         .pushdown-title {
           font-weight: 700;

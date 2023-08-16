@@ -150,6 +150,17 @@ export class Pushdown {
 
       content = `
       <div class="pushdown-wrapper" style="background-image: url('${this.image}');">
+        <div class="pushdown-close" onclick="window.scrollBy({ left: 0, top: document.getElementById('pushdown').getBoundingClientRect().height, behavior: 'smooth' });">
+          <div class="pushdown-close-inner">
+            <!-- close SVG -->
+            <svg class="close-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="icons">
+                <path id="Union" d="M31.9995 1.88235L30.1172 0L16 14.1174L1.88278 3.09577e-05L0.000453111 1.88238L14.1177 15.9998L0 30.1176L1.88233 32L16 17.8821L30.1177 32L32 30.1176L17.8823 15.9998L31.9995 1.88235Z" fill="white"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
         <img class="pushdown-mobile-image" src="${this.image}" />
         <div class="pushdown-overlay" style="${style_css}">
           <h2 class="pushdown-title">${this.content}</h2>
