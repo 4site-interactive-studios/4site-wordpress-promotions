@@ -5,6 +5,52 @@ add_action( 'acf/include_fields', function() {
 		return;
 	}
 
+	acf_add_local_field_group(array(
+		'key' => 'group_6440a98b14614',
+		'title' => 'Promotions Settings',
+		'fields' => array(
+			array(
+				'key' => 'field_6440a98b6c3dd',
+				'label' => 'Promotion Lightbox Script',
+				'name' => 'promotion_lightbox_script',
+				'aria-label' => '',
+				'type' => 'text',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'default_value' => '',
+				'maxlength' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param' => 'options_page',
+					'operator' => '==',
+					'value' => 'acf-options-settings',
+				),
+			),
+		),
+		'menu_order' => 0,
+		'position' => 'normal',
+		'style' => 'seamless',
+		'label_placement' => 'top',
+		'instruction_placement' => 'label',
+		'hide_on_screen' => '',
+		'active' => true,
+		'description' => '',
+		'show_in_rest' => 0,
+		'modified' => 1682299198,
+	));
+
 	acf_add_local_field_group( array(
 		'key' => 'group_61f180ebc7b9d',
 		'title' => 'Foursite Wordpress Promotions',
