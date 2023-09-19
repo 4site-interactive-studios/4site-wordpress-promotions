@@ -460,12 +460,49 @@ add_action( 'acf/include_fields', function() {
 				),
 			),
 			'wrapper' => array(
-				'width' => '',
+				'width' => '50',
 				'class' => '',
 				'id' => '',
 			),
+			'acfe_save_meta' => 0,
 			'default_value' => '',
 			'placeholder' => '',
+		),
+		array(
+			'key' => 'field_6509fd2d2de48',
+			'label' => 'Append Chain',
+			'name' => 'engrid_dp_append_chain',
+			'aria-label' => '',
+			'type' => 'true_false',
+			'instructions' => 'Appending ?chain to an Engaging Networks page URL takes advantage of their native page chaining which pre-populates a supporters information on subsequent pages. You don\'t always need to go directly from one EN page to another EN page for the fields to pre-populate, all that matters is that the URL argument is present and your browser still has an active session. When enabled, supporters who have recently completed any EN form, and have an active session, may see their supporter info pre-populated on the embedded page.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'signup_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'acfe_save_meta' => 0,
+			'message' => '',
+			'default_value' => 0,
+			'ui_on_text' => '',
+			'ui_off_text' => '',
+			'ui' => 1,
 		),
 		array(
 			'key' => 'field_63bc637c4661c',

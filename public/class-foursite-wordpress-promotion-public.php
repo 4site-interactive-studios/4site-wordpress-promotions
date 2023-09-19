@@ -214,6 +214,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 		foreach($lightbox_ids as $lightbox_id){
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
+			$engrid_dp_append_chain = get_field('engrid_dp_append_chain', $lightbox_id);
 			$engrid_promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
 			$engrid_trigger_type = trim(get_field('engrid_trigger_type', $lightbox_id));
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
@@ -246,6 +247,14 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$confetti = array();
+
+			if($engrid_dp_append_chain) {
+				if(strpos($engrid_donation_page, '?') === false) {
+					$engrid_donation_page .= '?chain';
+				} else {
+					$engrid_donation_page .= '&chain';
+				}
+			}
 
 			if(have_rows('engrid_confetti', $lightbox_id) ){
 				while( have_rows('engrid_confetti', $lightbox_id) ){
