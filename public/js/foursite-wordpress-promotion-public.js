@@ -90,7 +90,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function launchPromotion(promotion) {
-    console.log('promo', promotion);
     switch(promotion.promotion_type) {
       case 'rollup':
         if(promotion.hide_under && window.innerWidth <= promotion.hide_under) {
@@ -297,13 +296,19 @@ window.addEventListener("DOMContentLoaded", () => {
             jQuery(document).scroll(lb_scroll_watcher);
           });
 
+          let slide_timeout = null;
           function lb_scroll_watcher() {
+            if(slide_timeout) {
+              clearTimeout(slide_timeout);
+              slide_timeout = null;
+            }
+
             var y = jQuery(this).scrollTop();
             if (y > 50) {
-              lb_slide_up();
+              slide_timeout = setTimeout(lb_slide_up, 250);
             } 
             if (y < 50) {
-              lb_slide_down();
+              slide_timeout = setTimeout(lb_slide_down, 250);
             }
           }
 
@@ -333,6 +338,7 @@ window.addEventListener("DOMContentLoaded", () => {
           }
 
           function lb_slide_down() {
+
             jQuery("#fs-rollup-container").stop().animate({
               height: '0px'
             }, 500, 'swing');
@@ -372,12 +378,27 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if(promotion.close_if_oustide_click) {
         promotion.js += `
-          <script>            
+          <script>
             jQuery(window).click(lb_click_close);
-            jQuery('#fs-rollup-container').click((event) => { event.stopPropagaion(); });
+          </script>
+        `;
+        if(!promotion.close_if_inside_click) {
+          promotion.js += `
+            <script>
+              jQuery('#fs-rollup-container').click((event) => { event.stopPropagaion(); });
+            </script>
+          `;
+        }
+      }
+
+      if(promotion.close_if_inside_click) {
+        promotion.js += `
+          <script>
+            jQuery('#fs-rollup-container').click(lb_click_close);
           </script>
         `;
       }
+
       insertJs(promotion.id, `${promotion.js}`);
   }
 

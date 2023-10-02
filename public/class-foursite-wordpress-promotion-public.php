@@ -631,6 +631,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'target' => ($rollup_settings['target']) ? '_blank' : '',
 					'hide_under' => $rollup_settings['hide_under'],
 					'close_if_oustide_click' => $rollup_settings['close_if_outside_click'],
+					'close_if_inside_click' => $rollup_settings['close_if_inside_click'],
 					'close_cookie_hours' => $rollup_settings['cookie_hours'],
 					'html' => $engrid_html, 
 					'js' => $engrid_js, 
