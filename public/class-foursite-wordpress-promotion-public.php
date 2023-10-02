@@ -621,6 +621,28 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_hours' => $engrid_cookie_hours, 
 					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false
 				];
+			} else if($engrid_promotion_type == "rollup") {
+				$rollup_settings = get_field('rollup', $lightbox_id);
+				$client_side_triggered_config[] = [
+					'id' => $lightbox_id,
+					'promotion_type' => $engrid_promotion_type,
+					'image' => !empty($rollup_settings['image']['sizes']['2048x2048']) ? $rollup_settings['image']['sizes']['2048x2048'] : '',
+					'link' => $rollup_settings['link'],
+					'target' => ($rollup_settings['target']) ? '_blank' : '',
+					'hide_under' => $rollup_settings['hide_under'],
+					'close_if_oustide_click' => $rollup_settings['close_if_outside_click'],
+					'close_cookie_hours' => $rollup_settings['cookie_hours'],
+					'html' => $engrid_html, 
+					'js' => $engrid_js, 
+					'css' => $engrid_css, 
+					'cookie_name' => $engrid_cookie_name, 
+					'cookie_hours' => $engrid_cookie_hours, 
+					'trigger' => $trigger,
+				];
+
+				if($rollup_settings['enqueue_jquery']) {
+					wp_enqueue_script('jquery-cdn', 'https://code.jquery.com/jquery-3.7.1.min.js', [], '3.7.1');
+				}
 			}
 		}
 

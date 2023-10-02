@@ -90,7 +90,14 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function launchPromotion(promotion) {
+    console.log('promo', promotion);
     switch(promotion.promotion_type) {
+      case 'rollup':
+        if(promotion.hide_under && window.innerWidth <= promotion.hide_under) {
+        } else {
+          addRollup(promotion);
+        }
+        break;
       case 'multistep_lightbox':
         if(window.lightbox_triggered) {
           return;
@@ -241,6 +248,137 @@ window.addEventListener("DOMContentLoaded", () => {
     if (promotion.js) {
       insertJs(promotion.id, promotion.js);
     }
+  }
+
+  function insertHtml(promotion_id, promotion_html) {
+      const html_container = document.createElement("div");
+      html_container.classList.add("promotion-html");
+      html_container.classList.add("promotion-element");
+      html_container.classList.add("promotion-" + promotion_id);
+      html_container.innerHTML = promotion_html;
+      document.body.appendChild(html_container);
+  }
+
+  function addRollup(promotion) {
+      insertHtml(promotion.id, `
+        <div id="fs-rollup-container">
+          <a href="${promotion.link}" target="${promotion.target}"><div id="fs-rollup-inner">${promotion.html}</div></a>
+        </div> 
+      `);
+      insertCss(promotion.id, `
+        @media screen and (min-width: 1200px) { 
+          body {
+            margin-bottom: 190px;
+          }
+        }
+        #fs-rollup-container {
+          width: 100%;
+          height: 200px;
+          background: #ffffff;
+          padding: 0px;
+          position: fixed;
+          bottom: 0px;
+          right: 0px;
+          z-index: 500;
+          box-shadow: 0 0 15px #333333;
+        }
+        #fs-rollup-inner {
+          max-width: 1170px;
+          height: 200px;
+          margin: 0 auto;
+          background: #ffffff url('${promotion.image}') top left no-repeat;
+          background-size: auto 100% ;
+        }
+        ${promotion.css}
+      `);
+      promotion.js += `
+        <script>
+          jQuery(document).ready(function() {
+            jQuery(document).scroll(lb_scroll_watcher);
+          });
+
+          function lb_scroll_watcher() {
+            var y = jQuery(this).scrollTop();
+            if (y > 50) {
+              lb_slide_up();
+            } 
+            if (y < 50) {
+              lb_slide_down();
+            }
+          }
+
+          function lb_slide_up() {
+            if (jQuery(window).width() > 1200) { 
+
+              jQuery("#fs-rollup-container").stop().animate({
+                height: '200px'
+              }, 700, 'swing');
+
+              jQuery("#fs-rollup-inner").stop().animate({
+                marginTop: '-0px'
+              }, 300, 'swing');
+
+              jQuery("#fs-rollup-inner").css('height', '200px');
+              jQuery("body").css('margin-bottom', '200px');
+              jQuery("#fs-rollup-inner").css('display', 'block');
+
+            } else {
+
+              jQuery("#fs-rollup-container").css('margin-top', '0px');
+              jQuery("#fs-rollup-container").css('height', 'auto');
+              jQuery("#fs-rollup-inner").css('height', 'auto');
+              jQuery("body").css('margin-bottom', '0px');
+
+            }
+          }
+
+          function lb_slide_down() {
+            jQuery("#fs-rollup-container").stop().animate({
+              height: '0px'
+            }, 500, 'swing');
+
+            jQuery("#fs-rollup-inner").stop().animate({
+              marginTop: 0
+            }, 300, 'swing');
+
+            jQuery("body").css('margin-bottom', '0px');
+          }
+
+          window.lb_click_close = function(event) {
+            lb_slide_down();
+            jQuery(document).off('scroll', lb_scroll_watcher);
+
+            if(${promotion.cookie_hours}) {
+              setCookie('${promotion.cookie_name}', ${promotion.cookie_hours});
+            } else if(${promotion.close_cookie_hours}) {
+              setCookie('${promotion.cookie_name}', ${promotion.close_cookie_hours});
+            }
+          }
+        </script>
+      `;
+      if(promotion.hide_under) {
+        promotion.js += `
+          <script>
+            window.addEventListener('resize', function() {
+              if(window.innerWidth <= ${promotion.hide_under}) {
+                const rollup_container = document.getElementById('fs-rollup-container');
+                if(rollup_container) {
+                  rollup_container.style.display = 'none';
+                }                  
+              }
+            });
+          </script>
+        `;
+      }
+      if(promotion.close_if_oustide_click) {
+        promotion.js += `
+          <script>            
+            jQuery(window).click(lb_click_close);
+            jQuery('#fs-rollup-container').click((event) => { event.stopPropagaion(); });
+          </script>
+        `;
+      }
+      insertJs(promotion.id, `${promotion.js}`);
   }
 
   function addPushdown(promotion) {
