@@ -578,8 +578,26 @@ class Foursite_Wordpress_Promotion_Public {
 				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 				$fsft_css = get_field('engrid_css', $lightbox_id);
 				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
+				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
+				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
 				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
 				$fsft_id = 'fs-donation-tab';
+
+				$trigger = 0;
+				switch($fsft_trigger) {
+					case "0":
+						$trigger = 0;
+						break;
+					case 'px':
+						$trigger = $engrid_trigger_scroll_pixels.'px';
+						break;
+					case '%':
+						$trigger = $engrid_trigger_scroll_percentage.'%';
+						break;
+					case 'js':
+						$trigger = 'js';
+						break;
+				}
 
 				$style = '';
 				if(!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";
@@ -616,7 +634,7 @@ class Foursite_Wordpress_Promotion_Public {
 					'promotion_type' => $engrid_promotion_type,
 					'css' => $engrid_css,
 					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
-					'trigger' => $fsft_trigger,
+					'trigger' => $trigger,
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false
