@@ -45,7 +45,7 @@ function promotions_en_form_block() {
 }
 add_action( 'init', 'promotions_en_form_block' );
 
-function generate_en_form_shortcode($atts) {
+function fwp_generate_en_form_shortcode($atts) {
 	wp_enqueue_script('en-form-parent'); // Only load the script when the shortcode is used
     $shortcode_atts = shortcode_atts(
         array(
@@ -82,7 +82,7 @@ function generate_en_form_shortcode($atts) {
 
     return $shortcode;
 }
-add_shortcode('en-form', 'generate_en_form_shortcode');
+add_shortcode('en-form', 'fwp_generate_en_form_shortcode');
 
 function promotions_en_form_wp_enqueue_scripts() {
     wp_register_script( 'en-form-parent', plugins_url( '/en-form/dist/en-form-parent.js', __FILE__ ), array(), foursite_wordpress_promotion_VERSION, 'all' );

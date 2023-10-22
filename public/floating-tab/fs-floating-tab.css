@@ -4,8 +4,9 @@
   align-items: center;
 
   box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.12);
-  transition: right 0.5s;
+  transition: right 1s;
   transform: rotate(-90deg);
+  transform-origin: bottom right;
 
   text-decoration: none;
   font-size: 18px;
@@ -16,13 +17,17 @@
   line-height: 18px;
   letter-spacing: 0.04em;
   padding: 18px 30px;
-  margin-right: 25px;
+  margin-right: 0;
 
   position: fixed;
-  top: 50%;
-  right: -70px;
+  top: 40%;
+  right: -100px;
 
   white-space: unset;
+}
+
+#fs-donation-tab.floating-tab-show {
+  right: 0;
 }
 
 #fs-donation-tab.fixed-in-page {

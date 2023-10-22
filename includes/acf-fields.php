@@ -2150,6 +2150,45 @@ add_action( 'acf/include_fields', function() {
 			'search_placeholder' => '',
 		),
 		array(
+			'key' => 'field_63e28926f3d25',
+			'label' => 'Trigger',
+			'name' => 'engrid_fsft_trigger_type',
+			'aria-label' => '',
+			'type' => 'select',
+			'instructions' => 'For Javascript Trigger, open the promotion with triggerPromotion(id); 
+		Replace "id" with your promotion id.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'floating_tab',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				0 => 'Immediately',
+				'px' => 'On Pixel Scroll',
+				'%' => 'On Percentage Scroll',
+				'js' => 'Javascript Trigger',
+			),
+			'default_value' => false,
+			'return_format' => 'value',
+			'multiple' => 0,
+			'allow_null' => 0,
+			'ui' => 0,
+			'ajax' => 0,
+			'placeholder' => '',
+			'allow_custom' => 0,
+			'search_placeholder' => '',
+		),
+		array(
 			'key' => 'field_61f1e8cad1f27',
 			'label' => 'Seconds',
 			'name' => 'engrid_trigger_seconds',
@@ -2202,6 +2241,13 @@ add_action( 'acf/include_fields', function() {
 						'value' => 'px',
 					),
 				),
+				array(
+						array(
+							'field' => 'field_63e28926f3d25',
+							'operator' => '==',
+							'value' => 'px',
+						),
+					),
 			),
 			'wrapper' => array(
 				'width' => '50',
@@ -2232,6 +2278,13 @@ add_action( 'acf/include_fields', function() {
 						'value' => '%',
 					),
 				),
+				array(
+						array(
+							'field' => 'field_63e28926f3d25',
+							'operator' => '==',
+							'value' => '%',
+						),
+					),
 			),
 			'wrapper' => array(
 				'width' => '50',
@@ -2245,43 +2298,6 @@ add_action( 'acf/include_fields', function() {
 			'min' => '',
 			'max' => '',
 			'step' => '',
-		),
-		array(
-			'key' => 'field_63e28926f3d25',
-			'label' => 'Trigger',
-			'name' => 'engrid_fsft_trigger_type',
-			'aria-label' => '',
-			'type' => 'select',
-			'instructions' => 'For Javascript Trigger, open the promotion with triggerPromotion(id); 
-		Replace "id" with your promotion id.',
-			'required' => 0,
-			'conditional_logic' => array(
-				array(
-					array(
-						'field' => 'field_63694582ec47e',
-						'operator' => '==',
-						'value' => 'floating_tab',
-					),
-				),
-			),
-			'wrapper' => array(
-				'width' => '50',
-				'class' => '',
-				'id' => '',
-			),
-			'choices' => array(
-				0 => 'Immediately',
-				'js' => 'Javascript Trigger',
-			),
-			'default_value' => false,
-			'return_format' => 'value',
-			'multiple' => 0,
-			'allow_null' => 0,
-			'ui' => 0,
-			'ajax' => 0,
-			'placeholder' => '',
-			'allow_custom' => 0,
-			'search_placeholder' => '',
 		),
 		array(
 			'key' => 'field_61f1839713dff',
