@@ -5,6 +5,12 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  window.triggerPromotion = function (id) {
+    window.dispatchEvent(
+      new CustomEvent("trigger-promotion", { detail: { promotion_id: id } })
+    );
+  };
+
   document.addEventListener("multistep-lightbox", (e) => {
     if (e.detail.action == "closed" && e.detail.context !== "object") {
       document.getElementById(e.detail.id).remove();
@@ -656,9 +662,4 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  window.triggerPromotion = function (id) {
-    window.dispatchEvent(
-      new CustomEvent("trigger-promotion", { detail: { promotion_id: id } })
-    );
-  };
 });
