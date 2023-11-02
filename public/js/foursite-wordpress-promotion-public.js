@@ -486,6 +486,9 @@ window.addEventListener("DOMContentLoaded", () => {
         });
         break;
       default:
+        window.setTimeout(() => {
+          showFloatingTab();
+        }, trigger);
         break;
     }
   }
@@ -661,5 +664,4 @@ window.addEventListener("DOMContentLoaded", () => {
       return false;
     }
   }
-
 });
