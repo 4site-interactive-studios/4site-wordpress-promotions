@@ -130,16 +130,6 @@ class Foursite_Wordpress_Promotion {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-foursite-wordpress-promotion-public.php';
 
 		$this->loader = new Foursite_Wordpress_Promotion_Loader();
-		add_action('acf/save_post', 'foursite_wordpress_promotion_save_post');
-		function foursite_wordpress_promotion_save_post( $post_id ) {
-			// Detect when the options page for this plugin is being saved
-			if($post_id == 'options' && isset($_POST['acf']['field_61f180fb94e9c'])) {
-				// Clear the cloudflare caches. This requires both the
-				// Foursite Wordpress Promotion Cloudflare Addon plugin and 
-				// the Cloudflare plugin.
-				do_action('engrid_fwp_clear_cloudflare_all');
-			}
-		}
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/options.php';
 

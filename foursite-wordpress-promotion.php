@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.0.19
+ * Version:           1.0.20
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.0.19' );
+define( 'foursite_wordpress_promotion_VERSION', '1.0.20' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -116,6 +116,95 @@ register_deactivation_hook( __FILE__, 'deactivate_foursite_wordpress_promotion' 
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-foursite-wordpress-promotion.php';
+
+
+
+function foursite_wordpress_promotion_schedule_initial_cron() {
+    $today = new DateTime();
+    $today->setTime(0,0);
+    wp_schedule_event($today->getTimestamp(), 'daily', 'fs_wp_promo_hook');
+}
+
+add_action('fs_wp_promo_hook', 'foursite_wordpress_promotion_cron_exec');
+function foursite_wordpress_promotion_cron_exec() {
+    $today = date('Y-m-d');
+    $current_schedule = get_option('fs_wp_promo_cron_schedules', []);
+    $clear_cache = false;
+    foreach($current_schedule as $post_id => $dates) {
+        foreach($dates as $idx => $date) {
+            if($date <= $today) {
+                $clear_cache = true;
+                unset($current_schedule[$post_id][$idx]);
+            }
+        }
+    }
+    foreach($current_schedule as $post_id => $dates) {
+        if(count($dates) == 0) {
+            unset($current_schedule[$post_id]);
+        }
+    }
+    if(count($current_schedule) == 0) {
+        $next_scheduled_cron_run = wp_next_scheduled('fs_wp_promo_hook');
+        if($next_scheduled_cron_run) {
+            wp_unschedule_event($next_scheduled_cron_run, 'fs_wp_promo_hook');
+        }
+    }
+    if($clear_cache) {
+        do_action('engrid_fwp_clear_cloudflare_all');
+        update_option('fs_wp_promo_cron_schedules', $current_schedule); 
+    }
+}
+
+add_action('acf/save_post', 'foursite_wordpress_promotion_save_post');
+function foursite_wordpress_promotion_save_post( $post_id ) {
+    // Detect when the options page for this plugin is being saved
+    if($post_id == 'options' && isset($_POST['acf']['field_61f180fb94e9c'])) {
+        // Clear the cloudflare caches. This requires both the
+        // Foursite Wordpress Promotion Cloudflare Addon plugin and 
+        // the Cloudflare plugin.
+        do_action('engrid_fwp_clear_cloudflare_all');
+    } else {
+        $post_type = get_post_type($post_id);
+        if($post_type == 'wordpress_promotion') {
+            foursite_wordpress_promotion_update_schedule($post_id);
+        }
+    }
+}
+
+function foursite_wordpress_promotion_update_schedule($post_id) {
+    $values = get_fields($post_id);
+    $current_schedule = get_option('fs_wp_promo_cron_schedules', []);
+    if(isset($current_schedule[$post_id])) {
+        unset($current_schedule[$post_id]);
+    }
+    if($values['engrid_lightbox_display'] == 'scheduled') {
+        $start_date = date('Y-m-d', strtotime($values['engrid_start_date']));
+        $end_date = date('Y-m-d', strtotime($values['engrid_end_date']));
+        $current_date = date('Y-m-d');
+        $cron_clear_dates = [];
+        if($start_date >= $current_date) {
+            $cron_clear_dates[] = $start_date;
+        }
+        if($end_date >= $current_date && $start_date != $end_date) {
+            $cron_clear_dates[] = $end_date;
+        }
+    }
+    if(count($cron_clear_dates)) {
+        $current_schedule[$post_id] = $cron_clear_dates;
+    }
+    update_option('fs_wp_promo_cron_schedules', $current_schedule);
+
+    // set cron run for every day at midnight, if we have events to clear cache for; otherwise, remove the scheduled cron run
+    $next_scheduled_cron_run = wp_next_scheduled('fs_wp_promo_hook');
+    if(count($current_schedule)) {
+        if(!$next_scheduled_cron_run) {
+            foursite_wordpress_promotion_schedule_initial_cron();
+        }
+    } else if($next_scheduled_cron_run) {
+        wp_unschedule_event($next_scheduled_cron_run, 'fs_wp_promo_hook');
+    }
+}
+
 
 
 

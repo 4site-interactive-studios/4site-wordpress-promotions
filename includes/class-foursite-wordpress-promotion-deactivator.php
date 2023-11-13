@@ -30,7 +30,10 @@ class Foursite_Wordpress_Promotion_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		$next_scheduled_cron_run = wp_next_scheduled('fs_wp_promo_hook');
+		if($next_scheduled_cron_run) {
+			wp_unschedule_event($next_scheduled_cron_run, 'fs_wp_promo_hook');
+		}
 	}
 
 }
