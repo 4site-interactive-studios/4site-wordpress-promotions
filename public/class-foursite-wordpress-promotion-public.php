@@ -113,7 +113,6 @@ class Foursite_Wordpress_Promotion_Public {
 		if($lightbox_query->posts){
 			foreach($lightbox_query->posts as $lightbox){
 				$lightbox_id = $lightbox->ID;
-				$test[] = $lightbox_id;
 				$whitelist = get_field('engrid_whitelist', $lightbox_id);
 				$blacklist = get_field('engrid_blacklist', $lightbox_id);
 				$lightbox_start = get_field('engrid_start_date', $lightbox_id);
@@ -131,12 +130,15 @@ class Foursite_Wordpress_Promotion_Public {
 
 				$is_scheduled  = false;
 				if($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
+					$is_scheduled = true;
+					/*
 					$today_date = date("Ymd");
 					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
 						$is_scheduled = true;
 					} else {
 						continue;
 					}
+					*/
 				}
 
 				if($whitelist) {
@@ -294,7 +296,7 @@ class Foursite_Wordpress_Promotion_Public {
 
 			if($engrid_promotion_type == "multistep_lightbox") {
 
-				$promo_config = [
+				$client_side_triggered_config[] = [
 					'id' => $lightbox_id,
 					'promotion_type' => $engrid_promotion_type, 
 					'url' => $engrid_donation_page, 
@@ -319,9 +321,11 @@ class Foursite_Wordpress_Promotion_Public {
 					'gtm_open_event_name' => $engrid_gtm_open_event_name,
 					'gtm_close_event_name' => $engrid_gtm_close_event_name,
 					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
-					'confetti' => $engrid_confetti
+					'confetti' => $engrid_confetti,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
-				$client_side_triggered_config[] = $promo_config;
 
 			} else if($engrid_promotion_type == "raw_code") {
 
@@ -334,7 +338,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'trigger' => $trigger, 
-					'is_lightbox' => boolval(get_field('is_lightbox', $lightbox_id))
+					'is_lightbox' => boolval(get_field('is_lightbox', $lightbox_id)),
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
 
 
@@ -466,7 +473,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'cta_type' => $cta_type,
 					'amounts' => ($cta_type == 'fundraising') ? str_replace(' ', '', get_field('amount_options', $lightbox_id)) : '',
 					'custom_css' => ".foursite-en-overlay { {$formated_styles_string} }",
-					'js_url' => plugin_dir_url( __FILE__ ) . 'overlay/dist/foursite-en-overlay.js'
+					'js_url' => plugin_dir_url( __FILE__ ) . 'overlay/dist/foursite-en-overlay.js',
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
 
 			} else if ($engrid_promotion_type == "pushdown") {
@@ -478,8 +488,13 @@ class Foursite_Wordpress_Promotion_Public {
 				$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
 				$engrid_pushdown_paragraph = get_field('pushdown_paragraph', $lightbox_id);
 				$engrid_pushdown_button = get_field('pushdown_button_label', $lightbox_id);
-				$resized_pushdown_image = isset($engrid_pushdown_image["sizes"]["2048x2048"]) ? $engrid_pushdown_image["sizes"]["2048x2048"] : $engrid_pushdown_image["url"];
-				
+				$resized_pushdown_image = '';
+				if(isset($engrid_pushdown_image["sizes"]["2048x2048"])) {
+					$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
+				} else if(isset($engrid_pushdown_image["url"])) {
+					$resized_pushdown_image = $engrid_pushdown_image["url"];
+				}
+
 				$client_side_triggered_config[] = [
 					'id' => $lightbox_id, 
 					'promotion_type' => $engrid_promotion_type, 
@@ -496,7 +511,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
 					'bg_color' => $engrid_bg_color,
 					'fg_color' => $engrid_text_color,
-					'image_id' => isset($engrid_pushdown_image['ID']) ? $engrid_pushdown_image['ID'] : 0
+					'image_id' => isset($engrid_pushdown_image['ID']) ? $engrid_pushdown_image['ID'] : 0,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
 
 			} else if($engrid_promotion_type == "signup_lightbox") {
@@ -533,6 +551,9 @@ class Foursite_Wordpress_Promotion_Public {
 						whitelist: [],
 						layout: "$layout",
 						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+						display: "{$engrid_display}",
+						start: "{$engrid_start_date}",
+						end: "{$engrid_end_date}"
 					};
 					ENGRID;
 
@@ -559,6 +580,9 @@ class Foursite_Wordpress_Promotion_Public {
 						blacklist: [],
 						whitelist: [],
 						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+						display: "{$engrid_display}",
+						start: "{$engrid_start_date}",
+						end: "{$engrid_end_date}"
 					};
 					ENGRID;
 
@@ -637,7 +661,10 @@ class Foursite_Wordpress_Promotion_Public {
 					'trigger' => $trigger,
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
-					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false
+					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
 			} else if($engrid_promotion_type == "rollup") {
 				$rollup_settings = get_field('rollup', $lightbox_id);
@@ -657,6 +684,9 @@ class Foursite_Wordpress_Promotion_Public {
 					'cookie_name' => $engrid_cookie_name, 
 					'cookie_hours' => $engrid_cookie_hours, 
 					'trigger' => $trigger,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date
 				];
 
 				if($rollup_settings['enqueue_jquery']) {
