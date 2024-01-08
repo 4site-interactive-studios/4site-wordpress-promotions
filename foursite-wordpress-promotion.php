@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.0.20
+ * Version:           1.0.21
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.0.20' );
+define( 'foursite_wordpress_promotion_VERSION', '1.0.21' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -56,6 +56,7 @@ function fwp_generate_en_form_shortcode($atts) {
             'loading-color' => '#E5E6E8',
             'bounce-color' => '#16233f',
             'append-url-params' => 'true',
+            'frame-title' => ''
         ),
         $atts,
         'en-form'
@@ -69,6 +70,7 @@ function fwp_generate_en_form_shortcode($atts) {
     $loading_color = $shortcode_atts['loading-color'];
     $bounce_color = $shortcode_atts['bounce-color'];
     $append_url_params = $shortcode_atts['append-url-params'];
+    $frame_title = $shortcode_atts['frame-title'];
 
     // Generate the iframe shortcode string
     $shortcode = '<iframe class="promo-form-iframe" ';
@@ -78,6 +80,7 @@ function fwp_generate_en_form_shortcode($atts) {
     $shortcode .= 'data-border_radius="' . esc_attr($border_radius) . '" ';
     $shortcode .= 'data-loading_color="' . esc_attr($loading_color) . '" ';
     $shortcode .= 'data-bounce_color="' . esc_attr($bounce_color) . '" ';
+    $shortcode .= 'title="' . esc_attr($frame_title) . '" ';
     $shortcode .= 'data-append_url_params="' . esc_attr($append_url_params) . '"></iframe>';
 
     return $shortcode;
