@@ -36,6 +36,10 @@ window.addEventListener("DOMContentLoaded", () => {
       continue;
     }
 
+    if (client_side_triggered_config[i].display == 'scheduled' && !scheduledForToday(client_side_triggered_config[i])) {
+      continue;
+    }
+
     // add our promo to the appropriate array
     let trigger = client_side_triggered_config[i].trigger;
     let trigger_type = getTriggerType(trigger);
@@ -75,6 +79,18 @@ window.addEventListener("DOMContentLoaded", () => {
       default:
         break;
     }
+  }
+
+  function scheduledForToday(promotion) {
+    if(promotion.display == 'scheduled' && promotion.start && promotion.end) {
+      const start = Date.parse(promotion.start + ' 00:00:01');
+      const end = Date.parse(promotion.end + ' 23:59:59');
+      const today = Date.now();
+      if(start <= today && end >= today) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function addMultistepLightbox(promotion) {
@@ -512,7 +528,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addFloatingTab(promotion) {
-    console.log(promotion);
 
     const html_container = document.createElement("div");
     html_container.innerHTML = promotion.html;
