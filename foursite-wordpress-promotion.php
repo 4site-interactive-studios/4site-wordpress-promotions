@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.1.0' );
+define( 'foursite_wordpress_promotion_VERSION', '1.1.1' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -52,11 +52,16 @@ function fwp_add_acf_field_css() {
         .acf-fields > .acf-field[data-key='field_65d51492d5b94'],
         .acf-fields > .acf-field[data-key='field_630676e57bb3b'],
         .acf-fields > .acf-field[data-key='field_63694582ec47e'],
-        .acf-fields > .acf-field[data-key='field_6420da53c4965'] {
+        .acf-fields > .acf-field[data-key='field_6420da53c4965'],
+        .acf-fields > .acf-field[data-key='field_61f1856cc8652'], 
+        .acf-fields > .acf-field[data-key='field_61f185aac8653'] {
             border-top-style: unset;
             padding-top: 0px;
             padding-bottom: 0px;
             min-height: unset!important;
+        }
+        .acf-field[data-width][data-key='field_61f1856cc8652'] + .acf-field[data-width][data-key='field_61f185aac8653'] {
+            border-left: none;
         }
         .acf-fields > .acf-field[data-key='field_65d51492d5b94'] {
             padding-top: 15px;
@@ -68,6 +73,12 @@ function fwp_add_acf_field_css() {
             padding-bottom: 15px;
         }
         .acf-fields > .acf-field[data-key='field_6420da53c4965'] {
+            padding-bottom: 15px;
+        }
+        .acf-fields > .acf-field[data-key='field_61f1856cc8652'] {
+            padding-bottom: 15px;
+        } 
+        .acf-fields > .acf-field[data-key='field_61f185aac8653'] {
             padding-bottom: 15px;
         }
         </style>

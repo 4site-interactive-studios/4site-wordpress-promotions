@@ -52,6 +52,58 @@ add_action( 'acf/include_fields', function() {
 			'layout' => 'horizontal',
 		),
 		array(
+			'key' => 'field_61f1856cc8652',
+			'label' => 'Start Date',
+			'name' => 'engrid_start_date',
+			'aria-label' => '',
+			'type' => 'date_picker',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_630676e57bb3b',
+						'operator' => '==',
+						'value' => 'scheduled',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'display_format' => 'm/d/Y',
+			'return_format' => 'm/d/Y',
+			'first_day' => 1,
+		),
+		array(
+			'key' => 'field_61f185aac8653',
+			'label' => 'End Date',
+			'name' => 'engrid_end_date',
+			'aria-label' => '',
+			'type' => 'date_picker',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_630676e57bb3b',
+						'operator' => '==',
+						'value' => 'scheduled',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'display_format' => 'm/d/Y',
+			'return_format' => 'm/d/Y',
+			'first_day' => 1,
+		),
+		array(
 			'key' => 'field_63694582ec47e',
 			'label' => '',
 			'name' => 'engrid_promotion_type',
@@ -128,58 +180,6 @@ add_action( 'acf/include_fields', function() {
 			),
 			'placement' => 'top',
 			'endpoint' => 0,
-		),
-		array(
-			'key' => 'field_61f1856cc8652',
-			'label' => 'Start Date',
-			'name' => 'engrid_start_date',
-			'aria-label' => '',
-			'type' => 'date_picker',
-			'instructions' => '',
-			'required' => 0,
-			'conditional_logic' => array(
-				array(
-					array(
-						'field' => 'field_630676e57bb3b',
-						'operator' => '==',
-						'value' => 'scheduled',
-					),
-				),
-			),
-			'wrapper' => array(
-				'width' => '50',
-				'class' => '',
-				'id' => '',
-			),
-			'display_format' => 'm/d/Y',
-			'return_format' => 'm/d/Y',
-			'first_day' => 1,
-		),
-		array(
-			'key' => 'field_61f185aac8653',
-			'label' => 'End Date',
-			'name' => 'engrid_end_date',
-			'aria-label' => '',
-			'type' => 'date_picker',
-			'instructions' => '',
-			'required' => 0,
-			'conditional_logic' => array(
-				array(
-					array(
-						'field' => 'field_630676e57bb3b',
-						'operator' => '==',
-						'value' => 'scheduled',
-					),
-				),
-			),
-			'wrapper' => array(
-				'width' => '50',
-				'class' => '',
-				'id' => '',
-			),
-			'display_format' => 'm/d/Y',
-			'return_format' => 'm/d/Y',
-			'first_day' => 1,
 		),
 		array(
 			'key' => 'field_651a2eaa0bd3b',
@@ -993,8 +993,8 @@ add_action( 'acf/include_fields', function() {
 			),
 			'choices' => array(
 				'image' => 'Image',
-				'autoplay-video' => 'Auto play Video',
-				'click-to-play-video' => 'Click to Play Video',
+				'autoplay-video' => 'Autoplay Video',
+				'click-to-play-video' => 'Click-to-Play Video',
 			),
 			'default_value' => '',
 			'return_format' => 'value',
