@@ -124,6 +124,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function launchPromotion(promotion) {
     switch (promotion.promotion_type) {
+      case "cta_lightbox":
+        if (window.lightbox_triggered) {
+          return;
+        } else {
+          window.lightbox_triggered = true;
+        }
+        addCtaLightbox(promotion);
+        break;
       case "rollup":
         if (promotion.hide_under && window.innerWidth <= promotion.hide_under) {
         } else {
@@ -264,6 +272,254 @@ window.addEventListener("DOMContentLoaded", () => {
         document.removeEventListener("trigger-promotion", jsTrigger);
       }
     }
+  }
+
+  function addCtaLightbox(promotion) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("fs-cta-modal-container");
+
+    const modal = document.createElement("div");
+    modal.classList.add("fs-cta-modal");
+      
+    const modal_close_button = document.createElement("div");
+    modal_close_button.classList.add("fs-cta-modal-close-button");
+    modal_close_button.innerHTML = "&times;";
+    modal.appendChild(modal_close_button);
+
+    if(promotion.image.position === "left") {
+      modal.classList.add("fs-cta-modal-image-left");
+    } else {
+      modal.classList.add("fs-cta-modal-image-right");
+    }
+    if(promotion.bg_color) {
+      modal.style.backgroundColor = promotion.bg_color;
+    }
+    if(promotion.fg_color) {
+      modal.style.color = promotion.fg_color;
+      modal.style.borderColor = promotion.fg_color;
+      modal.style.borderWidth = "2px";
+    }
+
+    const modal_text_column = document.createElement("div");
+    modal_text_column.classList.add("fs-cta-modal-text-column");
+
+    if(promotion.header) {
+      const modal_header = document.createElement("div");
+      modal_header.classList.add("fs-cta-modal-header");
+      modal_header.innerHTML = promotion.header;
+      modal_text_column.appendChild(modal_header);  
+    }
+
+    if(promotion.body) {
+      const modal_content = document.createElement("div");
+      modal_content.classList.add("fs-cta-modal-content");
+      modal_content.innerHTML = promotion.body;
+      modal_text_column.appendChild(modal_content);  
+    }
+
+    if(promotion.cta_1.label && promotion.cta_1.link) {
+      const modal_cta_button_1 = document.createElement("a");
+      modal_cta_button_1.classList.add("fs-cta-modal-button");
+      modal_cta_button_1.href = promotion.cta_1.link;
+      modal_cta_button_1.target = '_blank';
+      modal_cta_button_1.innerHTML = promotion.cta_1.label;
+      if(promotion.cta_1.bg_color) {
+        modal_cta_button_1.style.backgroundColor = promotion.cta_1.bg_color;
+      }
+      if(promotion.cta_1.fg_color) {
+        modal_cta_button_1.style.color = promotion.cta_1.fg_color;
+        modal_cta_button_1.style.borderColor = promotion.cta_1.fg_color;
+        modal_cta_button_1.style.borderWidth = "2px";
+      }
+      modal_text_column.appendChild(modal_cta_button_1);
+    }
+
+    if(promotion.cta_2.label && promotion.cta_2.link) {
+      const modal_cta_button_2 = document.createElement("a");
+      modal_cta_button_2.classList.add("fs-cta-modal-button");
+      modal_cta_button_2.href = promotion.cta_2.link;
+      modal_cta_button_2.target = '_blank';
+      modal_cta_button_2.innerHTML = promotion.cta_2.label;
+      if(promotion.cta_2.bg_color) {
+        modal_cta_button_2.style.backgroundColor = promotion.cta_2.bg_color;
+      }
+      if(promotion.cta_2.fg_color) {
+        modal_cta_button_2.style.color = promotion.cta_2.fg_color;
+        modal_cta_button_2.style.borderColor = promotion.cta_2.fg_color;
+        modal_cta_button_2.style.borderWidth = "2px";
+      }
+      modal_text_column.appendChild(modal_cta_button_2);
+    }
+
+    modal.appendChild(modal_text_column);
+
+    if(promotion.image.url) {
+      const modal_image_column = document.createElement("div");
+      modal_image_column.classList.add("fs-cta-modal-image-column");
+  
+      const modal_image = document.createElement("img");
+      modal_image.src = promotion.image.url;
+      modal_image.alt = promotion.image.alt;
+      modal_image.classList.add("fs-cta-modal-image");
+  
+      const modal_image_container = document.createElement("div");
+      modal_image_container.classList.add("fs-cta-modal-image-container");
+      modal_image_container.appendChild(modal_image); 
+  
+      modal_image_column.appendChild(modal_image_container);
+      modal.appendChild(modal_image_column);  
+    }
+
+    const css = `
+      .fs-cta-modal-container {
+        display: flex;
+        z-index: 9999;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-animation: fadeIn 0.5s;
+        animation: fadeIn 0.5s;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0,0,0,0.45);
+        overflow-y: scroll;
+      }
+      .fs-cta-modal {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        position: relative;
+        width: 95%;
+        max-width: 1000px;
+        height: fit-content;
+      }
+      .fs-cta-modal-header {
+        font-size: 32px;
+        font-weight: 600;
+      }
+      .fs-cta-modal-content {
+        font-size: 20px;
+        line-height: 1.5;
+        font-weight: 400;
+      }
+      .fs-cta-modal-text-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+        width: 50%;
+        padding: 30px 30px;
+      }
+      .fs-cta-modal-image-column {
+        width: 50%;
+      }
+      .fs-cta-modal-image-container {
+        overflow: hidden;
+      }
+      .fs-cta-modal-image {
+        max-width: unset;
+        object-fit: cover;
+      }
+      .fs-cta-modal-button {
+        display: block;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 1;
+        transition: opacity 0.7s;
+      }
+      .fs-cta-modal-button:hover {
+        text-decoration: none;
+        opacity: 0.8;
+      }
+      .fs-cta-modal-close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          display: flex;
+          font-size: 30px;
+          border: 3px solid white;
+          line-height: 1;
+          justify-content: center;
+          align-items: center;
+          width: 30px;
+          height: 32px;
+          box-sizing: border-box;
+          opacity: 0.5;
+          cursor: pointer;
+      }
+      .fs-cta-modal-close-button:hover {
+        opacity: 1;
+      }
+      .fs-cta-modal-noscroll {
+        overflow: hidden;
+
+      }
+
+      @media (max-width: 600px) {
+        .fs-cta-modal-container {
+          align-items: flex-start;
+        }
+        .fs-cta-modal {
+          flex-direction: column-reverse;
+        }
+        .fs-cta-modal-text-column,
+        .fs-cta-modal-image-column {
+          width: 100%;
+        }
+        .fs-cta-modal-image {
+          object-fit: contain;
+          max-width: 100%;
+        }
+        .fs-cta-modal-header {
+          font-size: 24px;
+        }
+        .fs-cta-modal-content {
+          font-size: 18px;
+        }
+        .fs-cta-modal-button {
+          font-size: 18px;
+        }
+      }
+      ${promotion.css}
+    `;
+    insertCss(promotion.id, css);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Prevent scrolling of the page while the CTA modal is open
+    document.body.classList.add('fs-cta-modal-noscroll');
+
+    // Handle closure of the CTA modal
+    function detectEscape(e) {
+      if(e.key === "Escape") {
+        closeCtaModal();
+      }
+    }
+    function clickOutsideModal(e) {
+      closeCtaModal();
+    }
+    function clickWithinModal(e) {
+      e.stopPropagation();
+    }
+    function closeCtaModal() {
+      document.body.removeEventListener('keyup', detectEscape);
+      document.querySelector('.fs-cta-modal-close-button').removeEventListener('click', closeCtaModal);
+      document.querySelector('.fs-cta-modal-container').removeEventListener('click', clickOutsideModal);
+      document.querySelector('.fs-cta-modal').removeEventListener('click', clickWithinModal);
+      document.querySelector('.fs-cta-modal-container').style.display = 'none';
+      document.body.classList.remove('fs-cta-modal-noscroll');
+    }
+    document.body.addEventListener('keyup', detectEscape);
+    document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
+    document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
+    document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
   }
 
   function addRawCode(promotion) {
