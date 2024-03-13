@@ -692,6 +692,42 @@ class Foursite_Wordpress_Promotion_Public {
 				if($rollup_settings['enqueue_jquery']) {
 					wp_enqueue_script('jquery-cdn', 'https://code.jquery.com/jquery-3.7.1.min.js', [], '3.7.1');
 				}
+			} else if($engrid_promotion_type == "cta_lightbox") {
+				$config = get_field('cta_lightbox', $lightbox_id);
+				$client_side_triggered_config[] = [
+					'id' => $lightbox_id,
+					'promotion_type' => $engrid_promotion_type,
+					'trigger' => $trigger,
+					'cookie_name' => $engrid_cookie_name, 
+					'cookie_hours' => $engrid_cookie_hours, 
+					'trigger' => $trigger,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date,
+					'header' => $config['copy_header'],
+					'body' => $config['copy_body'],
+					'bg_color' => $config['copy_bg_color'],
+					'fg_color' => $config['copy_fg_color'],
+					'cta_1' => [
+						'label' => $config['cta_1_label'],
+						'link' => $config['cta_1_link'],
+						'bg_color' => $config['cta_1_bg_color'],
+						'fg_color' => $config['cta_1_fg_color']
+					],
+					'cta_2' => [
+						'label' => $config['cta_2_label'],
+						'link' => $config['cta_2_link'],
+						'bg_color' => $config['cta_2_bg_color'],
+						'fg_color' => $config['cta_2_fg_color']
+					],
+					'image' => [
+						'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
+						'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+						'position' => $config['image_position'],
+						'bg_color' => $config['image_bg_color']
+					],
+					'css' => $config['custom_css']
+				];
 			}
 		}
 
