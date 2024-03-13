@@ -1,6 +1,6 @@
 <?php
-if (function_exists('acf_add_local_field_group')) :
 
+if (function_exists('acf_add_local_field_group')) :
 	acf_add_local_field_group(array(
 		'key' => 'group_61f180ebc7b9d',
 		'title' => 'Promotions',
@@ -3007,7 +3007,7 @@ if (function_exists('acf_add_local_field_group')) :
 			),
 			array(
 				'key' => 'field_65e12e71214fa',
-				'label' => 'CTA Lightbox',
+				'label' => '',
 				'name' => 'cta_lightbox',
 				'type' => 'group',
 				'instructions' => '',
@@ -3030,22 +3030,6 @@ if (function_exists('acf_add_local_field_group')) :
 				'acfe_seamless_style' => 0,
 				'acfe_group_modal' => 0,
 				'sub_fields' => array(
-					array(
-						'key' => 'field_65e12ed3214ff',
-						'label' => 'Copy',
-						'name' => '',
-						'type' => 'tab',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'placement' => 'top',
-						'endpoint' => 0,
-					),
 					array(
 						'key' => 'field_65e12e8b214fb',
 						'label' => 'Header',
@@ -3087,7 +3071,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12e9b214fd',
-						'label' => 'Background Color',
+						'label' => 'Content Background Color',
 						'name' => 'copy_bg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3104,7 +3088,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12ea9214fe',
-						'label' => 'Font Color',
+						'label' => 'Content Font Color',
 						'name' => 'copy_fg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3120,31 +3104,15 @@ if (function_exists('acf_add_local_field_group')) :
 						'return_format' => 'string',
 					),
 					array(
-						'key' => 'field_65e12ee721500',
-						'label' => 'CTA 1',
-						'name' => '',
-						'type' => 'tab',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'placement' => 'top',
-						'endpoint' => 0,
-					),
-					array(
 						'key' => 'field_65e12f7121506',
-						'label' => 'Label',
+						'label' => 'CTA Button 1 Label',
 						'name' => 'cta_1_label',
 						'type' => 'text',
 						'instructions' => '',
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
@@ -3156,14 +3124,14 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12f9421508',
-						'label' => 'CTA 1 Link',
+						'label' => 'CTA Button 1 Link',
 						'name' => 'cta_1_link',
 						'type' => 'text',
 						'instructions' => '',
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
@@ -3175,7 +3143,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12fad2150a',
-						'label' => 'Background Color',
+						'label' => 'CTA 1 Button Background Color',
 						'name' => 'cta_1_bg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3192,7 +3160,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12fd52150c',
-						'label' => 'Font Color',
+						'label' => 'CTA 1 Button Font Color',
 						'name' => 'cta_1_fg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3208,31 +3176,15 @@ if (function_exists('acf_add_local_field_group')) :
 						'return_format' => 'string',
 					),
 					array(
-						'key' => 'field_65e12eef21501',
-						'label' => 'CTA 2',
-						'name' => '',
-						'type' => 'tab',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'placement' => 'top',
-						'endpoint' => 0,
-					),
-					array(
 						'key' => 'field_65e12f8021507',
-						'label' => 'Label',
+						'label' => 'CTA 2 Button Label',
 						'name' => 'cta_2_label',
 						'type' => 'text',
 						'instructions' => '',
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
@@ -3244,14 +3196,14 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12f9b21509',
-						'label' => 'Link',
+						'label' => 'CTA 2 Button Link',
 						'name' => 'cta_2_link',
 						'type' => 'text',
 						'instructions' => '',
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
@@ -3263,7 +3215,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12fbe2150b',
-						'label' => 'Background Color',
+						'label' => 'CTA 2 Button Background Color',
 						'name' => 'cta_2_bg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3280,7 +3232,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12fe12150d',
-						'label' => 'Font Color',
+						'label' => 'CTA 2 Button Font Color',
 						'name' => 'cta_2_fg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3296,22 +3248,6 @@ if (function_exists('acf_add_local_field_group')) :
 						'return_format' => 'string',
 					),
 					array(
-						'key' => 'field_65e12efb21502',
-						'label' => 'Image',
-						'name' => '',
-						'type' => 'tab',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'placement' => 'top',
-						'endpoint' => 0,
-					),
-					array(
 						'key' => 'field_65e12f0521503',
 						'label' => 'Image',
 						'name' => 'image_file',
@@ -3320,7 +3256,7 @@ if (function_exists('acf_add_local_field_group')) :
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
@@ -3342,17 +3278,17 @@ if (function_exists('acf_add_local_field_group')) :
 						'label' => 'Position',
 						'name' => 'image_position',
 						'type' => 'radio',
-						'instructions' => '',
+						'instructions' => 'Choose the position of your image in the lightbox.',
 						'required' => 0,
 						'conditional_logic' => 0,
 						'wrapper' => array(
-							'width' => '',
+							'width' => '50',
 							'class' => '',
 							'id' => '',
 						),
 						'choices' => array(
 							'left' => 'Left',
-							'right' => 'RIght',
+							'right' => 'Right',
 						),
 						'allow_null' => 0,
 						'other_choice' => 0,
@@ -3363,7 +3299,7 @@ if (function_exists('acf_add_local_field_group')) :
 					),
 					array(
 						'key' => 'field_65e12f2c21505',
-						'label' => 'Background Color',
+						'label' => 'Image Background Color',
 						'name' => 'image_bg_color',
 						'type' => 'color_picker',
 						'instructions' => '',
@@ -3377,22 +3313,6 @@ if (function_exists('acf_add_local_field_group')) :
 						'default_value' => '',
 						'enable_opacity' => 0,
 						'return_format' => 'string',
-					),
-					array(
-						'key' => 'field_65e13123da66e',
-						'label' => 'Custom CSS',
-						'name' => '',
-						'type' => 'tab',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'placement' => 'top',
-						'endpoint' => 0,
 					),
 					array(
 						'key' => 'field_65e1312fda66f',

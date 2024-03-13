@@ -283,21 +283,25 @@ window.addEventListener("DOMContentLoaded", () => {
       
     const modal_close_button = document.createElement("div");
     modal_close_button.classList.add("fs-cta-modal-close-button");
-    modal_close_button.innerHTML = "&times;";
+    if(promotion.image.bg_color) {
+      modal_close_button.style.color = promotion.image.bg_color;
+      modal_close_button.style.borderColor = promotion.image.bg_color;
+    }
     modal.appendChild(modal_close_button);
 
-    if(promotion.image.position === "left") {
+    if(promotion.image.url && promotion.image.position === "left") {
       modal.classList.add("fs-cta-modal-image-left");
-    } else {
+    } else if(promotion.image.url && promotion.image.position === "right") {
       modal.classList.add("fs-cta-modal-image-right");
+    } else {
+      modal.classList.add("fs-cta-modal-no-image");
     }
+
     if(promotion.bg_color) {
       modal.style.backgroundColor = promotion.bg_color;
     }
     if(promotion.fg_color) {
       modal.style.color = promotion.fg_color;
-      modal.style.borderColor = promotion.fg_color;
-      modal.style.borderWidth = "2px";
     }
 
     const modal_text_column = document.createElement("div");
@@ -328,8 +332,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if(promotion.cta_1.fg_color) {
         modal_cta_button_1.style.color = promotion.cta_1.fg_color;
-        modal_cta_button_1.style.borderColor = promotion.cta_1.fg_color;
-        modal_cta_button_1.style.borderWidth = "2px";
       }
       modal_text_column.appendChild(modal_cta_button_1);
     }
@@ -345,8 +347,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if(promotion.cta_2.fg_color) {
         modal_cta_button_2.style.color = promotion.cta_2.fg_color;
-        modal_cta_button_2.style.borderColor = promotion.cta_2.fg_color;
-        modal_cta_button_2.style.borderWidth = "2px";
       }
       modal_text_column.appendChild(modal_cta_button_2);
     }
@@ -356,7 +356,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if(promotion.image.url) {
       const modal_image_column = document.createElement("div");
       modal_image_column.classList.add("fs-cta-modal-image-column");
-  
+
       const modal_image = document.createElement("img");
       modal_image.src = promotion.image.url;
       modal_image.alt = promotion.image.alt;
@@ -364,6 +364,7 @@ window.addEventListener("DOMContentLoaded", () => {
   
       const modal_image_container = document.createElement("div");
       modal_image_container.classList.add("fs-cta-modal-image-container");
+      modal_image_container.style.backgroundImage = `url(${promotion.image.url})`;      
       modal_image_container.appendChild(modal_image); 
   
       modal_image_column.appendChild(modal_image_container);
@@ -372,7 +373,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const css = `
       .fs-cta-modal-container {
-        display: flex;
         z-index: 9999;
         position: fixed;
         left: 0;
@@ -387,13 +387,17 @@ window.addEventListener("DOMContentLoaded", () => {
         overflow-y: scroll;
       }
       .fs-cta-modal {
+        margin: 10vh auto;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         position: relative;
         width: 95%;
-        max-width: 1000px;
+        max-width: 880px;
         height: fit-content;
+      }
+      .fs-cta-modal.fs-cta-modal-image-left {
+        flex-direction: row-reverse;
       }
       .fs-cta-modal-header {
         font-size: 32px;
@@ -413,15 +417,24 @@ window.addEventListener("DOMContentLoaded", () => {
         width: 50%;
         padding: 30px 30px;
       }
+      .fs-cta-modal.fs-cta-modal-no-image .fs-cta-modal-text-column {
+        width: 100%;
+      }
       .fs-cta-modal-image-column {
         width: 50%;
       }
       .fs-cta-modal-image-container {
         overflow: hidden;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
       }
       .fs-cta-modal-image {
         max-width: unset;
         object-fit: cover;
+        display: none;
       }
       .fs-cta-modal-button {
         display: block;
@@ -437,44 +450,72 @@ window.addEventListener("DOMContentLoaded", () => {
         text-decoration: none;
         opacity: 0.8;
       }
+
       .fs-cta-modal-close-button {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          display: flex;
-          font-size: 30px;
-          border: 3px solid white;
-          line-height: 1;
-          justify-content: center;
-          align-items: center;
-          width: 30px;
-          height: 32px;
-          box-sizing: border-box;
-          opacity: 0.5;
-          cursor: pointer;
+        position: absolute;
+        box-sizing: content-box;
+        right: 10px;
+        top: 10px;
+        width: 25px;
+        height: 25px;
+        z-index: 1000;
+        padding: 5px;
+        border: 3px solid #f6f7f8;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.3s opacity ease-in-out;
       }
       .fs-cta-modal-close-button:hover {
         opacity: 1;
       }
-      .fs-cta-modal-noscroll {
-        overflow: hidden;
-
+      .fs-cta-modal-close-button:hover::before {
+        transform: rotate(45deg) scale(1.5);
+      }
+      .fs-cta-modal-close-button:hover::after {
+        transform: rotate(-45deg) scale(1.5);
+      }
+      .fs-cta-modal-close-button::before,
+      .fs-cta-modal-close-button::after {
+        transition: 0.3s transform ease-in-out, 0.3s background-color ease-in-out;
+        position: absolute;
+        content: " ";
+        height: 19px;
+        width: 2px;
+        background-color: #f6f7f8;
+        left: 17px;
+        top: 8px;
+      }
+      .fs-cta-modal-close-button::before {
+        transform: rotate(45deg);
+      }
+      .fs-cta-modal-close-button::after {
+        transform: rotate(-45deg);
       }
 
-      @media (max-width: 600px) {
+      .fs-cta-modal-noscroll {
+        overflow: hidden;
+      }
+
+      @media (max-width: 700px) {
         .fs-cta-modal-container {
           align-items: flex-start;
         }
-        .fs-cta-modal {
+        .fs-cta-modal,
+        .fs-cta-modal.fs-cta-modal-image-left,
+        .fs-cta-modal.fs-cta-modal-image-right {
           flex-direction: column-reverse;
         }
         .fs-cta-modal-text-column,
         .fs-cta-modal-image-column {
           width: 100%;
         }
+        .fs-cta-modal-container {
+          background-image: unset;
+        }
         .fs-cta-modal-image {
           object-fit: contain;
           max-width: 100%;
+          display: block;
         }
         .fs-cta-modal-header {
           font-size: 24px;

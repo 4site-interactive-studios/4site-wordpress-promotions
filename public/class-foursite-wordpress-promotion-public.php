@@ -721,9 +721,9 @@ class Foursite_Wordpress_Promotion_Public {
 						'fg_color' => $config['cta_2_fg_color']
 					],
 					'image' => [
-						'url' => $config['image_file']['sizes']['large'],
-						'alt' => $config['image_file']['alt'],
-						'position' => $config,
+						'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
+						'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+						'position' => $config['image_position'],
 						'bg_color' => $config['image_bg_color']
 					],
 					'css' => $config['custom_css']
