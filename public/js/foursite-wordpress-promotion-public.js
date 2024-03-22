@@ -81,11 +81,27 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function format_date(d) {
+    let month = d.getMonth() + 1;
+    let day = d.getDay();
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    let seconds = d.getSeconds();
+
+    if(month < 10) month = '0' + month;
+    if(day < 10) day = '0' + day;
+    if(hours < 10) hours = '0' + hours;
+    if(minutes < 10) minutes = '0' + minutes;
+    if(seconds < 10) seconds = '0' + seconds;
+
+    return d.getFullYear() + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+  }
   function scheduledForToday(promotion) {
     if(promotion.display == 'scheduled' && promotion.start && promotion.end) {
-      const start = Date.parse(promotion.start + ' 00:00:01');
-      const end = Date.parse(promotion.end + ' 23:59:59');
+      const start = Date.parse(promotion.start);
+      const end = Date.parse(promotion.end);
       const today = Date.now();
+
       if(start <= today && end >= today) {
         return true;
       }

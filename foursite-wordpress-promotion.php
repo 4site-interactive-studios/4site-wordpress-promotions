@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.2
+ * Version:           1.3
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,13 +37,310 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.2' );
+define( 'foursite_wordpress_promotion_VERSION', '1.3' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
     register_block_type(__DIR__ . '/blocks/en-form');
 }
 add_action( 'init', 'promotions_en_form_block' );
+
+
+
+// Add template custom post status for promos
+add_action('init', 'fwp_register_template_post_status');
+add_action('admin_footer-edit.php','fwp_template_add_in_quick_edit');
+add_action('admin_footer-post.php', 'fwp_template_add_in_post_page');
+add_action('admin_footer-post-new.php', 'fwp_template_add_in_post_page');
+function fwp_register_template_post_status() {
+    register_post_status('template', [
+        'label'                     => _x('Template', 'promotion'),
+        'public'                    => true,
+        'exclude_from_search'       => true,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'label_count'               => _n_noop('Template <span class="count">(%s)</span>', 'Templates <span class="count">(%s)</span>')
+    ]);
+}
+function fwp_template_add_in_quick_edit() {
+    if(get_current_screen()->post_type === 'wordpress_promotion') {
+        echo "<script>
+        jQuery(document).ready( function() {
+            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"template\">Template</option>' );      
+        }); 
+        </script>";    
+    }
+}
+function fwp_template_add_in_post_page() {
+    if(get_current_screen()->post_type === 'wordpress_promotion') {
+        echo "<script>
+        jQuery(document).ready( function() {        
+            jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"template\">Template</option>' );
+        });
+        </script>";
+    }
+}
+
+
+
+
+// Handle sorting & filtering & generation of a custom "status" & "scheduled" columns for the promos list screen
+global $pagenow;
+if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpress_promotion' == $_GET['post_type']) {
+    add_filter('manage_wordpress_promotion_posts_columns', 'fwp_add_columns');
+    add_filter('manage_edit-wordpress_promotion_sortable_columns', 'fwp_set_sortable_columns');
+    add_action('manage_wordpress_promotion_posts_custom_column', 'fwp_populate_columns', 10, 2);
+    add_action('pre_get_posts', 'fwp_sort_query_orderby');
+
+    function fwp_sort_query_orderby($query) {
+        $orderby = $query->get('orderby');
+        switch($orderby) {
+            case 'fwp_schedule_start':
+                $query->set('meta_key', 'engrid_start_date');
+                $query->set('orderby', 'meta_value');
+                break;
+            case 'fwp_schedule_end':
+                $query->set('meta_key', 'engrid_end_date');
+                $query->set('orderby', 'meta_value');
+                break;
+            default;
+                break;
+        }
+    }
+
+    function fwp_set_sortable_columns($columns) {
+        //$columns['fwp_status'] = 'fwp_status';
+        $columns['fwp_schedule_start'] = 'fwp_schedule_start';
+        $columns['fwp_schedule_end'] = 'fwp_schedule_end';
+        return $columns;
+    }
+    function fwp_add_columns($columns) {
+        $columns['fwp_status'] = __('Status', ' foursite-wordpress-promotion');
+        $columns['fwp_schedule_start'] = __('Start', ' foursite-wordpress-promotion');
+        $columns['fwp_schedule_end'] = __('End', ' foursite-wordpress-promotion');
+        return $columns;
+    }
+    function fwp_populate_columns($column, $post_id) {
+        if($column == 'fwp_status') {
+            $fwp_status = '';
+    
+            $post_status = get_post_status($post_id);
+            if(!in_array($post_status, ['publish', 'template'])) {
+                $fwp_status = "Off - Not Published";
+            } else {
+                $status = get_field('engrid_lightbox_display', $post_id);
+                if($status == 'scheduled') {
+                    $start_date = get_field('engrid_start_date', $post_id);
+                    $end_date = get_field('engrid_end_date', $post_id);
+        
+                    $current_date = new DateTime('now', new DateTimeZone('America/New_York'));
+                    $current_date = $current_date->format('Y-m-d H:i:s');
+        
+                    if($start_date > $current_date) {
+                        $fwp_status = "Scheduled - Upcoming";
+                    } else if($end_date < $current_date) {
+                        $fwp_status = "Scheduled - Expired";
+                    } else {
+                        $fwp_status = "Scheduled - Active";
+                    }
+                } else if($status == 'turned-on') {
+                    $fwp_status = 'On';
+                } else {
+                    $fwp_status = 'Off';
+                }
+            }
+    
+            if($post_status == 'template') {
+                $fwp_status = "Template";
+            }
+            echo $fwp_status;
+        } else if($column == 'fwp_schedule_start') {
+            $fwp_schedule = "--";
+            $start_date = get_field('engrid_start_date', $post_id);
+            if($start_date) {
+                $fwp_schedule = date('Y/m/d g:i a', strtotime($start_date)) . " ET";
+                $status = get_field('engrid_lightbox_display', $post_id);
+                if($status != 'scheduled') {
+                    $fwp_schedule = "<span style='opacity: 0.4; text-decoration: line-through;'>{$fwp_schedule}</span>";
+                }
+            }
+            echo $fwp_schedule;
+        } else if($column == 'fwp_schedule_end') {
+            $fwp_schedule = "--";
+            $end_date = get_field('engrid_end_date', $post_id);
+            if($end_date) {
+                $fwp_schedule = date('Y/m/d g:i a', strtotime($end_date)) . " ET";
+                $status = get_field('engrid_lightbox_display', $post_id);
+                if($status != 'scheduled') {
+                    $fwp_schedule = "<span style='opacity: 0.4; text-decoration: line-through;'>{$fwp_schedule}</span>";
+                }
+            }
+
+            echo $fwp_schedule;
+        }
+    }
+    
+    function fwp_sort_column_query($query) {
+        $orderby = $query->get('orderby');
+        if('fwp_status' == $orderby) {
+            $meta_query = array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'engrid_lightbox_display',
+                    'compare' => 'NOT EXISTS',
+                ),
+                array(
+                    'key' => 'engrid_lightbox_display',
+                ),
+            );
+    
+            $query->set('meta_query', $meta_query);
+            $query->set('orderby', 'meta_value');
+        }
+    }
+
+    add_filter('parse_query', 'fwp_filter_request_query' , 10);
+    function fwp_filter_request_query($query) {
+        if(!(is_admin() AND $query->is_main_query())){ 
+            return $query;
+        }
+        if(!('wordpress_promotion' === $query->query['post_type'] AND !empty($_REQUEST['fwp_status']) ) ){
+            return $query;
+        }
+
+        $post_ids = [];
+        if('on-scheduled' == $_REQUEST['fwp_status']) {
+            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('active'));
+            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('upcoming'));
+            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('on'));
+        } else if('off-expired' == $_REQUEST['fwp_status']) {
+            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('expired'));
+            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('off'));
+        } else {
+            $post_ids = fwp_get_post_ids_for_status($_REQUEST['fwp_status']);
+        }
+        $post_ids = array_unique($post_ids);
+        if(count($post_ids) == 0) $post_ids = [0];
+        $query->query_vars['post__in'] = $post_ids;
+        $query->query_vars['orderby'] = 'post__in';
+        return $query;
+    }
+
+    function fwp_get_post_ids_for_status($status) {
+        global $wpdb;
+        $post_ids = [];
+
+        $current_date = new DateTime('now', new DateTimeZone('America/New_York'));
+        $current_date = $current_date->format('Y-m-d H:i:s');
+
+        $joins = '';
+        $conditions = '';
+
+        if($status == 'expired') {
+            $joins = "
+                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
+            ";
+            $conditions = "
+                and p.post_status in ('publish')
+                and active_status_pm.meta_key = 'engrid_lightbox_display'
+                and active_status_pm.meta_value = 'scheduled'
+                and end_date_pm.meta_key = 'engrid_end_date'
+                and end_date_pm.meta_value < '{$current_date}' 
+            ";
+        } else if($status == 'on') {
+            $joins = "
+                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
+                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
+            ";
+            $conditions = "
+                and p.post_status in ('publish')
+                and active_status_pm.meta_key = 'engrid_lightbox_display'
+                and active_status_pm.meta_value = 'turned-on'
+            ";
+        } else if($status == 'off') {
+            $joins = "
+                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
+                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
+            ";
+            $conditions = "
+                and active_status_pm.meta_key = 'engrid_lightbox_display'
+                and (
+                    active_status_pm.meta_value = 'turned-off'
+                    or p.post_status not in ('publish', 'template')
+                )
+                and p.post_status <> 'template'
+            ";
+        } else if($status == 'active') {
+            $joins = "
+                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
+                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
+            ";
+            $conditions = "
+                and p.post_status in ('publish')
+                and active_status_pm.meta_key = 'engrid_lightbox_display'
+                and active_status_pm.meta_value = 'scheduled'
+                and start_date_pm.meta_key = 'engrid_start_date'
+                and start_date_pm.meta_value < '{$current_date}'
+                and end_date_pm.meta_key = 'engrid_end_date'
+                and end_date_pm.meta_value > '{$current_date}'
+            ";
+        } else if($status == 'upcoming') {
+            $joins = "
+                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
+            ";
+            $conditions = "
+                and p.post_status in ('publish'')
+                and active_status_pm.meta_key = 'engrid_lightbox_display'
+                and active_status_pm.meta_value = 'scheduled'
+                and start_date_pm.meta_key = 'engrid_start_date'
+                and start_date_pm.meta_value <> ''
+                and start_date_pm.meta_value > '{$current_date}'
+            ";
+        }
+
+        $query = "
+            select distinct ID
+            from {$wpdb->posts} p
+            join {$wpdb->postmeta} active_status_pm on p.ID = active_status_pm.post_id
+            {$joins}
+            where p.post_type = 'wordpress_promotion'        
+            {$conditions}
+        ";
+        $post_ids = $wpdb->get_col($query);
+        if(empty($post_ids)) $post_ids = [];
+        return $post_ids;
+    }
+
+    function fwp_format_option($label, $key, $selected_key, $disabled = false) {
+        $selected_string = (!$disabled && $key == $selected_key) ? " selected" : "";
+        $disabled_string = ($disabled) ? ' disabled' : '';
+        return "<option value='{$key}'{$selected_string}{$disabled_string}>{$label}</option>";
+    }
+
+    add_action('restrict_manage_posts', 'fwp_table_filtering' );
+    function fwp_table_filtering($post_type) {
+        if($post_type !== 'wordpress_promotion' ) {
+            return;
+        }
+
+        $current_fwp_status = (!empty($_GET['fwp_status'])) ? $_GET['fwp_status'] : '';
+        $options = [];
+        $options[] = fwp_format_option(__('Show all Promotions', 'foursite-wordpress-promotions'), '', $current_fwp_status);
+        $options[] = fwp_format_option(__('On & Scheduled', 'foursite-wordpress-promotions'), 'on-scheduled', $current_fwp_status);
+        $options[] = fwp_format_option(__('Off & Expired', 'foursite-wordpress-promotions'), 'off-expired', $current_fwp_status);
+        $options[] = fwp_format_option('<hr><br><br>', '', $current_fwp_status, true);
+        $options[] = fwp_format_option(__('Off', 'foursite-wordpress-promotions'), 'off', $current_fwp_status);
+        $options[] = fwp_format_option(__('On', 'foursite-wordpress-promotions'), 'on', $current_fwp_status);
+        $options[] = fwp_format_option(__('Scheduled - Expired', 'foursite-wordpress-promotions'), 'expired', $current_fwp_status);
+        $options[] = fwp_format_option(__('Scheduled - Upcoming', 'foursite-wordpress-promotions'), 'upcoming', $current_fwp_status);
+        $options[] = fwp_format_option(__('Scheduled - Active', 'foursite-wordpress-promotions'), 'active', $current_fwp_status);
+        $options_string = implode('', $options);
+        echo "<select class='' id='' name='fwp_status'>{$options_string}</select>";
+    }
+}
+
+
+
 
 // Add custom CSS to force the type & visibility promo fields to group as desired
 function fwp_add_acf_field_css() {
@@ -54,12 +351,14 @@ function fwp_add_acf_field_css() {
         .acf-fields > .acf-field[data-key='field_63694582ec47e'],
         .acf-fields > .acf-field[data-key='field_6420da53c4965'],
         .acf-fields > .acf-field[data-key='field_61f1856cc8652'], 
-        .acf-fields > .acf-field[data-key='field_61f185aac8653'] {
+        .acf-fields > .acf-field[data-key='field_61f185aac8653'],
+        .acf-fields > .acf-field[data-key='field_65f24985b7149'] {
             border-top-style: unset;
             padding-top: 0px;
             padding-bottom: 0px;
             min-height: unset!important;
         }
+        .acf-field[data-width][data-key='field_6420da53c4965'] + .acf-field[data-width][data-key='field_65f24985b7149'],
         .acf-field[data-width][data-key='field_61f1856cc8652'] + .acf-field[data-width][data-key='field_61f185aac8653'] {
             border-left: none;
         }
