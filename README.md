@@ -16,6 +16,10 @@ EN Lightbox
 
 > Creates a lightbox that displays a single-step embedded Engaging Networks page. Great for newsletter signups and petitions.
 
+CTA Lightbox
+
+> Creates a customizable call-to-action lightbox featuring an image, customizable colors, description, and buttons.
+
 Overlay
 
 > A customizable lightbox that can appear as a modal or full site takeover. Includes options for donation buttons that pass their values to a corresponding Engaging Networks Donation page.
