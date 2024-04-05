@@ -501,7 +501,7 @@ function foursite_wordpress_promotion_cron_exec() {
     }
     if($clear_cache) {
         //error_log('DEBUG: Triggering cloudflare cache clear.  Updating cache clear schedule: ' . print_r($current_schedule,true));
-        do_action('engrid_fwp_clear_cloudflare_all');
+        do_action('engrid_wpm_clear_cloudflare_all');
         update_option('fs_wp_promo_cron_schedules', $current_schedule); 
     }
 }
@@ -514,13 +514,14 @@ function foursite_wordpress_promotion_save_post( $post_id ) {
         // Clear the cloudflare caches. This requires both the
         // Foursite Wordpress Promotion Cloudflare Addon plugin and 
         // the Cloudflare plugin.
-        do_action('engrid_fwp_clear_cloudflare_all');
+        do_action('engrid_wpm_clear_cloudflare_all');
         //error_log('DEBUG: foursite_wordpress_promotion_save_post Options updated. Clearing cache...');
     } else {        
         $post_type = get_post_type($post_id);
         if($post_type == 'wordpress_promotion') {
             //error_log('DEBUG: foursite_wordpress_promotion_save_post wordpress_promotion updated. Clearing cache...');
             foursite_wordpress_promotion_update_schedule($post_id);
+            do_action('engrid_wpm_clear_cloudflare_all');
         }
     }
 }
@@ -545,7 +546,7 @@ function foursite_wordpress_promotion_update_schedule($post_id) {
         }
         if($end_date < $current_date) {
             //error_log('DEBUG: Past end date for scheduled promo detected; triggering cache clear.');
-            do_action('engrid_fwp_clear_cloudflare_all');
+            do_action('engrid_wpm_clear_cloudflare_all');
         }
     }
     if(count($cron_clear_dates)) {
