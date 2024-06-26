@@ -98,6 +98,14 @@ The floating tab promo correctly launches the lightbox modal (if configured to d
 
 The six types of promotions should be verified to work: Multistep Lightbox, Raw Code, Pushdown, Floating Tab, Overlay, Signup, Roll Up. Note that the signup comes with its own trigger logic within its compiled script, so do not look for the signup promo type to be handled within the plugin's main launch script.
 
+## Installing
+
+- Download the latest zipped version of the plugin from `https://github.com/4site-interactive-studios/4site-wordpress-promotions`.
+- Unzip and rename the source directory to `4site-wordpress-promotions`.
+- Move the directory to the `wp-content/plugins` directory of your WordPress installation.
+- Install the latest version of [Advanced Custom Fields Pro](https://www.advancedcustomfields.com/).
+- Activate ACF from the Plugins administration.
+- Activate the Promotions plugin from the Plugins administration.
 
 ## ToDo's
 
