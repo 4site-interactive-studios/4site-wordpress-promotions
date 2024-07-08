@@ -131,6 +131,8 @@ window.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(new_css);
     }
 
+    insertCss(promotion.id, promotion.custom_css);
+
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
 

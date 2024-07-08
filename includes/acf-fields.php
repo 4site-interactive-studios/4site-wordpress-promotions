@@ -1452,6 +1452,34 @@ add_action( 'acf/include_fields', function() {
 			'acfe_textarea_code' => 0,
 		),
 		array(
+			'key' => 'field_984ae2ad1c442',
+			'label' => 'Show View More Button',
+			'name' => 'engrid_show_view_more',
+			'aria-label' => '',
+			'type' => 'true_false',
+			'instructions' => 'If enabled, a "View More" button will be displayed at the bottom of the lightbox.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'message' => '',
+			'default_value' => 0,
+			'ui_on_text' => 'Yes',
+			'ui_off_text' => 'No',
+			'ui' => 1,
+		),
+		array(
 			'key' => 'field_61f1833c13dfc',
 			'label' => 'Text Color',
 			'name' => 'engrid_text_color',
@@ -2009,6 +2037,13 @@ add_action( 'acf/include_fields', function() {
 			'instructions' => 'Don\'t put &lt;style&gt; tags here as they will automatically be added when loading the CSS.',
 			'required' => 0,
 			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
 				array(
 					array(
 						'field' => 'field_63694582ec47e',

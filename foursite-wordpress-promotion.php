@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.4
+ * Version:           1.5
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.4' );
+define( 'foursite_wordpress_promotion_VERSION', '1.5' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -118,6 +118,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
         $columns['fwp_status'] = __('Status', ' foursite-wordpress-promotion');
         $columns['fwp_schedule_start'] = __('Start', ' foursite-wordpress-promotion');
         $columns['fwp_schedule_end'] = __('End', ' foursite-wordpress-promotion');
+        $columns['fwp_pages'] = __('Pages', ' foursite-wordpress-promotion');
         return $columns;
     }
     function fwp_populate_columns($column, $post_id) {
@@ -177,6 +178,60 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
             }
 
             echo $fwp_schedule;
+        } else if($column == 'fwp_pages') {
+            $whitelist = get_field('engrid_whitelist', $post_id);
+            $blacklist = get_field('engrid_blacklist', $post_id);
+            $show_on_page_ids = get_field('engrid_show_on', $post_id);
+            $hide_on_page_ids = get_field('engrid_hide_on', $post_id);
+
+            $fwp_pages = '';
+            $fwp_show_on = '';
+            $fwp_hide_on = '';
+
+            if($whitelist) {
+                $fwp_show_on .= $whitelist;
+            }
+            if($blacklist) {
+                $fwp_hide_on .= $blacklist;
+            }             
+            if($show_on_page_ids) {
+                if($fwp_show_on) {
+                    $fwp_show_on .= "<br>";
+                }
+                $page_ids = implode(',', $show_on_page_ids);
+                global $wpdb;
+                $results = $wpdb->get_results("SELECT post_title, ID FROM {$wpdb->posts} WHERE ID IN ({$page_ids})");
+                foreach($results as $result) {
+                    $page_url = get_permalink($result->ID);
+                    $fwp_show_on .= "<a href='" . $page_url . "' target='_blank'>{$result->post_title}</a><br>";
+                }
+            }
+            
+            if($hide_on_page_ids) {
+                if($fwp_hide_on) {
+                    $fwp_hide_on .= "<br>";
+                }
+                $page_ids = implode(', ', $hide_on_page_ids);
+                global $wpdb;
+                $results = $wpdb->get_results("SELECT post_title, ID FROM {$wpdb->posts} WHERE ID IN ({$page_ids})");
+                foreach($results as $result) {
+                    $page_url = get_permalink($result->ID);
+                    $fwp_hide_on .= "<a href='" . $page_url . "' target='_blank'>{$result->post_title}</a><br>";
+                }
+            }
+
+            $fwp_pages = '';
+            if($fwp_show_on) {
+                $fwp_pages .= "<strong>Show on:</strong><br>{$fwp_show_on}<br>";
+            }
+            if($fwp_hide_on) {
+                $fwp_pages .= "<strong>Hide on:</strong><br>{$fwp_hide_on}";
+            }
+            if(!$fwp_pages) {
+                $fwp_pages = '<strong>Show on:</strong><br>All Pages';
+            }
+
+            echo $fwp_pages;
         }
     }
     

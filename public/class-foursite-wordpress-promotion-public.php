@@ -121,45 +121,7 @@ class Foursite_Wordpress_Promotion_Public {
 				$hide_on = get_field('engrid_hide_on', $lightbox_id);
 				$show_on = get_field('engrid_show_on', $lightbox_id);
 
-				if(is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
-					continue;
-				}
-				if(is_array($show_on) && count($show_on) && !in_array($current_page_id, $show_on)) {
-					continue;
-				}
-
-				$is_scheduled  = false;
-				if($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
-					$is_scheduled = true;
-					/*
-					$today_date = date("Ymd");
-					if($today_date >= date_format(date_create($lightbox_start), "Ymd") && $today_date <= date_format(date_create($lightbox_end), "Ymd")) {
-						$is_scheduled = true;
-					} else {
-						continue;
-					}
-					*/
-				}
-
-				if($whitelist) {
-					// Explode the whitelist into an array
-					$whitelist_array = explode(',', strtolower($whitelist));
-					$compare_url = strtolower($current_page_url);
-					$is_whitelisted = false;
-					foreach($whitelist_array as $whitelist_item){
-						// Trim the whitespace from the whitelist item
-						$whitelist_item = trim($whitelist_item);
-						// Check if the current page URL contains the whitelist item
-						if(strpos($compare_url, $whitelist_item) !== false){
-							// If it does, show the lightbox
-							$is_whitelisted = true;
-						}
-					}
-					// If whitelist is not empty and the current page URL does not contain any of the whitelist items, do not show the lightbox
-					if(!$is_whitelisted) {
-						continue;
-					}
-				} elseif($blacklist) {
+				if($blacklist) {
 					// Explode the blacklist into an array
 					$blacklist_array = explode(',', strtolower($blacklist));
 					$is_blacklisted = false;
@@ -176,8 +138,53 @@ class Foursite_Wordpress_Promotion_Public {
 					}
 					// If blacklist is not empty and the current page URL does not contain any of the blacklist items, show the lightbox
 					if($is_blacklisted) {
+						echo "blacklisted per {$blacklist}<br>";
 						continue;
 					}
+				}
+
+				if(is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
+					continue;
+				}
+
+
+				$whitelist_check_enabled = false;
+				$eligible = false;
+				if($whitelist) {
+					$whitelist_check_enabled = true;
+					// Explode the whitelist into an array
+					$whitelist_array = explode(',', strtolower($whitelist));
+					$compare_url = strtolower($current_page_url);
+					$is_whitelisted = false;
+					foreach($whitelist_array as $whitelist_item){
+						// Trim the whitespace from the whitelist item
+						$whitelist_item = trim($whitelist_item);
+						// Check if the current page URL contains the whitelist item
+						if(strpos($compare_url, $whitelist_item) !== false){
+							// If it does, show the lightbox
+							$is_whitelisted = true;
+						}
+					}
+					// If whitelist is not empty and the current page URL does not contain any of the whitelist items, do not show the lightbox
+					if($is_whitelisted) {
+						$eligible = true;
+					}
+				}
+				
+				if(is_array($show_on)) {
+					$whitelist_check_enabled = true;
+					if(in_array($current_page_id, $show_on)) {
+						$eligible = true;
+					}
+				}
+
+				if($whitelist_check_enabled && !$eligible) {
+					continue;
+				}
+
+				$is_scheduled  = false;
+				if($lightbox_display == "scheduled" && $lightbox_start && $lightbox_end) {
+					$is_scheduled = true;
 				}
 
 				// If we made it this far, we're okay to show
@@ -248,6 +255,7 @@ class Foursite_Wordpress_Promotion_Public {
 			$engrid_js = get_field('engrid_javascript', $lightbox_id);
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
+			$engrid_view_more = get_field('engrid_show_view_more', $lightbox_id);
 			$confetti = array();
 
 			if($engrid_dp_append_chain) {
@@ -302,19 +310,21 @@ class Foursite_Wordpress_Promotion_Public {
 					'url' => $engrid_donation_page, 
 					'image' => $engrid_image, 
 					'logo' => $engrid_logo, 
-					'video' => $engrid_video,
+					'video' => ($engrid_hero_type == 'autoplay-video' || $engrid_hero_type == 'click-to-play-video') ? $engrid_video : "",
 					'autoplay' => $engrid_video_auto_play,
 					'logo_position_top' => in_array('top', $logo_position_options) ? "{$engrid_logo_position['top']}px" : "unset",
 					'logo_position_left' => in_array('left', $logo_position_options) ? "{$engrid_logo_position['left']}px" : "unset",
 					'logo_position_right' => in_array('right', $logo_position_options) ? "{$engrid_logo_position['right']}px" : "unset",
 					'logo_position_bottom' => in_array('bottom', $logo_position_options) ? "{$engrid_logo_position['bottom']}px" : "unset",
 					'divider' => $engrid_divider,
+					'view_more' => $engrid_view_more,
 					'title' => $engrid_title,
 					'paragraph' => $engrid_paragraph,
 					'footer' => $engrid_footer,
 					'bg_color' => $engrid_bg_color,
 					'txt_color' => $engrid_text_color,
 					'form_color' => $engrid_form_color,
+					'custom_css' => $engrid_css, 
 					'cookie_hours' => $engrid_cookie_hours,
 					'cookie_name' => $engrid_cookie_name,
 					'trigger' => $trigger,
