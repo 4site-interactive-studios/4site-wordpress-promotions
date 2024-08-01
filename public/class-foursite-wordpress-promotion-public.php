@@ -456,6 +456,7 @@ class Foursite_Wordpress_Promotion_Public
 					$formatted_styles['--submit-button-hover-border-radius'] = $styles['submit_button_hover']['border_radius'];
 				}
 
+				$formated_styles_string = '';
 				foreach ($formatted_styles as $key => $value) {
 					$formated_styles_string .= "{$key}: {$value};";
 				}
@@ -481,7 +482,7 @@ class Foursite_Wordpress_Promotion_Public
 					'max_height' => $styles['modal_dimensions']['max_height'],
 					'cta_type' => $cta_type,
 					'amounts' => ($cta_type == 'fundraising') ? str_replace(' ', '', get_field('amount_options', $lightbox_id)) : '',
-					'custom_css' => ".foursite-en-overlay { {$formated_styles_string} }",
+					'custom_css' => ".foursite-en-overlay { {$formated_styles_string} } {$engrid_css}",
 					'js_url' => plugin_dir_url(__FILE__) . 'overlay/dist/foursite-en-overlay.js',
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
@@ -522,7 +523,8 @@ class Foursite_Wordpress_Promotion_Public
 					'image_id' => isset($engrid_pushdown_image['ID']) ? $engrid_pushdown_image['ID'] : 0,
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
+					'end' => $engrid_end_date,
+					'custom_css' => $engrid_css
 				];
 			} else if ($engrid_promotion_type == "signup_lightbox") {
 

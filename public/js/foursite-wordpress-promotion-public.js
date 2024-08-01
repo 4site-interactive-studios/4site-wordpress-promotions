@@ -88,21 +88,21 @@ window.addEventListener("DOMContentLoaded", () => {
     let minutes = d.getMinutes();
     let seconds = d.getSeconds();
 
-    if(month < 10) month = '0' + month;
-    if(day < 10) day = '0' + day;
-    if(hours < 10) hours = '0' + hours;
-    if(minutes < 10) minutes = '0' + minutes;
-    if(seconds < 10) seconds = '0' + seconds;
+    if (month < 10) month = '0' + month;
+    if (day < 10) day = '0' + day;
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (seconds < 10) seconds = '0' + seconds;
 
     return d.getFullYear() + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
   }
   function scheduledForToday(promotion) {
-    if(promotion.display == 'scheduled' && promotion.start && promotion.end) {
+    if (promotion.display == 'scheduled' && promotion.start && promotion.end) {
       const start = Date.parse(promotion.start);
       const end = Date.parse(promotion.end);
       const today = Date.now();
 
-      if(start <= today && end >= today) {
+      if (start <= today && end >= today) {
         return true;
       }
     }
@@ -298,72 +298,72 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.createElement("div");
     modal.classList.add("fs-cta-modal");
-      
+
     const modal_close_button = document.createElement("div");
     modal_close_button.classList.add("fs-cta-modal-close-button");
-    if(promotion.image.bg_color) {
+    if (promotion.image.bg_color) {
       modal_close_button.style.color = promotion.image.bg_color;
       modal_close_button.style.borderColor = promotion.image.bg_color;
     }
     modal.appendChild(modal_close_button);
 
-    if(promotion.image.url && promotion.image.position === "left") {
+    if (promotion.image.url && promotion.image.position === "left") {
       modal.classList.add("fs-cta-modal-image-left");
-    } else if(promotion.image.url && promotion.image.position === "right") {
+    } else if (promotion.image.url && promotion.image.position === "right") {
       modal.classList.add("fs-cta-modal-image-right");
     } else {
       modal.classList.add("fs-cta-modal-no-image");
     }
 
-    if(promotion.bg_color) {
+    if (promotion.bg_color) {
       modal.style.backgroundColor = promotion.bg_color;
     }
-    if(promotion.fg_color) {
+    if (promotion.fg_color) {
       modal.style.color = promotion.fg_color;
     }
 
     const modal_text_column = document.createElement("div");
     modal_text_column.classList.add("fs-cta-modal-text-column");
 
-    if(promotion.header) {
+    if (promotion.header) {
       const modal_header = document.createElement("div");
       modal_header.classList.add("fs-cta-modal-header");
       modal_header.innerHTML = promotion.header;
-      modal_text_column.appendChild(modal_header);  
+      modal_text_column.appendChild(modal_header);
     }
 
-    if(promotion.body) {
+    if (promotion.body) {
       const modal_content = document.createElement("div");
       modal_content.classList.add("fs-cta-modal-content");
       modal_content.innerHTML = promotion.body;
-      modal_text_column.appendChild(modal_content);  
+      modal_text_column.appendChild(modal_content);
     }
 
-    if(promotion.cta_1.label && promotion.cta_1.link) {
+    if (promotion.cta_1.label && promotion.cta_1.link) {
       const modal_cta_button_1 = document.createElement("a");
       modal_cta_button_1.classList.add("fs-cta-modal-button");
       modal_cta_button_1.href = promotion.cta_1.link;
       modal_cta_button_1.target = '_blank';
       modal_cta_button_1.innerHTML = promotion.cta_1.label;
-      if(promotion.cta_1.bg_color) {
+      if (promotion.cta_1.bg_color) {
         modal_cta_button_1.style.backgroundColor = promotion.cta_1.bg_color;
       }
-      if(promotion.cta_1.fg_color) {
+      if (promotion.cta_1.fg_color) {
         modal_cta_button_1.style.color = promotion.cta_1.fg_color;
       }
       modal_text_column.appendChild(modal_cta_button_1);
     }
 
-    if(promotion.cta_2.label && promotion.cta_2.link) {
+    if (promotion.cta_2.label && promotion.cta_2.link) {
       const modal_cta_button_2 = document.createElement("a");
       modal_cta_button_2.classList.add("fs-cta-modal-button");
       modal_cta_button_2.href = promotion.cta_2.link;
       modal_cta_button_2.target = '_blank';
       modal_cta_button_2.innerHTML = promotion.cta_2.label;
-      if(promotion.cta_2.bg_color) {
+      if (promotion.cta_2.bg_color) {
         modal_cta_button_2.style.backgroundColor = promotion.cta_2.bg_color;
       }
-      if(promotion.cta_2.fg_color) {
+      if (promotion.cta_2.fg_color) {
         modal_cta_button_2.style.color = promotion.cta_2.fg_color;
       }
       modal_text_column.appendChild(modal_cta_button_2);
@@ -371,7 +371,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     modal.appendChild(modal_text_column);
 
-    if(promotion.image.url) {
+    if (promotion.image.url) {
       const modal_image_column = document.createElement("div");
       modal_image_column.classList.add("fs-cta-modal-image-column");
 
@@ -379,14 +379,14 @@ window.addEventListener("DOMContentLoaded", () => {
       modal_image.src = promotion.image.url;
       modal_image.alt = promotion.image.alt;
       modal_image.classList.add("fs-cta-modal-image");
-  
+
       const modal_image_container = document.createElement("div");
       modal_image_container.classList.add("fs-cta-modal-image-container");
-      modal_image_container.style.backgroundImage = `url(${promotion.image.url})`;      
-      modal_image_container.appendChild(modal_image); 
-  
+      modal_image_container.style.backgroundImage = `url(${promotion.image.url})`;
+      modal_image_container.appendChild(modal_image);
+
       modal_image_column.appendChild(modal_image_container);
-      modal.appendChild(modal_image_column);  
+      modal.appendChild(modal_image_column);
     }
 
     const css = `
@@ -557,7 +557,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Handle closure of the CTA modal
     function detectEscape(e) {
-      if(e.key === "Escape") {
+      if (e.key === "Escape") {
         closeCtaModal();
       }
     }
@@ -785,6 +785,10 @@ window.addEventListener("DOMContentLoaded", () => {
       promotion.pushdown_title
     );
     pushdownScript.classList.add("promotion-" + promotion.id);
+
+    if (promotion.custom_css) {
+      insertCss(promotion.id, promotion.custom_css);
+    }
 
     document.body.appendChild(pushdownScript);
   }
