@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.7.1
+ * Version:           1.7.2
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.7.1' );
+define( 'foursite_wordpress_promotion_VERSION', '1.7.2' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -162,7 +162,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
                 $fwp_schedule = date('Y/m/d g:i a', strtotime($start_date)) . " ET";
                 $status = get_field('engrid_lightbox_display', $post_id);
                 if($status != 'scheduled') {
-                    $fwp_schedule = "<span style='opacity: 0.4; text-decoration: line-through;'>{$fwp_schedule}</span>";
+                    $fwp_schedule = "--";
                 }
             }
             echo $fwp_schedule;
@@ -173,7 +173,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
                 $fwp_schedule = date('Y/m/d g:i a', strtotime($end_date)) . " ET";
                 $status = get_field('engrid_lightbox_display', $post_id);
                 if($status != 'scheduled') {
-                    $fwp_schedule = "<span style='opacity: 0.4; text-decoration: line-through;'>{$fwp_schedule}</span>";
+                    $fwp_schedule = "--";
                 }
             }
 
@@ -344,7 +344,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
                 join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
             ";
             $conditions = "
-                and p.post_status in ('publish'')
+                and p.post_status in ('publish')
                 and active_status_pm.meta_key = 'engrid_lightbox_display'
                 and active_status_pm.meta_value = 'scheduled'
                 and start_date_pm.meta_key = 'engrid_start_date'
