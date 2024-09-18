@@ -84,7 +84,6 @@ function smashing_add_new_columns($columns)
 {
   unset($columns['date']);
   $columns['custom_date'] = __('Published', 'smashing');
-  $columns['status'] = __('Status', 'smashing');
   $columns['post_id'] = __('Post ID', 'smashing');
   $columns['promotion_type'] = __('Type', 'smashing');
   $columns['trigger'] = __('Trigger', 'smashing');
@@ -95,10 +94,6 @@ add_action('manage_wordpress_promotion_posts_custom_column', 'smashing_wordpress
 function smashing_wordpress_promotion_column($column, $post_id)
 {
   $status = get_post_meta($post_id, 'engrid_lightbox_display', true);
-
-  if ($column == 'status') {
-    echo implode(" ", array_map("ucfirst", explode("-", $status)));
-  }
 
   if ('engrid_start_date' === $column) {
     $start_date = strtotime(get_post_meta($post_id, 'engrid_start_date', true));
@@ -172,7 +167,6 @@ add_filter('manage_edit-wordpress_promotion_sortable_columns', 'smashing_wordpre
 function smashing_wordpress_promotion_sortable_columns($columns)
 {
   $columns['custom_date'] = 'custom_date';
-  $columns['status'] = 'engrid_lightbox_display';
   $columns['post_id'] = 'post_id';
 
   return $columns;
