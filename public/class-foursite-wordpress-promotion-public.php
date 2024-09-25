@@ -234,6 +234,7 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
 			$engrid_logo = ($engrid_use_logo || $engrid_promotion_type == 'signup_lightbox') ? get_field('engrid_logo', $lightbox_id) : '';
 			$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
+			$engrid_raw_html = get_field('engrid_raw_html', $lightbox_id);
 			$engrid_divider = get_field('engrid_divider', $lightbox_id);
 			$engrid_title = get_field('engrid_title', $lightbox_id);
 			$engrid_paragraph = get_field('engrid_paragraph', $lightbox_id);
@@ -336,7 +337,8 @@ class Foursite_Wordpress_Promotion_Public
 					'confetti' => $engrid_confetti,
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
+					'end' => $engrid_end_date,
+					'raw_html' => $engrid_raw_html
 				];
 			} else if ($engrid_promotion_type == "raw_code") {
 
