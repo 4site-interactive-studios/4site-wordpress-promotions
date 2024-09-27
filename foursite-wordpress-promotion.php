@@ -16,7 +16,7 @@
  * Plugin Name:       Foursite Wordpress Promotion
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.7.4
+ * Version:           1.7.5
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.7.4' );
+define( 'foursite_wordpress_promotion_VERSION', '1.7.5' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -623,7 +623,18 @@ function foursite_wordpress_promotion_update_schedule($post_id) {
     }
 }
 
-
+function foursite_wordpress_promotion_plugin_data() {
+    if(!function_exists('get_plugin_data')) {
+        require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    return get_plugin_data(__FILE__);
+}
+function foursite_wordpress_promotion_plugin_basename() {
+    return plugin_basename(__FILE__);
+}
+function foursite_wordpress_promotion_plugin_path() {
+    return plugin_dir_path(__FILE__);
+}
 
 
 /**

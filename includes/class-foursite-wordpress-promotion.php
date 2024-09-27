@@ -107,6 +107,12 @@ class Foursite_Wordpress_Promotion {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/includes/acf-fields.php';
 
 		/**
+		 * The plugin update checker
+		 * 
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/includes/plugin-updates.php';
+
+		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
