@@ -31,7 +31,7 @@ function foursite_wordpress_promotion_add_remote_plugin_version($transient) {
         if($checked = $transient->checked) {
             $response = foursite_wordpress_promotion_get_latest_release_info();
             $plugin_basename = foursite_wordpress_promotion_plugin_basename();
-            if(!empty($response['tag_name'])) {
+            if(!empty($response['tag_name']) && isset($checked[$plugin_basename])) {
                 $out_of_date = version_compare($response['tag_name'], $checked[$plugin_basename], 'gt');
                 if($out_of_date) {
                     $zipball_url = $response['zipball_url'];
