@@ -54,12 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const hideSignUpForm = !!parseInt(crumbs.get(fs_signup_options.cookie_name)); // Get cookie
 
-  // This is for disable mobile view
-  const viewportWidth = Math.max(
-    document.documentElement.clientWidth || 0,
-    window.innerWidth || 0
-  );
-
   const isIE = !!document.documentMode;
 
   const setLightbox = () => {
@@ -70,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    if (!isBetweenDates() || isBlacklisted() || !isWhitelisted() || hideSignUpForm || viewportWidth < 600 || isIE) {
+    if (!isBetweenDates() || isBlacklisted() || !isWhitelisted() || hideSignUpForm || isIE) {
       return;
     } else {
       if(window.lightbox_triggered) {
