@@ -561,7 +561,7 @@ class Foursite_Wordpress_Promotion_Public
 						blacklist: [],
 						whitelist: [],
 						layout: "$layout",
-						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media; payment;'></iframe>`,
 						display: "{$engrid_display}",
 						start: "{$engrid_start_date}",
 						end: "{$engrid_end_date}"
@@ -589,7 +589,7 @@ class Foursite_Wordpress_Promotion_Public
 						dates: [],
 						blacklist: [],
 						whitelist: [],
-						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>`,
+						iframe: `<iframe width='100%' scrolling='no' class='en-iframe ' data-src='$engrid_donation_page' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media; payment;'></iframe>`,
 						display: "{$engrid_display}",
 						start: "{$engrid_start_date}",
 						end: "{$engrid_end_date}"

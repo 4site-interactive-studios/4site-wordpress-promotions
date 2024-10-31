@@ -11,7 +11,7 @@ const fs_signup_options = {
   cookie_name: "hideSignUpForm",
   trigger: 1000, // Trigger Lightbox after 1000 (1 second)
   iframe:
-    "<iframe loading='lazy' width='100%' scrolling='no' class='en-iframe ' data-src='https://e-activist.com/page/84950/data/1?mode=DEMO' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media'></iframe>",
+    "<iframe loading='lazy' width='100%' scrolling='no' class='en-iframe ' data-src='https://e-activist.com/page/84950/data/1?mode=DEMO' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media; payment;'></iframe>",
 };
 
 export { fs_signup_options };
