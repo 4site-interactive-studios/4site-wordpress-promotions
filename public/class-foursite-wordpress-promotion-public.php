@@ -328,6 +328,7 @@ class Foursite_Wordpress_Promotion_Public
 					'txt_color' => $engrid_text_color,
 					'form_color' => $engrid_form_color,
 					'custom_css' => $engrid_css,
+					'custom_js' => $engrid_js,
 					'cookie_hours' => $engrid_cookie_hours,
 					'cookie_name' => $engrid_cookie_name,
 					'trigger' => $trigger,

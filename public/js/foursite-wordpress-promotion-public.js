@@ -133,6 +133,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     insertCss(promotion.id, promotion.custom_css);
 
+    if (promotion.custom_js) {
+      insertJs(promotion.id, promotion.custom_js);
+    }
+
     window.DonationLightboxOptions = promotion;
     window.DonationLightboxOptions.trigger = 0;
 
@@ -295,6 +299,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function addCtaLightbox(promotion) {
     const overlay = document.createElement("div");
     overlay.classList.add("fs-cta-modal-container");
+    overlay.setAttribute("promotion-id", promotion.id);
 
     const modal = document.createElement("div");
     modal.classList.add("fs-cta-modal");
@@ -587,6 +592,7 @@ window.addEventListener("DOMContentLoaded", () => {
       html_container.classList.add("promotion-html");
       html_container.classList.add("promotion-element");
       html_container.classList.add("promotion-" + promotion.id);
+      html_container.setAttribute("promotion-id", promotion.id);
       html_container.innerHTML = promotion.html;
       document.body.appendChild(html_container);
     }
@@ -613,7 +619,7 @@ window.addEventListener("DOMContentLoaded", () => {
     insertHtml(
       promotion.id,
       `
-        <div id="fs-rollup-container">
+        <div id="fs-rollup-container" promotion-id="${promotion.id}">
           <a href="${promotion.link}" target="${promotion.target}"><div id="fs-rollup-inner">${promotion.html}</div></a>
         </div> 
       `
@@ -769,6 +775,7 @@ window.addEventListener("DOMContentLoaded", () => {
     pushdownScript.setAttribute("data-pushdown-image", promotion.image);
     pushdownScript.setAttribute("data-pushdown-fg-color", promotion.fg_color);
     pushdownScript.setAttribute("data-pushdown-bg-color", promotion.bg_color);
+    pushdownScript.setAttribute("data-promotion-id", promotion.id);
     pushdownScript.setAttribute(
       "data-pushdown-paragraph",
       promotion.pushdown_paragraph
@@ -847,7 +854,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addFloatingTab(promotion) {
-
     const html_container = document.createElement("div");
     html_container.innerHTML = promotion.html;
     const floating_tab_element = html_container.children[0];
@@ -855,6 +861,7 @@ window.addEventListener("DOMContentLoaded", () => {
     floating_tab_element.classList.add("floating-tab-element");
     floating_tab_element.classList.add("promotion-element");
     floating_tab_element.classList.add("promotion-" + promotion.id);
+    floating_tab_element.setAttribute("promotion-id", promotion.id);
     document.body.appendChild(floating_tab_element);
 
     if (promotion.css) {
@@ -898,6 +905,7 @@ window.addEventListener("DOMContentLoaded", () => {
     s.setAttribute("data-cta_type", promotion.cta_type);
     s.setAttribute("data-image", promotion.image);
     s.setAttribute("data-amounts", promotion.amounts);
+    s.setAttribute("data-promotion_id", promotion.id);
     document.body.appendChild(s);
 
     insertCss(promotion.id, promotion.custom_css);

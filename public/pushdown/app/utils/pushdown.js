@@ -10,6 +10,7 @@ export class Pushdown {
     this.fg_color = scriptTag.getAttribute("data-pushdown-fg-color");
     this.paragraph = scriptTag.getAttribute("data-pushdown-paragraph") || "";
     this.button_label = scriptTag.getAttribute("data-pushdown-button-label") || "";
+    this.promotion_id = scriptTag.getAttribute("data-promotion-id") || "";
     if (this.link) {
       this.init();
       return;
@@ -21,6 +22,7 @@ export class Pushdown {
   createContainer() {
     const container = document.createElement("div");
     container.setAttribute("id", "pushdown");
+    container.setAttribute("promotion-id", this.promotion_id);
     container.classList.add("pushdown-mode-" + this.mode);
     container.innerHTML = this.getContent();
     const body = document.querySelector("body");

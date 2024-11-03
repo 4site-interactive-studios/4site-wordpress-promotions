@@ -23,6 +23,7 @@ export class App {
     max_width: "",
     max_height: "",
     cta_type: "fundraising",
+    promotion_id: ""
   };
   private scriptTag = document.querySelector(
     "script[src*='foursite-en-overlay.js']"
@@ -103,6 +104,7 @@ export class App {
     overlay.id = this.overlayID;
     overlay.classList.add("is-hidden");
     overlay.classList.add("foursite-en-overlay");
+    overlay.setAttribute("promotion-id", this.options.promotion_id);
     overlay.innerHTML = markup;
 
     // Configure overlay modal.

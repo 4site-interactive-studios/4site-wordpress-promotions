@@ -1708,6 +1708,13 @@ add_action( 'acf/include_fields', function() {
 					array(
 						'field' => 'field_63694582ec47e',
 						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
 						'value' => 'raw_code',
 					),
 				),
