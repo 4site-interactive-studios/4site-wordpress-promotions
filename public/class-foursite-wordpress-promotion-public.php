@@ -653,6 +653,10 @@ class Foursite_Wordpress_Promotion_Public
 						} else if (stripos($key, 'href') !== false) {
 							// ignore this key -- we set href via the $fsft_link['url'] field
 						} else {
+							$keys_to_convert = ['data-footer', 'data-paragraph', 'data-title'];
+							if(in_array($key, $keys_to_convert)) {
+								$value = htmlspecialchars($value);
+							}
 							$attributes .= "{$key}='{$value}' ";
 						}
 					}
