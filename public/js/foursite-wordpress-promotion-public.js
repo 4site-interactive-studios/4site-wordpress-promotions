@@ -862,6 +862,7 @@ window.addEventListener("DOMContentLoaded", () => {
     floating_tab_element.classList.add("promotion-element");
     floating_tab_element.classList.add("promotion-" + promotion.id);
     floating_tab_element.setAttribute("promotion-id", promotion.id);
+    floating_tab_element.setAttribute("data-id", promotion.id);
     document.body.appendChild(floating_tab_element);
 
     if (promotion.css) {
