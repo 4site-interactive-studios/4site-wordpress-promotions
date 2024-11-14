@@ -11,14 +11,14 @@
 
 if(!defined('ABSPATH')) { exit; }
 
-define('RELEASES_URL', 'https://api.github.com/repos/4site-interactive-studios/4site-wordpress-promotions/releases');
+define('FWP_RELEASES_URL', 'https://api.github.com/repos/4site-interactive-studios/4site-wordpress-promotions/releases');
 
 add_filter('pre_set_site_transient_update_plugins', 'foursite_wordpress_promotion_add_remote_plugin_version', 10, 1);
 add_filter('plugins_api', 'foursite_wordpress_promotion_plugin_popup', 10, 3);
 add_filter('upgrader_post_install', 'foursite_wordpress_promotion_after_update', 10, 3);
 
 function foursite_wordpress_promotion_get_latest_release_info() {
-    $request_uri = RELEASES_URL;
+    $request_uri = FWP_RELEASES_URL;
     $response = json_decode(wp_remote_retrieve_body(wp_remote_get($request_uri)), true);
     if(is_array($response)) {
         $response = current($response);
