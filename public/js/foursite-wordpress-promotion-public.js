@@ -968,6 +968,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function addFloatingEmailSignup(promotion) {
     const floating_signup = document.createElement("div");
     floating_signup.classList.add("fes-container");
+    floating_signup.setAttribute("promotion-id", promotion.id);
 
     const floating_signup_inner = document.createElement("div");
     floating_signup_inner.classList.add("fes-container__inner");

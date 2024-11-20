@@ -721,7 +721,7 @@ function foursite_wordpress_promotion_fes_submit() {
 
     // We ask for the input Labels from the promotion editor.  We need to turn those into the input IDs
     $input_labels = [$gravity_form_email_field_name];
-    $input_values = [$email, true];
+    $input_values = [$email];
     foreach($gravity_form_field_map as $field_map) {
         $input_labels[] = $field_map['id'];
         $input_values[] = $field_map['value'];
@@ -739,12 +739,12 @@ function foursite_wordpress_promotion_fes_submit() {
 
     $result = GFAPI::submit_form($gravity_form_id, $submit_values);
     if(is_wp_error($result)) {
-        return wp_send_json(['success' => false, 'error' => $result->get_error_message(), 'debug' => $recaptcha_response]);
+        return wp_send_json(['success' => false, 'error' => $result->get_error_message()]);
     } else {
         if($result['is_valid']) {
-            wp_send_json(['success' => true, 'debug' => $recaptcha_response]);
+            wp_send_json(['success' => true]);
         } else {
-            wp_send_json(['success' => false, 'error' => $result['validation_messages'], 'debug' => $recaptcha_response]);
+            wp_send_json(['success' => false, 'error' => $result['validation_messages']]);
         }
     }
 }
