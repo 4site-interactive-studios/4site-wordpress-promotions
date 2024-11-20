@@ -29,6 +29,9 @@
 #fs-donation-tab.floating-tab-show {
   right: 0;
 }
+#fs-donation-tab.floating-tab-hide {
+  right: -100px;
+}
 
 #fs-donation-tab.fixed-in-page {
   position: absolute;

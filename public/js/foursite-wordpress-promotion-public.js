@@ -26,6 +26,7 @@ window.addEventListener("DOMContentLoaded", () => {
   let exit_triggered = [];
   let js_triggered = [];
   let time_triggered = [];
+  let hide_floating_tab = false;
 
   window.rawCodeTriggers = [];
 
@@ -180,6 +181,13 @@ window.addEventListener("DOMContentLoaded", () => {
         break;
       case "pushdown":
         addPushdown(promotion);
+        break;
+      case "floating_signup":
+        if (!window.lightbox_triggered) {
+          window.lightbox_triggered = true;
+          addFloatingEmailSignup(promotion);
+          watchFloatingEmailSignup(promotion);
+        }
         break;
       case "floating_tab":
         addFloatingTab(promotion);
@@ -803,14 +811,15 @@ window.addEventListener("DOMContentLoaded", () => {
   function hideFloatingTab() {
     const floating_tab = document.querySelector("#fs-donation-tab");
     if (floating_tab) {
-      floating_tab.classList.remove("floating-tab-show");
+      floating_tab.classList.add("floating-tab-hide");
     }
   }
 
   function showFloatingTab() {
+    if(hide_floating_tab) return;
     const floating_tab = document.querySelector("#fs-donation-tab");
     if (floating_tab) {
-      floating_tab.classList.add("floating-tab-show");
+      floating_tab.classList.remove("floating-tab-hide");
     }
   }
   function watchFloatingTab(promotion) {
@@ -885,6 +894,228 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       clearEventsForFloatingTab();
       window.donationLightboxObj = new DonationLightbox();
+    }
+    if(hide_floating_tab) {
+      hideFloatingTab();
+    }
+  }
+
+
+  function validateEmail(email_input) {
+    let is_valid = false;
+    if(typeof email_input.checkValidity === 'function') {
+      email_input.required = true;
+      is_valid = email_input.checkValidity();
+      email_input.required = false;
+    }
+    if(is_valid) is_valid = /\S+@\S+\.\S+/.test(email_input.value);
+    return is_valid;
+  }
+  
+  function suppressFloatingEmailSignup(promotion, close_modal) {
+    if(close_modal) {
+      const floating_signup = document.querySelector('.fes-container');
+      floating_signup.style.display = "none";
+      hide_floating_tab = false;
+      showFloatingTab();
+      stopWatchingFloatingEmailSignup();
+    }
+
+    if(parseInt(promotion.cookie_hours) > 0) {
+      setCookie(promotion.cookie_name, promotion.cookie_hours);
+    } else if(parseInt(promotion.close_cookie_hours) > 0) {
+      setCookie(promotion.cookie_name, promotion.close_cookie_hours);
+    }
+  }
+
+  async function floatingEmailSignupSubmit(form, token, promotion) {
+    const email_input = form.querySelector('.fes-container__inner__form__email');
+    const is_valid = validateEmail(email_input);
+    if(!is_valid) {
+      form.classList.add('has-error');
+    } else {
+      form.classList.remove('has-error');
+      form.classList.add('processing');
+      if(promotion.submit_url) {
+        try {
+          const response = await fetch(promotion.submit_url, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({ email: email_input.value, recaptcha: token }),        
+          });
+        
+          const r = await response.json();
+          if(r.success) {
+            const floating_signup = form.closest('.fes-container');
+            floating_signup.classList.add("submitted");
+            suppressFloatingEmailSignup(promotion, false);  
+          } else {
+            console.error('Error submitting floating signup form', r.error);
+          }
+        } catch (error) {
+          console.error('Error submitting floating signup form', error);
+        }
+      } else {
+        floating_signup.classList.add("submitted");
+      }
+      form.classList.remove('processing');
+    }
+  }
+
+  function addFloatingEmailSignup(promotion) {
+    const floating_signup = document.createElement("div");
+    floating_signup.classList.add("fes-container");
+    floating_signup.setAttribute("promotion-id", promotion.id);
+
+    const floating_signup_inner = document.createElement("div");
+    floating_signup_inner.classList.add("fes-container__inner");
+
+    const floating_signup_close = document.createElement("div");
+    floating_signup_close.classList.add("fes-container__inner__close");
+    floating_signup_close.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.49991 8.70706L13.3638 14.571L14.778 13.1568L8.91412 7.29285L14.3638 1.84315L12.9496 0.428939L7.49991 5.87863L2.05011 0.428833L0.635893 1.84305L6.08569 7.29285L0.22168 13.1569L1.63589 14.5711L7.49991 8.70706Z" fill="${promotion.fg_color}"/>
+      </svg>
+    `;
+    floating_signup_close.addEventListener("click", (e) => {
+      suppressFloatingEmailSignup(promotion, true);
+    });
+
+    const floating_signup_text = document.createElement("div");
+    floating_signup_text.classList.add("fes-container__inner__text");
+
+    const floating_signup_title = document.createElement("div");
+    floating_signup_title.classList.add("fes-container__inner__text__title");
+    floating_signup_title.innerHTML = `
+      <span class='fes-pre-submission-show'>${promotion.title}</span>
+      <span class='fes-post-submission-show'>${promotion.post_submission_title}</span>
+    `;
+
+    const floating_signup_content = document.createElement("div");
+    floating_signup_content.classList.add("fes-container__inner__text__content");
+    floating_signup_content.innerHTML = `
+      <span class='fes-pre-submission-show'>${promotion.paragraph}</span>
+      <span class='fes-post-submission-show'>${promotion.post_submission_paragraph}</span>
+    `;
+
+    const floating_signup_form = document.createElement("form");
+    floating_signup_form.classList.add("fes-container__inner__form");    
+    floating_signup_form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target.closest('.fes-container__inner__form');
+      if(promotion.recaptcha) {
+        grecaptcha.ready(() => {
+          grecaptcha.execute(promotion.recaptcha, {action: 'submit'}).then(function(token) {       
+            floatingEmailSignupSubmit(form, token, promotion);
+          });
+        });  
+      } else {
+        floatingEmailSignupSubmit(form, null, promotion);
+      }
+    });
+
+    const floating_signup_email = document.createElement("input");
+    floating_signup_email.classList.add("fes-container__inner__form__email");
+    floating_signup_email.classList.add("fes-pre-submission-show");
+    floating_signup_email.setAttribute("type", "email");
+    floating_signup_email.setAttribute("name", "email");
+    floating_signup_email.setAttribute("placeholder", "Email Address");
+
+    const floating_signup_submit = document.createElement("button");
+    floating_signup_submit.classList.add("fes-container__inner__form__submit");
+    floating_signup_submit.classList.add("fes-pre-submission-show");
+    floating_signup_submit.setAttribute("type", "submit");
+    floating_signup_submit.innerHTML = "Submit";
+
+    const floating_signup_post_submit_button = document.createElement("a");
+    floating_signup_post_submit_button.classList.add("fes-container__inner__form__post-submit-button");
+    floating_signup_post_submit_button.classList.add("fes-post-submission-show");
+    floating_signup_post_submit_button.textContent = promotion.post_submission_button.title;
+    floating_signup_post_submit_button.href = promotion.post_submission_button.url;
+    floating_signup_post_submit_button.target = promotion.post_submission_button.target;
+
+    const floating_signup_error = document.createElement("div");
+    floating_signup_error.classList.add("fes-container__inner__form__error");
+    floating_signup_error.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="#F04245"/><text x="5" y="11" fill="white">!</text></svg>
+      The email address is invalid, please try again.
+    `;
+
+    const css = `
+      .fes-container__inner {
+        background: ${promotion.bg_color};
+        color: ${promotion.fg_color};
+      }
+      .fes-container__inner__form__email {
+        border: 2px solid ${promotion.bg_color};
+      }
+      .fes-container__inner__form__submit,
+      .fes-container__inner__form__post-submit-button {
+        background: ${promotion.button_bg_color};
+        color: ${promotion.button_fg_color};
+      }
+      ${promotion.custom_css}
+    `;
+
+    floating_signup_form.appendChild(floating_signup_email);
+    floating_signup_form.appendChild(floating_signup_submit);
+    floating_signup_form.appendChild(floating_signup_post_submit_button);
+    floating_signup_form.appendChild(floating_signup_error);
+
+    floating_signup_text.appendChild(floating_signup_title);
+    floating_signup_text.appendChild(floating_signup_content);
+
+    floating_signup_inner.appendChild(floating_signup_text);
+    floating_signup_inner.appendChild(floating_signup_form);
+    floating_signup_inner.appendChild(floating_signup_close);
+
+    floating_signup.appendChild(floating_signup_inner);
+    document.body.appendChild(floating_signup);
+
+    insertCss(promotion.id, css);
+
+    hide_floating_tab = true;
+    hideFloatingTab();
+  }
+
+
+
+  function stopWatchingFloatingEmailSignup() {
+    document.removeEventListener("scroll", watchFloatingEmailSignupForFooterVisibility);
+  }
+  function hideFloatingEmailSignup() {
+    const floating_signup = document.querySelector('.fes-container');
+    if (floating_signup) {
+      floating_signup.style.display = "none";
+    }
+  }
+  function showFloatingEmailSignup() {
+    const floating_signup = document.querySelector('.fes-container');
+    if (floating_signup) {
+      floating_signup.style.display = null;
+    }
+  }
+  function watchFloatingEmailSignupForFooterVisibility() {
+    const footer = document.querySelector('footer');
+    const floating_signup = document.querySelector('.fes-container');
+    const rect = footer.getBoundingClientRect();
+    if(rect.top <= (window.innerHeight || document.documentElement.clientHeight)) {
+      hide_floating_tab = false;
+      hideFloatingEmailSignup();
+      showFloatingTab();
+    } else if(floating_signup.style.display === "none") { 
+      hide_floating_tab = true;
+      hideFloatingTab();
+      showFloatingEmailSignup();      
+    }
+  }
+  function watchFloatingEmailSignup() {
+    const footer = document.querySelector('footer');
+    if(footer) {
+      document.addEventListener("scroll", watchFloatingEmailSignupForFooterVisibility);
     }
   }
 
@@ -963,7 +1194,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function setCookie(cookie, hours = 24, path = "/") {
-    const expires = new Date(Date.now() + hours * 36e5).toUTCString();
+    const expires = new Date(Date.now() + parseInt(hours) * 36e5).toUTCString();
     document.cookie =
       cookie +
       "=" +
