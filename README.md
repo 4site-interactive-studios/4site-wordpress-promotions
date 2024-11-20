@@ -40,6 +40,10 @@ Raw Code
 
 > Adds custom HTML, CSS, and Javascript to the page.
 
+Floating Email Signup
+
+> Adds simple email signup form in a floating modal.  Submits to a gravity form of your choosing.  NOTE: the chosen gravity form must have recaptcha disabled.  Instead, the form uses its own ReCaptcha (enter the v3 site key & secret key in Promotion Settings).
+
 ## Trigger Options
 
 > Each promotion can be triggered immediately, after X seconds, after X pixels scrolled, after X% of the page scrolled, on exit, or event via your own Javascript Trigger. ([see example](https://cln.sh/gg4M1SYY))
