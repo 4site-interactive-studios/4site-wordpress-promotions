@@ -197,7 +197,7 @@ class Foursite_Wordpress_Promotion_Public
 			}
 		}
 
-		// the WP_Query above doesn't perfectly sort the dates when it comes to the times.  Two on the same 
+		// the WP_Query above doesn't perfectly sort the dates when it comes to the times.
 		rsort($lightbox_ids);
 		rsort($scheduled_lightbox_ids);
 		$lightbox_ids = array_merge(array_values($scheduled_lightbox_ids), array_values($lightbox_ids));
@@ -341,6 +341,48 @@ class Foursite_Wordpress_Promotion_Public
 					'end' => $engrid_end_date,
 					'raw_html' => $engrid_raw_html
 				];
+			} else if ($engrid_promotion_type == "floating_signup") {
+				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
+				$button_colors = get_field('fes_button_colors', $lightbox_id);
+				$post_submission_button = get_field('fes_post_submission_button', $lightbox_id);
+				if(!$post_submission_button) {
+					$post_submission_button = ['title' => '', 'url' => '', 'target' => ''];
+				}
+				$gravity_form_id = get_field('fes_gravity_form_id', $lightbox_id);
+				$gravity_form_email_field_id = get_field('fes_gravity_form_email_field_id', $lightbox_id);
+				$fes_nonce = wp_create_nonce('fes_nonce');
+
+				$recaptcha_site_key = get_field('promotion_lightbox_recaptcha_site_key', 'options');
+				if($recaptcha_site_key) {
+					wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js?render=' . $recaptcha_site_key);
+				}
+				$client_side_triggered_config[] = [
+					'id' => $lightbox_id,
+					'promotion_type' => $engrid_promotion_type,
+					'fg_color' => $fsft_colors['foreground'],
+					'bg_color' => $fsft_colors['background'],
+					'button_fg_color' => $button_colors['foreground'],
+					'button_bg_color' => $button_colors['background'],
+					'title' => $engrid_title,
+					'paragraph' => $engrid_paragraph,
+					'custom_css' => $engrid_css,
+					'gtm_open_event_name' => $engrid_gtm_open_event_name,
+					'gtm_close_event_name' => $engrid_gtm_close_event_name,
+					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
+					'cookie_hours' => $engrid_cookie_hours,
+					'close_cookie_hours' => get_field('fes_closed_cookie_hours', $lightbox_id),
+					'cookie_name' => $engrid_cookie_name,
+					'display' => $engrid_display,
+					'start' => $engrid_start_date,
+					'end' => $engrid_end_date,
+					'trigger' => $trigger,
+					'post_submission_title' => get_field('fes_post_submission_title', $lightbox_id),
+					'post_submission_paragraph' => get_field('fes_post_submission_paragraph', $lightbox_id),
+					'post_submission_button' => $post_submission_button,
+					'recaptcha' => $recaptcha_site_key,
+					'submit_url' => ($gravity_form_id && $gravity_form_email_field_id) ? admin_url('admin-ajax.php?action=fes_submit&nonce=' . $fes_nonce . '&promo_id=' . $lightbox_id) : ''
+				];
+
 			} else if ($engrid_promotion_type == "raw_code") {
 
 				$client_side_triggered_config[] = [
@@ -743,6 +785,9 @@ class Foursite_Wordpress_Promotion_Public
 		}
 
 		if (count($client_side_triggered_config)) {
+			// move the floating_signup promo beyond any lightbox promos
+			$client_side_triggered_config = $this->move_floating_signup_beyond_lightbox_promos($client_side_triggered_config);
+
 			if ($multistep_script_url) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
 				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
@@ -751,5 +796,37 @@ class Foursite_Wordpress_Promotion_Public
 			}
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
 		}
+	}
+
+	function is_lightbox($promotion) {
+		$is_lightbox = in_array($promotion['promotion_type'], ['multistep_lightbox', 'overlay', 'signup_lightbox', 'cta_lightbox']);
+		if(!$is_lightbox && $promotion['promotion_type'] == 'raw_code' && $promotion['is_lightbox']) {
+			$is_lightbox = true;
+		}
+		return $is_lightbox;
+	}
+
+	function move_floating_signup_beyond_lightbox_promos($client_side_triggered_config) {
+		$fs_idx = [];
+		for($i = 0; $i < count($client_side_triggered_config); $i++) {
+			if($client_side_triggered_config[$i]['promotion_type'] == 'floating_signup') {
+				$fs_idx[] = $i;
+			}
+		}
+		for($i = 0; $i < count($fs_idx); $i++) {
+			$promo_to_move_idx = $fs_idx[$i];
+			$last_lightbox_idx = -1;
+			for($j = $promo_to_move_idx+1; $j < count($client_side_triggered_config); $j++) {
+				if($this->is_lightbox($client_side_triggered_config[$j])) {
+					$last_lightbox_idx = $j;
+				}
+			}
+			if($promo_to_move_idx < $last_lightbox_idx) {
+				$promo_to_move = $client_side_triggered_config[$promo_to_move_idx];
+				array_splice($client_side_triggered_config, $promo_to_move_idx, 1);
+				array_splice($client_side_triggered_config, $last_lightbox_idx, 0, [$promo_to_move]);
+			}
+		}
+		return $client_side_triggered_config;
 	}
 }

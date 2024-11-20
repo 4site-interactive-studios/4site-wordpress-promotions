@@ -2,3 +2,224 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+ .fes-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	left: 10px;
+	z-index: 9999;
+	font-family: sans-serif;
+}
+.fes-container__inner {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	max-width: 1280px;
+	padding: 22px 20px 24px 20px;
+	font-family: inherit;
+	border-radius: 9px;
+	box-shadow: 0px -2px 3px 2px rgba(0, 0, 0, 0.12), 2px 0px 3px 2px rgba(0, 0, 0, 0.12), -2px 0px 3px 2px rgba(0, 0, 0, 0.12);
+}
+.fes-container__inner__close {
+	cursor: pointer;
+}
+.fes-container__inner__text {
+	display: flex;
+	flex-direction: column;
+	width: 60%;
+}
+.fes-container__inner__text__title {
+	color: inherit;
+	font-family: inherit;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-wrap: pretty;
+}
+.fes-container__inner__text__content {
+	color: inherit;
+	font-family: inherit;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	/*letter-spacing: -0.216px;*/
+	text-wrap: pretty;
+}
+.fes-container__inner__form {
+	position: relative;
+	width: 35%;
+}
+.fes-container__inner__form__email {
+	border-radius: 33px;
+	background: #FFF;
+	color: #667085;
+	font-family: inherit;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: -0.32px;
+	height: 71px;
+	padding-left: 36px;
+	padding-right: 140px;
+	width: 100%;
+}
+.fes-container__inner__form__email::placeholder {
+	font-family: inherit;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: -0.32px;
+}
+.fes-container__inner__form__submit,
+.fes-container__inner__form__post-submit-button {
+	position: absolute;
+	top: 2px;
+	right: 0px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 137px;
+	height: 67px;
+	border-radius: 33px;
+	font-size: 22px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	letter-spacing: -0.22px;
+	text-transform: uppercase;
+}
+
+.fes-container__inner__form__post-submit-button {
+	width: unset;
+	padding-left: 22px;
+	padding-right: 22px;
+	position: static;
+	text-align: center;
+}
+
+.fes-container__inner__form__error {
+	display: none;
+	position: absolute;
+	bottom: -20px;
+	left: 20px;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: -0.12px;
+	gap: 5px;
+}
+.fes-container__inner__form.has-error .fes-container__inner__form__error {
+	display: flex;
+}
+.fes-container__inner__form.has-error .fes-container__inner__form__email {
+	color: #F04245;
+	border: 2px solid #F04245;
+}
+.fes-container__inner__form.has-error .fes-container__inner__form__email::placeholder {
+	color: #F04245;
+}
+.fes-container__inner__form.processing .fes-container__inner__form__submit {
+	text-indent: -9999px;
+}
+.fes-container__inner__form.processing .fes-container__inner__form__submit::after {
+	content: '.';
+	animation: fes-processing 1.5s infinite;
+	text-indent: 0;
+	letter-spacing: 1px;
+}
+@keyframes fes-processing {
+	0% {
+		content: '.';
+	}
+	33% {
+		content: '..';
+	}
+	66% {
+		content: '...';
+	}    
+}
+.fes-pre-submission-show {
+	display: flex;
+}
+.fes-post-submission-show {
+	display: none;
+}
+.fes-container.submitted .fes-pre-submission-show {
+	display: none;
+}
+.fes-container.submitted .fes-post-submission-show {
+	display: flex;
+}
+@media (max-width: 900px) {
+	.fes-container__inner__text {
+		width: 50%;
+	}
+	.fes-container__inner__text__title {
+		font-size: 20px;
+	}
+	.fes-container__inner__text__content {
+		font-size: 14px;
+	}
+	.fes-container__inner__form {
+		width: 50%;
+		max-width: 400px;
+	}
+	.fes-container__inner__form__email {
+		height: 44px;
+		padding-left: 20px;
+		font-size: 14px;
+	}
+	.fes-container__inner__form__email::placeholder {
+		font-size: 14px;
+	}
+	.fes-container__inner__form__submit,
+	.fes-container__inner__form__post-submit-button {
+		height: 40px;
+		font-size: 20px;
+	}
+	.fes-container__inner__close {
+		position: absolute;
+		top: 10px;
+		right: 7px;
+	}
+}
+@media (max-width: 600px) {
+	.fes-container__inner {
+		flex-direction: column;
+		align-items: center;
+		padding: 35px 17px;
+	}
+	.fes-container__inner__text {
+		width: 100%;
+		max-width: 400px;
+		margin-bottom: 10px;
+	}
+	.fes-container__inner__text__title {
+		font-size: 20px;
+		margin-bottom: 5px;
+	}
+	.fes-container__inner__text__content {
+		font-size: 14px;
+	}
+	.fes-container__inner__form {
+		width: 100%;
+		max-width: 400px;
+	}
+}
+
+.grecaptcha-badge {
+	visibility: hidden; 
+}

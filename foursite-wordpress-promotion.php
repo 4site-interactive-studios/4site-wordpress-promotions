@@ -623,6 +623,132 @@ function foursite_wordpress_promotion_update_schedule($post_id) {
     }
 }
 
+add_action("wp_ajax_fes_submit", "foursite_wordpress_promotion_fes_submit");
+add_action("wp_ajax_nopriv_fes_submit", "foursite_wordpress_promotion_fes_submit");
+function foursite_wordpress_promotion_fes_submit() {
+    $data = json_decode(file_get_contents("php://input"), true);
+    $required_params_present = !empty($data['email']) && !empty($_GET['promo_id']) && !empty($_GET['nonce']);
+    if(!$required_params_present) {
+        return wp_send_json(['success' => false, 'error' => 'Required parameters missing.']);
+    }
+    if(!wp_verify_nonce($_GET['nonce'], 'fes_nonce')) {
+        return wp_send_json(['success' => false, 'error' => 'Nonce invalid.']);
+    }
+
+    $email = $data['email'];
+    $promo_id = $_GET['promo_id'];
+    
+    $recaptcha_response = null;
+    $recaptcha_site_key = get_field('promotion_lightbox_recaptcha_site_key', 'options');
+    $recaptcha_secret_key = get_field('promotion_lightbox_recaptcha_secret_key', 'options');
+    if($recaptcha_secret_key && $recaptcha_site_key) {
+        $token = $data['recaptcha'] ?? '';
+        if(!$token) {
+            return wp_send_json(['success' => false, 'error' => 'Recaptcha token missing.']);
+        }
+        $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+        $recaptcha_response = wp_remote_post($recaptcha_url, [
+            'body' => [
+                'secret' => $recaptcha_secret_key,
+                'response' => $token
+            ]
+        ]);
+        $recaptcha_response = json_decode(wp_remote_retrieve_body($recaptcha_response), true);
+        if(!$recaptcha_response['success'] || $recaptcha_response['score'] < 0.5) {
+            return wp_send_json(['success' => false, 'error' => 'Recaptcha validation failed.']);
+        }
+    }
+
+
+    $gravity_form_id = intval(get_field('fes_gravity_form_id', $promo_id));
+    $gravity_form_email_field_name = get_field('fes_gravity_form_email_field_id', $promo_id);
+    $gravity_form_field_map = get_field('fes_gravity_form_submission_map', $promo_id);
+
+    if(!$gravity_form_id || !$gravity_form_email_field_name) {
+        return wp_send_json(['success' => false, 'error' => 'Gravity Form IDs not set.']);
+    }
+
+    if(!class_exists('GFAPI')) {
+        return wp_send_json(['success' => false, 'error' => 'Gravity Forms API not available.']);
+    }
+    $form_exists = GFAPI::form_id_exists($gravity_form_id);
+    if(!$form_exists) {
+        return wp_send_json(['success' => false, 'error' => 'Form does not exist.']);
+    }
+
+    $gravity_form = GFAPI::get_form($gravity_form_id);
+
+    function explode_inputs_to_find($inputs) {
+        $arr = [];
+        foreach($inputs as $input) {			
+            $parts = explode('|', $input); 
+            for($i = 0; $i < count($parts); $i++) {
+                $parts[$i] = trim($parts[$i]);
+            }
+            $arr[] = $parts;
+        }
+        return $arr;
+    }
+    function find_field_ids_from_field_label($form, $inputs_to_find) {
+        $field_ids = [];
+        foreach($inputs_to_find as $input_to_find) {
+            $check_subfields = count($input_to_find) > 1;
+            $field_id = null;
+            foreach($form['fields'] as $field) {
+                if(!$check_subfields && strcmp($field['label'], $input_to_find[0]) == 0) {
+                    $field_id = $field['id'];
+                    break;
+                } else if($check_subfields) {
+                    $field_id_found = false;
+                    if(isset($field['inputs']) && is_array($field['inputs'])) {
+                        foreach($field['inputs'] as $sub_field) {
+                            if(strcmp($sub_field['label'], $input_to_find[1]) == 0) {
+                                $field_id = $sub_field['id'];
+                                $field_id_found = true;
+                                break;
+                            }
+                        }	
+                    }
+                    if($field_id_found) {
+                        break;
+                    }	
+                }
+            }
+            $field_ids[] = $field_id;
+        }
+        return $field_ids;
+    }
+
+    // We ask for the input Labels from the promotion editor.  We need to turn those into the input IDs
+    $input_labels = [$gravity_form_email_field_name];
+    $input_values = [$email, true];
+    foreach($gravity_form_field_map as $field_map) {
+        $input_labels[] = $field_map['id'];
+        $input_values[] = $field_map['value'];
+    }
+    $exploded_input_labels = explode_inputs_to_find($input_labels);
+    $input_ids = find_field_ids_from_field_label($gravity_form, $exploded_input_labels);
+
+    // Prepare the submission form data
+    $submit_values = ['form_id' => $gravity_form_id];
+    for($i = 0; $i < count($input_ids); $i++) {
+        if($input_ids[$i]) {
+            $submit_values['input_' . str_replace('.', '_', $input_ids[$i])] = $input_values[$i];
+        }
+    }
+
+    $result = GFAPI::submit_form($gravity_form_id, $submit_values);
+    if(is_wp_error($result)) {
+        return wp_send_json(['success' => false, 'error' => $result->get_error_message(), 'debug' => $recaptcha_response]);
+    } else {
+        if($result['is_valid']) {
+            wp_send_json(['success' => true, 'debug' => $recaptcha_response]);
+        } else {
+            wp_send_json(['success' => false, 'error' => $result['validation_messages'], 'debug' => $recaptcha_response]);
+        }
+    }
+}
+
 function foursite_wordpress_promotion_plugin_data() {
     if(!function_exists('get_plugin_data')) {
         require_once(ABSPATH . 'wp-admin/includes/plugin.php');
