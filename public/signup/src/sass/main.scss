@@ -221,6 +221,11 @@ img {
   height: calc(max(100%, 100vh));
 }
 
+.fs-signup-container-form iframe {
+  // fixes issue discovered in a particular client's site where the iframe was getting force-set to 0 width for some reason, probably a malfunctioning script of theirs.
+  min-width: 100% !important;
+}
+
 // Overrides for one-column signup
 .fs-signup-lightbox.one-col {
   .fs-signup-container-form {
