@@ -489,7 +489,7 @@ add_action( 'acf/include_fields', function() {
 						'operator' => '==',
 						'value' => 'floating_signup',
 					),
-				),				
+				),
 			),
 			'wrapper' => array(
 				'width' => '',
@@ -1972,6 +1972,9 @@ add_action( 'acf/include_fields', function() {
 			'layout' => 'block',
 			'acfe_seamless_style' => 0,
 			'acfe_group_modal' => 0,
+			'acfe_group_modal_close' => 0,
+			'acfe_group_modal_button' => '',
+			'acfe_group_modal_size' => 'large',
 			'sub_fields' => array(
 				array(
 					'key' => 'field_67229ec3b1348',
@@ -2012,9 +2015,6 @@ add_action( 'acf/include_fields', function() {
 					'allow_in_bindings' => 1,
 				),
 			),
-			'acfe_group_modal_close' => 0,
-			'acfe_group_modal_button' => '',
-			'acfe_group_modal_size' => 'large',
 		),
 		array(
 			'key' => 'field_6722a081e84d1',
@@ -4207,6 +4207,32 @@ add_action( 'acf/include_fields', function() {
 			),
 		),
 		array(
+			'key' => 'field_67833eb821e46',
+			'label' => '404 Pages',
+			'name' => 'show_404',
+			'aria-label' => '',
+			'type' => 'radio',
+			'instructions' => 'Determines if this promotion should or should not run on a 404 page.',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				'N' => 'Do not run this promotion on a 404 page',
+				'Y' => 'Run this promotion on a 404 page',
+			),
+			'default_value' => 'N',
+			'return_format' => 'value',
+			'allow_null' => 0,
+			'other_choice' => 0,
+			'allow_in_bindings' => 0,
+			'layout' => 'vertical',
+			'save_other_choice' => 0,
+		),
+		array(
 			'key' => 'field_61f1f16c7455e',
 			'label' => 'GTM Data Layer',
 			'name' => '',
@@ -4350,7 +4376,7 @@ add_action( 'acf/include_fields', function() {
 			'name' => 'promotion_lightbox_recaptcha_site_key',
 			'aria-label' => '',
 			'type' => 'text',
-			'instructions' => 'Both this and the secret key should be for a v3 recaptcha.  These are only used for the floating signup promo, and can be omitted if not using promos of that type.',
+			'instructions' => 'Both this and the secret key should be for a v3 recaptcha.	These are only used for the floating signup promo, and can be omitted if not using promos of that type.',
 			'required' => 0,
 			'conditional_logic' => 0,
 			'wrapper' => array(
@@ -4414,4 +4440,3 @@ add_action( 'acf/include_fields', function() {
 	'acfe_note' => '',
 ) );
 } );
-
