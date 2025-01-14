@@ -21,14 +21,11 @@
 
   position: fixed;
   top: 40%;
-  right: -100px;
+  right: 0px;
 
   white-space: unset;
 }
 
-#fs-donation-tab.floating-tab-show {
-  right: 0;
-}
 #fs-donation-tab.floating-tab-hide {
   right: -100px;
 }

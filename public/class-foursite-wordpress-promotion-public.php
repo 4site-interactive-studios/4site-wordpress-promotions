@@ -645,7 +645,7 @@ class Foursite_Wordpress_Promotion_Public
 				wp_add_inline_script('foursite-wordpress-signup-lightbox', $engrid_js_code, 'before');
 			} else if ($engrid_promotion_type == "floating_tab") {
 
-				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__));
+				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__), [], '1.0');
 
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
 				$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
