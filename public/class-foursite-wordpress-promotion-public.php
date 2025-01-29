@@ -651,10 +651,10 @@ class Foursite_Wordpress_Promotion_Public
 				$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
 				$fsft_location = get_field('engrid_fsft_location', $lightbox_id);
 				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
-				$fsft_css = get_field('engrid_css', $lightbox_id);
 				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
+				$engrid_js = get_field('engrid_js', $lightbox_id);
 				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
-				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
+				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);				
 				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
 				$fsft_id = 'fs-donation-tab';
 
@@ -710,6 +710,7 @@ class Foursite_Wordpress_Promotion_Public
 					'id' => $lightbox_id,
 					'promotion_type' => $engrid_promotion_type,
 					'css' => $engrid_css,
+					'js' => $engrid_js,
 					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
 					'trigger' => $trigger,
 					'cookie_name' => $engrid_cookie_name,

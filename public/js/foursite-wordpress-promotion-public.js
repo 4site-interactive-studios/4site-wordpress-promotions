@@ -885,6 +885,10 @@ window.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(new_css);
     }
 
+    if (promotion.js) {
+      insertJs(promotion.id, promotion.js);
+    }
+
     if (promotion.open_lightbox) {
       if (window.DonationLightboxOptions) {
         delete window.DonationLightboxOptions;

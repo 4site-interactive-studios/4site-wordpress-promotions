@@ -2486,6 +2486,35 @@ add_action( 'acf/include_fields', function() {
 			'new_lines' => '',
 		),
 		array(
+			'key' => 'field_13562964ab124',
+			'label' => 'Custom JS',
+			'name' => 'engrid_js',
+			'aria-label' => '',
+			'type' => 'textarea',
+			'instructions' => 'Add javascript to your markup. Don\'t forget to include &lt;script&gt;&lt;/script&gt;.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'floating_tab',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'acfe_textarea_code' => 0,
+			'maxlength' => '',
+			'rows' => '',
+			'placeholder' => '',
+			'new_lines' => ''
+		),
+		array(
 			'key' => 'field_64339a3abd49d',
 			'label' => 'Modal Overlay',
 			'name' => 'modal_overlay',
