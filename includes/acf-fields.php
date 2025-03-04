@@ -4349,7 +4349,7 @@ add_action( 'acf/include_fields', function() {
 	'acfe_note' => '',
 ) );
 
-	acf_add_local_field_group( array(
+acf_add_local_field_group( array(
 	'key' => 'group_65e11091aa12f',
 	'title' => 'Promotions Settings',
 	'fields' => array(
@@ -4379,7 +4379,7 @@ add_action( 'acf/include_fields', function() {
 			'name' => 'promotion_lightbox_recaptcha_site_key',
 			'aria-label' => '',
 			'type' => 'text',
-			'instructions' => 'Both this and the secret key should be for a v3 recaptcha.  These are only used for the floating signup promo, and can be omitted if not using promos of that type.',
+			'instructions' => 'Both this and the secret key should be for a v3 recaptcha.	These are only used for the floating signup promo, and can be omitted if not using promos of that type.',
 			'required' => 0,
 			'conditional_logic' => 0,
 			'wrapper' => array(
@@ -4414,6 +4414,48 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'prepend' => '',
 			'append' => '',
+		),
+		array(
+			'key' => 'field_67c671bbfe2b9',
+			'label' => 'RememberMe Domain Whitelist',
+			'name' => 'promotion_lightbox_domains',
+			'aria-label' => '',
+			'type' => 'textarea',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'acfe_textarea_code' => 0,
+			'maxlength' => '',
+			'allow_in_bindings' => 0,
+			'rows' => '',
+			'placeholder' => '',
+			'new_lines' => '',
+		),
+		array(
+			'key' => 'field_67c673f43d40e',
+			'label' => '',
+			'name' => '',
+			'aria-label' => '',
+			'type' => 'message',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'message' => 'Enter a list of domains that rememberme will work for.	One domain per line. Do not include the protocol (eg, https://) nor any slashes.
+
+If there are domains provided, upon saving these options, a rememberme.html file will be automatically generated (or updated) at [current-domain]/wp-content/uploads/fwp-promo-assets/rememberme.html',
+			'new_lines' => 'wpautop',
+			'esc_html' => 0,
 		),
 	),
 	'location' => array(
