@@ -86,10 +86,10 @@ class Foursite_Wordpress_Promotion_Public
 
 	public function get_lightbox_ids()
 	{
-		// Get the current page URL
-		$current_page_url = get_permalink();
-		// Get the current page ID
-		$current_page_id = url_to_postid($current_page_url);
+		$current_page_url = $_SERVER['REQUEST_URI'];
+		$current_page_id = url_to_postid(get_permalink());
+		$is_404 = is_404();
+
 		$args = array(
 			'numberposts'	=> -1,
 			'post_type'		=> 'wordpress_promotion',
@@ -122,65 +122,76 @@ class Foursite_Wordpress_Promotion_Public
 				$lightbox_display = get_field("engrid_lightbox_display", $lightbox_id);
 				$hide_on = get_field('engrid_hide_on', $lightbox_id);
 				$show_on = get_field('engrid_show_on', $lightbox_id);
+				$show_on_404 = get_field('show_404', $lightbox_id);
 
-				if ($blacklist) {
-					// Explode the blacklist into an array
-					$blacklist_array = explode(',', strtolower($blacklist));
-					$is_blacklisted = false;
-					$compare_url = strtolower($current_page_url);
-					foreach ($blacklist_array as $blacklist_item) {
-						// Trim the whitespace from the blacklist item
-						$blacklist_item = trim($blacklist_item);
-						// Check if the current page URL contains the blacklist item
-						if (strpos($compare_url, $blacklist_item) !== false) {
-							// If it does, do not show the lightbox
-							$is_blacklisted = true;
-							break;
+				$skip_checks = false;
+				if($is_404) {
+					if($show_on_404 == 'Y') {
+						$skip_checks = true;
+					} else {
+						continue;	
+					}
+				}
+
+				if(!$skip_checks) {
+					if ($blacklist) {
+						// Explode the blacklist into an array
+						$blacklist_array = explode(',', strtolower($blacklist));
+						$is_blacklisted = false;
+						$compare_url = strtolower($current_page_url);
+						foreach ($blacklist_array as $blacklist_item) {
+							// Trim the whitespace from the blacklist item
+							$blacklist_item = trim($blacklist_item);
+							// Check if the current page URL contains the blacklist item
+							if (strpos($compare_url, $blacklist_item) !== false) {
+								// If it does, do not show the lightbox
+								$is_blacklisted = true;
+								break;
+							}
+						}
+						// If blacklist is not empty and the current page URL does not contain any of the blacklist items, show the lightbox
+						if ($is_blacklisted) {
+							continue;
 						}
 					}
-					// If blacklist is not empty and the current page URL does not contain any of the blacklist items, show the lightbox
-					if ($is_blacklisted) {
+	
+					if (is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
 						continue;
 					}
-				}
 
-				if (is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
-					continue;
-				}
-
-
-				$whitelist_check_enabled = false;
-				$eligible = false;
-				if ($whitelist) {
-					$whitelist_check_enabled = true;
-					// Explode the whitelist into an array
-					$whitelist_array = explode(',', strtolower($whitelist));
-					$compare_url = strtolower($current_page_url);
-					$is_whitelisted = false;
-					foreach ($whitelist_array as $whitelist_item) {
-						// Trim the whitespace from the whitelist item
-						$whitelist_item = trim($whitelist_item);
-						// Check if the current page URL contains the whitelist item
-						if (strpos($compare_url, $whitelist_item) !== false) {
-							// If it does, show the lightbox
-							$is_whitelisted = true;
+					$whitelist_check_enabled = false;
+					$eligible = false;
+					if ($whitelist) {
+						$whitelist_check_enabled = true;
+						// Explode the whitelist into an array
+						$whitelist_array = explode(',', strtolower($whitelist));
+						$compare_url = strtolower($current_page_url);
+						$is_whitelisted = false;
+						foreach ($whitelist_array as $whitelist_item) {
+							// Trim the whitespace from the whitelist item
+							$whitelist_item = trim($whitelist_item);
+							// Check if the current page URL contains the whitelist item
+							if (strpos($compare_url, $whitelist_item) !== false) {
+								// If it does, show the lightbox
+								$is_whitelisted = true;
+							}
+						}
+						// If whitelist is not empty and the current page URL does not contain any of the whitelist items, do not show the lightbox
+						if ($is_whitelisted) {
+							$eligible = true;
 						}
 					}
-					// If whitelist is not empty and the current page URL does not contain any of the whitelist items, do not show the lightbox
-					if ($is_whitelisted) {
-						$eligible = true;
+	
+					if (is_array($show_on)) {
+						$whitelist_check_enabled = true;
+						if (in_array($current_page_id, $show_on)) {
+							$eligible = true;
+						}
 					}
-				}
-
-				if (is_array($show_on)) {
-					$whitelist_check_enabled = true;
-					if (in_array($current_page_id, $show_on)) {
-						$eligible = true;
+	
+					if ($whitelist_check_enabled && !$eligible) {
+						continue;
 					}
-				}
-
-				if ($whitelist_check_enabled && !$eligible) {
-					continue;
 				}
 
 				$is_scheduled  = false;
