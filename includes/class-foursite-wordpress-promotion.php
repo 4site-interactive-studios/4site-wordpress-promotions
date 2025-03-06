@@ -139,6 +139,7 @@ class Foursite_Wordpress_Promotion {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/options.php';
 
+		require_once plugin_dir_path (dirname( __FILE__ ) ) . 'admin/rememberme.php';
 	}
 
 	/**
