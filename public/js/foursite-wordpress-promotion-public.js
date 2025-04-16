@@ -21,6 +21,9 @@ window.addEventListener("DOMContentLoaded", () => {
   window.lightbox_triggered =
     window.lightbox_triggered === undefined ? false : window.lightbox_triggered;
 
+  // we don't want to show more than one floating tab at a time
+  let floating_tab_triggered = false;
+
   let scroll_px_triggered = [];
   let scroll_per_triggered = [];
   let exit_triggered = [];
@@ -190,6 +193,11 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         break;
       case "floating_tab":
+        if (floating_tab_triggered) {
+          return;
+        } else {
+          floating_tab_triggered = true;
+        }        
         addFloatingTab(promotion);
         watchFloatingTab(promotion);
         break;
