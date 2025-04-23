@@ -140,6 +140,8 @@ class Foursite_Wordpress_Promotion {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/options.php';
 
 		require_once plugin_dir_path (dirname( __FILE__ ) ) . 'admin/rememberme.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-foursite-wordpress-promotion-export.php';	
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-foursite-wordpress-promotion-import.php';	
 	}
 
 	/**
