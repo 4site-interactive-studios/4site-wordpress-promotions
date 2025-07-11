@@ -800,6 +800,9 @@ class Foursite_Wordpress_Promotion_Public
 			// move the floating_signup promo beyond any lightbox promos
 			$client_side_triggered_config = $this->move_floating_signup_beyond_lightbox_promos($client_side_triggered_config);
 
+			// move the floating_tab promo above any lightbox promos
+			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
+
 			if ($multistep_script_url) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
 				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
@@ -841,4 +844,23 @@ class Foursite_Wordpress_Promotion_Public
 		}
 		return $client_side_triggered_config;
 	}
+
+	function move_first_floating_tab_to_top($client_side_triggered_config) {
+		for($i = 0; $i < count($client_side_triggered_config); $i++) {
+			if($client_side_triggered_config[$i]['promotion_type'] == 'floating_tab') {
+				if($i == 0) {
+					// already at the top
+					break;
+				}
+				
+				$promo_to_move = $client_side_triggered_config[$i];
+				array_splice($client_side_triggered_config, $i, 1);
+				array_splice($client_side_triggered_config, 0, 0, [$promo_to_move]);
+
+				// we're only interested in the first floating tab promo
+				break;
+			}
+		}
+		return $client_side_triggered_config;
+	}	
 }
