@@ -16,7 +16,7 @@
  * Plugin Name:       4Site Promotions Plugin
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.8.7.4
+ * Version:           1.8.7.5
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.8.7.4' );
+define( 'foursite_wordpress_promotion_VERSION', '1.8.7.5' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -159,7 +159,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
             $fwp_schedule = "--";
             $start_date = get_field('engrid_start_date', $post_id);
             if($start_date) {
-                $fwp_schedule = date('Y/m/d g:i a', strtotime($start_date)) . " ET";
+                $fwp_schedule = date('Y/m/d g:i a', strtotime($start_date));
                 $status = get_field('engrid_lightbox_display', $post_id);
                 if($status != 'scheduled') {
                     $fwp_schedule = "--";
@@ -170,7 +170,7 @@ if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpr
             $fwp_schedule = "--";
             $end_date = get_field('engrid_end_date', $post_id);
             if($end_date) {
-                $fwp_schedule = date('Y/m/d g:i a', strtotime($end_date)) . " ET";
+                $fwp_schedule = date('Y/m/d g:i a', strtotime($end_date));
                 $status = get_field('engrid_lightbox_display', $post_id);
                 if($status != 'scheduled') {
                     $fwp_schedule = "--";
