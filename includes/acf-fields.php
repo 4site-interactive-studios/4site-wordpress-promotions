@@ -658,7 +658,7 @@ add_action( 'acf/include_fields', function() {
 		),
 		array(
 			'key' => 'field_61f180fb94e9c',
-			'label' => 'Engaging Networks Page',
+			'label' => 'Multistep Page',
 			'name' => 'engrid_donation_page',
 			'aria-label' => '',
 			'type' => 'url',
@@ -693,6 +693,7 @@ add_action( 'acf/include_fields', function() {
 				'id' => '',
 			),
 			'default_value' => '',
+			'allow_in_bindings' => 1,
 			'placeholder' => '',
 		),
 		array(
@@ -729,6 +730,79 @@ add_action( 'acf/include_fields', function() {
 			'ui_on_text' => '',
 			'ui_off_text' => '',
 			'ui' => 1,
+		),
+		array(
+			'key' => 'field_6874877cabc1d',
+			'label' => 'Multistep Page Host',
+			'name' => 'page_host',
+			'aria-label' => '',
+			'type' => 'radio',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				'en' => 'Engaging Networks',
+				'ea' => 'EveryAction',
+			),
+			'default_value' => 'en',
+			'return_format' => 'value',
+			'allow_null' => 0,
+			'other_choice' => 0,
+			'allow_in_bindings' => 0,
+			'layout' => 'vertical',
+			'save_other_choice' => 0,
+		),
+		array(
+			'key' => 'field_687487fdabc1e',
+			'label' => 'EA Promo Style',
+			'name' => 'ea_promo_style',
+			'aria-label' => '',
+			'type' => 'radio',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_6874877cabc1d',
+						'operator' => '==',
+						'value' => 'ea',
+					),
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				'top' => 'Top',
+				'bottom' => 'Bottom',
+			),
+			'default_value' => 'bottom',
+			'return_format' => 'value',
+			'allow_null' => 0,
+			'other_choice' => 0,
+			'allow_in_bindings' => 0,
+			'layout' => 'vertical',
+			'save_other_choice' => 0,
 		),
 		array(
 			'key' => 'field_63bc637c4661c',
@@ -1105,6 +1179,40 @@ add_action( 'acf/include_fields', function() {
 			'max_size' => '',
 			'mime_types' => 'mp4',
 			'uploader' => '',
+		),
+		array(
+			'key' => 'field_68748c103c0db',
+			'label' => 'Media Credit',
+			'name' => 'media_credit',
+			'aria-label' => '',
+			'type' => 'text',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+					array(
+						'field' => 'field_6874877cabc1d',
+						'operator' => '==',
+						'value' => 'ea',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'maxlength' => '',
+			'allow_in_bindings' => 0,
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
 		),
 		array(
 			'key' => 'field_66f365d614aec',
@@ -2216,6 +2324,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_63e18264ddd9b',
@@ -2512,7 +2622,7 @@ add_action( 'acf/include_fields', function() {
 			'maxlength' => '',
 			'rows' => '',
 			'placeholder' => '',
-			'new_lines' => ''
+			'new_lines' => '',
 		),
 		array(
 			'key' => 'field_64339a3abd49d',
@@ -3859,6 +3969,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_63e28926f3d25',
@@ -3898,6 +4010,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_61f1e8cad1f27',
@@ -4375,7 +4489,7 @@ add_action( 'acf/include_fields', function() {
 	'acfe_note' => '',
 ) );
 
-acf_add_local_field_group( array(
+	acf_add_local_field_group( array(
 	'key' => 'group_65e11091aa12f',
 	'title' => 'Promotions Settings',
 	'fields' => array(

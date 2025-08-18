@@ -231,6 +231,8 @@ class Foursite_Wordpress_Promotion_Public
 		$client_side_triggered_config = [];
 
 		$multistep_script_url = get_field('promotion_lightbox_script', 'options');
+		$ea_multistep_script_url = plugin_dir_url(__FILE__) . 'js/ea-multistep-lightbox.js';
+
 		$script_ver = $this->version;
 		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
 
@@ -253,8 +255,6 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_bg_color = get_field('engrid_bg_color', $lightbox_id);
 			$engrid_text_color = get_field('engrid_text_color', $lightbox_id);
 			$engrid_form_color = get_field('engrid_form_color', $lightbox_id);
-			$engrid_show_on = get_field('engrid_show_on', $lightbox_id);
-			$engrid_hide_on = get_field('engrid_hide_on', $lightbox_id);
 			$engrid_start_date = get_field('engrid_start_date', $lightbox_id);
 			$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
 			$engrid_cookie_hours = get_field('engrid_cookie_hours', $lightbox_id);
@@ -350,7 +350,12 @@ class Foursite_Wordpress_Promotion_Public
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
 					'end' => $engrid_end_date,
-					'raw_html' => $engrid_raw_html
+					'raw_html' => $engrid_raw_html,
+					'page_host' => get_field('page_host', $lightbox_id),
+					'promo_style' => get_field('ea_promo_style', $lightbox_id),
+					'media_credit' => get_field('media_credit', $lightbox_id),
+					'text_position' => 'top', // used by the EA multistep script
+					'view_more_text' => 'Read More' // used by the EA multistep script
 				];
 			} else if ($engrid_promotion_type == "floating_signup") {
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
@@ -802,6 +807,8 @@ class Foursite_Wordpress_Promotion_Public
 
 			// move the floating_tab promo above any lightbox promos
 			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
+			
+			wp_enqueue_script('ea-multistep-lightbox', $ea_multistep_script_url, array(), $script_ver, false);
 
 			if ($multistep_script_url) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
