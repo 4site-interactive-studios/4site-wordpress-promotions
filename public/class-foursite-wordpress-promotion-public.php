@@ -241,6 +241,7 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_trigger_type = trim(get_field('engrid_trigger_type', $lightbox_id));
 			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
 			$engrid_image = get_field('engrid_image', $lightbox_id);
+			$engrid_image_url = get_field('engrid_image_link', $lightbox_id);
 			$engrid_video = get_field('engrid_video', $lightbox_id);
 			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
 			$engrid_logo = ($engrid_use_logo || $engrid_promotion_type == 'signup_lightbox') ? get_field('engrid_logo', $lightbox_id) : '';
@@ -350,7 +351,8 @@ class Foursite_Wordpress_Promotion_Public
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
 					'end' => $engrid_end_date,
-					'raw_html' => $engrid_raw_html
+					'raw_html' => $engrid_raw_html,
+					'image_url' => $engrid_image_url
 				];
 			} else if ($engrid_promotion_type == "floating_signup") {
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);

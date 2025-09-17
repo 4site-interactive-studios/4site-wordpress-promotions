@@ -76,6 +76,7 @@ add_action( 'acf/include_fields', function() {
 			'display_format' => 'Y/m/d g:i a',
 			'return_format' => 'Y-m-d H:i:s',
 			'first_day' => 1,
+			'default_to_current_date' => 0,
 		),
 		array(
 			'key' => 'field_61f185aac8653',
@@ -102,6 +103,7 @@ add_action( 'acf/include_fields', function() {
 			'display_format' => 'Y/m/d g:i a',
 			'return_format' => 'Y-m-d H:i:s',
 			'first_day' => 1,
+			'default_to_current_date' => 0,
 		),
 		array(
 			'key' => 'field_63694582ec47e',
@@ -1059,6 +1061,37 @@ add_action( 'acf/include_fields', function() {
 			'preview_size' => 'medium',
 			'uploader' => '',
 			'acfe_thumbnail' => 0,
+		),
+		array(
+			'key' => 'field_68ca061920bca',
+			'label' => 'Image Link',
+			'name' => 'engrid_image_link',
+			'aria-label' => '',
+			'type' => 'url',
+			'instructions' => 'Optional link for the image in the left side of the multistep lightbox.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+					array(
+						'field' => 'field_6243ac17400c8',
+						'operator' => '==',
+						'value' => 'image',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '100',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'allow_in_bindings' => 1,
+			'placeholder' => '',
 		),
 		array(
 			'key' => 'field_6243ab00400c7',
@@ -2216,6 +2249,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_63e18264ddd9b',
@@ -2512,7 +2547,7 @@ add_action( 'acf/include_fields', function() {
 			'maxlength' => '',
 			'rows' => '',
 			'placeholder' => '',
-			'new_lines' => ''
+			'new_lines' => '',
 		),
 		array(
 			'key' => 'field_64339a3abd49d',
@@ -3859,6 +3894,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_63e28926f3d25',
@@ -3898,6 +3935,8 @@ add_action( 'acf/include_fields', function() {
 			'placeholder' => '',
 			'allow_custom' => 0,
 			'search_placeholder' => '',
+			'create_options' => 0,
+			'save_options' => 0,
 		),
 		array(
 			'key' => 'field_61f1e8cad1f27',
@@ -4375,7 +4414,7 @@ add_action( 'acf/include_fields', function() {
 	'acfe_note' => '',
 ) );
 
-acf_add_local_field_group( array(
+	acf_add_local_field_group( array(
 	'key' => 'group_65e11091aa12f',
 	'title' => 'Promotions Settings',
 	'fields' => array(
