@@ -690,12 +690,48 @@ add_action( 'acf/include_fields', function() {
 				),
 			),
 			'wrapper' => array(
-				'width' => '50',
+				'width' => '100',
 				'class' => '',
 				'id' => '',
 			),
 			'default_value' => '',
 			'placeholder' => '',
+		),
+		array(
+			'key' => 'field_68ab983952567',
+			'label' => 'Append Query String',
+			'name' => 'engrid_append_query_string',
+			'aria-label' => '',
+			'type' => 'true_false',
+			'instructions' => 'When enabled, passes the query string from the parent page to the iframed ENgrid page.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'signup_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '50',
+				'class' => '',
+				'id' => '',
+			),
+			'message' => '',
+			'default_value' => 1,
+			'allow_in_bindings' => 1,
+			'ui_on_text' => '',
+			'ui_off_text' => '',
+			'ui' => 1,
 		),
 		array(
 			'key' => 'field_6509fd2d2de48',

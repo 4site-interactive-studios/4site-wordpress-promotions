@@ -271,6 +271,8 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$engrid_view_more = get_field('engrid_show_view_more', $lightbox_id);
+			$engrid_append_query_string = get_field('engrid_append_query_string', $lightbox_id);
+
 			$confetti = array();
 
 			if ($engrid_dp_append_chain) {
@@ -352,6 +354,7 @@ class Foursite_Wordpress_Promotion_Public
 					'start' => $engrid_start_date,
 					'end' => $engrid_end_date,
 					'raw_html' => $engrid_raw_html,
+					'append_parent_query_string' => $engrid_append_query_string,
 					'image_url' => $engrid_image_url
 				];
 			} else if ($engrid_promotion_type == "floating_signup") {

@@ -44,6 +44,9 @@ window.addEventListener("DOMContentLoaded", () => {
       continue;
     }
 
+    // Make replacements in eligible promotions if particular strings (eg, HOST_PAGE_URL) are present
+    client_side_triggered_config[i] = makePromoReplacements(client_side_triggered_config[i]);
+
     // add our promo to the appropriate array
     let trigger = client_side_triggered_config[i].trigger;
     let trigger_type = getTriggerType(trigger);
@@ -1249,5 +1252,20 @@ window.addEventListener("DOMContentLoaded", () => {
     } else {
       return false;
     }
+  }
+
+  function makePromoReplacements(promotion) {
+    if(typeof promotion.url == "string" && promotion.url) {
+      if(promotion.url.includes("HOST_PAGE_URL")) {
+        promotion.url = promotion.url.replace("HOST_PAGE_URL", encodeURIComponent(window.location.href));
+      }
+
+      if(promotion.append_parent_query_string && window.location.search) {
+        const query_string = window.location.search.startsWith('?') ? window.location.search.slice(1) : window.location.search;
+        promotion.url += (promotion.url.includes('?')) ? '&' : '?';
+        promotion.url += query_string;
+      }
+    }
+    return promotion;
   }
 });
