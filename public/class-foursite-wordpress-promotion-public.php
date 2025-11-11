@@ -268,6 +268,9 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_gtm_suppressed_event_name = get_field('engrid_gtm_suppressed_event_name', $lightbox_id);
 			$engrid_display = get_field('engrid_lightbox_display', $lightbox_id);
 			$engrid_js = get_field('engrid_javascript', $lightbox_id);
+			if($engrid_js) {
+				$engrid_js = $this->make_js_replacements($engrid_js);
+			}
 			$engrid_html = get_field('engrid_html', $lightbox_id);
 			$engrid_css = get_field('engrid_css', $lightbox_id);
 			$engrid_view_more = get_field('engrid_show_view_more', $lightbox_id);
@@ -669,6 +672,9 @@ class Foursite_Wordpress_Promotion_Public
 				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
 				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
 				$engrid_js = get_field('engrid_js', $lightbox_id);
+				if($engrid_js) {
+					$engrid_js = $this->make_js_replacements($engrid_js);
+				}
 				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
 				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);				
 				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
@@ -867,5 +873,12 @@ class Foursite_Wordpress_Promotion_Public
 			}
 		}
 		return $client_side_triggered_config;
-	}	
+	}
+
+	// Some hosts will not permit <script> tags in POSTs. This is a workaround for those hosts.
+	function make_js_replacements($js) {
+		$js = preg_replace("/\[script(.*)\]/U", "<script$1>", $js);
+		$js = preg_replace("/\[\/script\]/", "</script>", $js);
+		return $js;
+	}
 }
