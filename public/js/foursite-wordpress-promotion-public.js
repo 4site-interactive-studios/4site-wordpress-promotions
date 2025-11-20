@@ -116,39 +116,58 @@ window.addEventListener("DOMContentLoaded", () => {
     return false;
   }
 
+  function isEveryAction(promotion) {
+    return promotion.page_host == 'ea';
+    //return (promotion.url.indexOf('/a/') >= 0);
+  }
+
   function addMultistepLightbox(promotion) {
-    if (window.donationLightboxObj) {
-      delete window.donationLightboxObj;
+    if(isEveryAction(promotion)) {
+      if (window.EADonationLightboxObj) {
+        delete window.EADonationLightboxObj;
+      }
+
+      insertCss(promotion.id, promotion.custom_css);
+
+      if (promotion.custom_js) {
+        insertJs(promotion.id, promotion.custom_js);
+      }
+
+      window.EADonationLightboxObj = new EADonationLightbox(promotion);
+    } else {
+      if (window.donationLightboxObj) {
+        delete window.donationLightboxObj;
+      }
+
+      // remove previously set logo fix CSS
+      const existing_logo_fix_css = document.querySelectorAll(
+        ".multistep-logo-fix"
+      );
+      for (let i = 0; i < existing_logo_fix_css.length; i++) {
+        existing_logo_fix_css[i].remove();
+      }
+
+      // add new logo fix CSS (the external multistep script doesn't seem to respect the values we pass in)
+      if (promotion.hasOwnProperty("logo_fix_css")) {
+        const new_css = document.createElement("style");
+        new_css.setAttribute("type", "text/css");
+        new_css.classList.add("multistep-logo-fix");
+        new_css.textContent = promotion.logo_fix_css;
+        document.body.appendChild(new_css);
+      }
+
+      insertCss(promotion.id, promotion.custom_css);
+
+      if (promotion.custom_js) {
+        insertJs(promotion.id, promotion.custom_js);
+      }
+
+      window.DonationLightboxOptions = promotion;
+      window.DonationLightboxOptions.trigger = 0;
+
+      clearEventsForFloatingTab();
+      window.donationLightboxObj = new DonationLightbox();
     }
-
-    // remove previously set logo fix CSS
-    const existing_logo_fix_css = document.querySelectorAll(
-      ".multistep-logo-fix"
-    );
-    for (let i = 0; i < existing_logo_fix_css.length; i++) {
-      existing_logo_fix_css[i].remove();
-    }
-
-    // add new logo fix CSS (the external multistep script doesn't seem to respect the values we pass in)
-    if (promotion.hasOwnProperty("logo_fix_css")) {
-      const new_css = document.createElement("style");
-      new_css.setAttribute("type", "text/css");
-      new_css.classList.add("multistep-logo-fix");
-      new_css.textContent = promotion.logo_fix_css;
-      document.body.appendChild(new_css);
-    }
-
-    insertCss(promotion.id, promotion.custom_css);
-
-    if (promotion.custom_js) {
-      insertJs(promotion.id, promotion.custom_js);
-    }
-
-    window.DonationLightboxOptions = promotion;
-    window.DonationLightboxOptions.trigger = 0;
-
-    clearEventsForFloatingTab();
-    window.donationLightboxObj = new DonationLightbox();
   }
 
   function launchPromotion(promotion) {

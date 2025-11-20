@@ -59,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const setLightbox = () => {
     if (!hideSignUpForm) {
       crumbs.set(fs_signup_options.cookie_name, 0, {
-        type: "day",
-        value: 1,
+        type: "hour",
+        value: fs_signup_options.cookie_hours,
       });
     }
 
@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn &&
       submitBtn.addEventListener("click", () => {
         crumbs.set(fs_signup_options.cookie_name, 1, {
-          type: "month",
-          value: 12,
+          type: "hour",
+          value: fs_signup_options.cookie_hours,
         }); // Create one year cookie
       });
 
@@ -159,6 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
             left: 0,
             behavior: "smooth",
           });
+        } else if (e.data.hasOwnProperty("key") && e.data.key == "status" && e.data.hasOwnProperty("value") && e.data.value == "submit") {
+          document.querySelector('.fs-signup-container').scrollTop = 0;
         }
 
         if (
@@ -171,9 +173,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.data.pageNumber == e.data.pageCount
           ) {
             crumbs.set(fs_signup_options.cookie_name, 1, {
-              type: "month",
-              value: 12,
-            }); // Create one year cookie
+              type: "hour",
+              value: fs_signup_options.cookie_hours,
+            });
           }
         }
 
@@ -189,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     lightbox.classList.remove("fs-signup-visible");
     lightbox.classList.add("fs-signup-hidden");
     body.style.overflow = "auto";
-    crumbs.set(fs_signup_options.cookie_name, 1, { type: "day", value: 1 });
+    crumbs.set(fs_signup_options.cookie_name, 1, { type: "hour", value: fs_signup_options.cookie_hours });
   }
 
   function isWhitelisted() {
