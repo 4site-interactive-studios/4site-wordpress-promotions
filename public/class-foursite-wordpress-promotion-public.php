@@ -258,7 +258,7 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_form_color = get_field('engrid_form_color', $lightbox_id);
 			$engrid_start_date = get_field('engrid_start_date', $lightbox_id);
 			$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
-			$engrid_cookie_hours = get_field('engrid_cookie_hours', $lightbox_id);
+			$engrid_cookie_hours = (int) get_field('engrid_cookie_hours', $lightbox_id);
 			$engrid_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
 			$engrid_trigger_seconds = get_field('engrid_trigger_seconds', $lightbox_id);
 			$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);

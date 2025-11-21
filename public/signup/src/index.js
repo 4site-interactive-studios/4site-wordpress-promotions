@@ -220,14 +220,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function isBetweenDates() {
     let result = true;
-    // Check if the there are dates defined
-    if (fs_signup_options.dates.length) {
-      let now = new Date();
-      let start = new Date(fs_signup_options.dates[0]);
-      let end = new Date(fs_signup_options.dates[1] + " 23:59:59");
-      if (now < start || now > end) {
+    if(fs_signup_options.display === 'scheduled') {
+      // Check if the there are dates defined
+      if (fs_signup_options.dates.length) {
+        let now = new Date();
+        let start = new Date(fs_signup_options.dates[0]);
+        let end = new Date(fs_signup_options.dates[1] + " 23:59:59");
+        if (now < start || now > end) {
+          result = false;
+        }
+      } else if(fs_signup_options.start || fs_signup_options.end) {
+        // There is another set of date properties we must check
+        let now = new Date();
+        if(fs_signup_options.start) {
+          let start = new Date(fs_signup_options.start);
+          if(now < start) {
+            result = false;
+          }
+        }
+        if(fs_signup_options.end) {
+          let end = new Date(fs_signup_options.end);
+          if(now > end) {
+            result = false;
+          }
+        }
+      } else {
         result = false;
       }
+    } else if(fs_signup_options.display === 'turned-off') {
+      result = false;
     }
     return result;
   }

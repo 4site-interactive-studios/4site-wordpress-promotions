@@ -1246,7 +1246,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function deleteCookie(cookie, path = "/") {
-    setCookie(cookie, "", -1, path);
+    setCookie(cookie, -1, path);
   }
 
   function getTriggerType(trigger) {
