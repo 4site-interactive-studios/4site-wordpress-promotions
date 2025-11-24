@@ -231,7 +231,6 @@ class Foursite_Wordpress_Promotion_Public
 		$client_side_triggered_config = [];
 
 		$multistep_script_url = get_field('promotion_lightbox_script', 'options');
-		$ea_multistep_script_url = plugin_dir_url(__FILE__) . 'js/ea-multistep-lightbox.js';
 
 		$script_ver = $this->version;
 		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
@@ -817,8 +816,6 @@ class Foursite_Wordpress_Promotion_Public
 			// move the floating_tab promo above any lightbox promos
 			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
 			
-			wp_enqueue_script('ea-multistep-lightbox', $ea_multistep_script_url, array(), $script_ver, false);
-
 			if ($multistep_script_url) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
 				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
