@@ -4007,11 +4007,6 @@ add_action( 'acf/include_fields', function() {
 					array(
 						'field' => 'field_63694582ec47e',
 						'operator' => '!=',
-						'value' => 'signup_lightbox',
-					),
-					array(
-						'field' => 'field_63694582ec47e',
-						'operator' => '!=',
 						'value' => 'floating_tab',
 					),
 				),
@@ -4096,13 +4091,6 @@ add_action( 'acf/include_fields', function() {
 						'field' => 'field_61f1e7ca4d5dc',
 						'operator' => '==',
 						'value' => 'seconds',
-					),
-				),
-				array(
-					array(
-						'field' => 'field_63694582ec47e',
-						'operator' => '==',
-						'value' => 'signup_lightbox',
 					),
 				),
 			),
