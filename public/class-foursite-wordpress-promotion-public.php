@@ -778,7 +778,6 @@ class Foursite_Wordpress_Promotion_Public
 					'trigger' => $trigger,
 					'cookie_name' => $engrid_cookie_name,
 					'cookie_hours' => $engrid_cookie_hours,
-					'trigger' => $trigger,
 					'display' => $engrid_display,
 					'start' => $engrid_start_date,
 					'end' => $engrid_end_date,
@@ -805,6 +804,24 @@ class Foursite_Wordpress_Promotion_Public
 						'bg_color' => $config['image_bg_color']
 					],
 					'css' => $config['custom_css']
+				];
+			} else if ($engrid_promotion_type == "video") {
+				$video_settings = get_field('video', $lightbox_id);
+				$client_side_triggered_config[] = [
+					'id' => $lightbox_id,
+					'promotion_type' => $engrid_promotion_type,
+					'trigger' => $trigger,
+					'cookie_name' => $engrid_cookie_name,
+					'cookie_hours' => $engrid_cookie_hours,
+					'video_url' => $video_settings['url'],
+					'thumbnail' => isset($video_settings['thumbnail']['sizes']['large']) ? $video_settings['thumbnail']['sizes']['large'] : '',
+					'options' => $video_settings['options'],
+					'background_color' => $video_settings['background'],
+					'foreground_color' => $video_settings['foreground'],
+					'button' => $video_settings['button'],
+					'button_background_color' => $video_settings['button_background'],
+					'button_foreground_color' => $video_settings['button_foreground'],
+					'css' => $engrid_css
 				];
 			}
 		}
