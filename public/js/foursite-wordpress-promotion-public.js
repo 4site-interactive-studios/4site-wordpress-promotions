@@ -1297,7 +1297,9 @@ window.addEventListener("DOMContentLoaded", () => {
       tag.src = "https://www.youtube.com/iframe_api";
       document.body.appendChild(tag);
 
-      window.onYouTubeIframeAPIReady = function() {
+      // Check if the YouTube API is already loaded and we've already shown a video lightbox
+      // If so, onYouTubeIframeAPIReady won't be called again, so we need to create the player directly
+      if(window.video_lightbox_yt_player) {
         window.video_lightbox_yt_player = new YT.Player('fs-youtube-video-container', {
           height: '390',
           width: '640',
@@ -1311,7 +1313,23 @@ window.addEventListener("DOMContentLoaded", () => {
             }
           }
         });
-      };
+      } else {
+        window.onYouTubeIframeAPIReady = function() {
+          window.video_lightbox_yt_player = new YT.Player('fs-youtube-video-container', {
+            height: '390',
+            width: '640',
+            videoId: video_id,
+            playerVars: { autoplay: is_autoplay ? 1 : 0, mute: is_muted ? 1 : 0 },
+            events: {
+              'onReady': function(event) {              
+                if(is_autoplay) {
+                  event.target.playVideo();
+                }
+              }
+            }
+          });
+        };
+      }
     }
 
     function openVideoModal() {
