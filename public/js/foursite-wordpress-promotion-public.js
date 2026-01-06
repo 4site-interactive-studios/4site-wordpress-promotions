@@ -1,11 +1,21 @@
 window.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const is_debug = urlParams.has('promo_debug');
+  if(is_debug) {
+    logMessage('Promo Debugging Enabled');
+  }
+
+  logMessage('Foursite Promotions Public JS Loaded');
+
   if (client_side_triggered_config == undefined) {
+    logMessage('No client-side triggered promotions found, exiting.');
     return;
   }
 
   window.triggerPromotion = function (id) {
+    logMessage('Manually triggering promotion ID: ' + id);
     window.dispatchEvent(
       new CustomEvent("trigger-promotion", { detail: { promotion_id: id } })
     );
@@ -20,6 +30,9 @@ window.addEventListener("DOMContentLoaded", () => {
   // lightboxes are limited to 1/page, and can be launched from a few different scripts that set this variable
   window.lightbox_triggered =
     window.lightbox_triggered === undefined ? false : window.lightbox_triggered;
+
+  window.bypass_promo_limits = window.bypass_promo_limits ? window.bypass_promo_limits : [];
+  logMessage('Bypass Protections: ' + JSON.stringify(window.bypass_promo_limits));
 
   // we don't want to show more than one floating tab at a time
   let floating_tab_triggered = false;
@@ -37,10 +50,12 @@ window.addEventListener("DOMContentLoaded", () => {
     // skip if there is already a cookie set for this promo
     const cookie = client_side_triggered_config[i].cookie_name;
     if (getCookie(cookie)) {
+      logMessage('Skipping promo ' + client_side_triggered_config[i].id + ' due to existing cookie: ' + cookie);
       continue;
     }
 
     if (client_side_triggered_config[i].display == 'scheduled' && !scheduledForToday(client_side_triggered_config[i])) {
+      logMessage('Skipping promo ' + client_side_triggered_config[i].id + ' not scheduled for today');
       continue;
     }
 
@@ -232,10 +247,12 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         break;
       case "video":
-        if (!window.lightbox_triggered) {
+
+        if (isBypassEnabled(promotion.id) || !window.lightbox_triggered) {
           addVideoLightbox(promotion);
           window.lightbox_triggered = true;
         } else {
+          logMessage('Skipping video promo ' + promotion.id + ' because another lightbox was already triggered');
           return;
         }
 
@@ -262,6 +279,7 @@ window.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("mouseleave", exitTrigger);
   }
   if (js_triggered.length) {
+    logMessage('Adding JS trigger listener for ' + js_triggered.length + ' promotions');
     addEventListener("trigger-promotion", jsTrigger);
   }
   if (time_triggered.length) {
@@ -327,17 +345,21 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function jsTrigger(e) {
+    logMessage('JS Trigger event received for promotion ID: ' + e.detail.promotion_id);
     if (e.detail.promotion_id) {
       const promotion_id = Number(e.detail.promotion_id);
       for (let i = js_triggered.length - 1; i >= 0; i--) {
         if (js_triggered[i].id == promotion_id) {
           deleteCookie(js_triggered[i].cookie_name);
           launchPromotion(js_triggered[i]);
-          js_triggered.splice(i, 1);
+
+          if(!isBypassEnabled(e.detail.promotion_id)) {
+            js_triggered.splice(i, 1);
+          }
           break;
         }
       }
-      if (scroll_per_triggered.length == 0) {
+      if (js_triggered.length == 0) {
         document.removeEventListener("trigger-promotion", jsTrigger);
       }
     }
@@ -1465,5 +1487,19 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
     return promotion;
+  }
+
+  function isBypassEnabled(promotion_id) {
+    if(window.bypass_promo_limits && Array.isArray(window.bypass_promo_limits)) {
+      logMessage('Bypass protections disabled for promotion ID:', promotion_id);
+      return window.bypass_promo_limits.includes(promotion_id);
+    }
+    return false;
+  }
+
+  function logMessage(...args) {
+    if (is_debug) {
+      console.log(...args);
+    }
   }
 });
