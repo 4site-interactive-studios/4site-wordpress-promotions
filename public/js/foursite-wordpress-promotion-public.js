@@ -1299,7 +1299,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // Check if the YouTube API is already loaded and we've already shown a video lightbox
       // If so, onYouTubeIframeAPIReady won't be called again, so we need to create the player directly
-      if(window.video_lightbox_yt_player) {
+      if(window.video_lightbox_yt_player || typeof YT != 'undefined') {
         window.video_lightbox_yt_player = new YT.Player('fs-youtube-video-container', {
           height: '390',
           width: '640',
