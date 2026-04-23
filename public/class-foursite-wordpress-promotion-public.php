@@ -872,8 +872,8 @@ class Foursite_Wordpress_Promotion_Public
 	private function prepare_ab_test_config($lightbox_id)
 	{
 		$variants = [];
-		if (have_rows('engrid_promotions', $lightbox_id)) {
-			while (have_rows('engrid_promotions', $lightbox_id)) {
+		if (have_rows('ab_promotions', $lightbox_id)) {
+			while (have_rows('ab_promotions', $lightbox_id)) {
 				the_row();
 				$promo_id = get_sub_field('promotion');
 				$ad_blocker_id = get_sub_field('ad_blocker_promotion');

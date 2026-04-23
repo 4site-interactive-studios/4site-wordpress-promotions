@@ -199,7 +199,7 @@ add_action( 'acf/include_fields', function() {
 		array(
 			'key' => 'field_69e9776a13bb7',
 			'label' => 'A/B Promotions',
-			'name' => 'engrid_promotions',
+			'name' => 'ab_promotions',
 			'aria-label' => '',
 			'type' => 'repeater',
 			'instructions' => '',
