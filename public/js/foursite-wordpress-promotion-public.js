@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", () => {
     client_side_triggered_config[i] = makePromoReplacements(client_side_triggered_config[i]);
 
     // add our promo to the appropriate array
-    let trigger = client_side_triggered_config[i].trigger;
+    let trigger = client_side_triggered_config[i].trigger;    
     let trigger_type = getTriggerType(trigger);
     if (!trigger_type) {
       trigger_type = "seconds";
@@ -170,6 +170,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function addSignupLightbox(promotion) {
+    if(promotion.css) insertCss(promotion.id, promotion.css);
+    if(window.launchENLightbox) window.launchENLightbox(promotion);
+    else console.error('EN Lightbox script not loaded');
+  }
+
   function launchPromotion(promotion) {
     switch (promotion.promotion_type) {
       case "cta_lightbox":
@@ -192,6 +198,14 @@ window.addEventListener("DOMContentLoaded", () => {
         } else {
           window.lightbox_triggered = true;
           addMultistepLightbox(promotion);
+        }
+        break;
+      case "signup_lightbox":
+        if (window.lightbox_triggered) {
+          return;
+        } else {
+          window.lightbox_triggered = true;
+          addSignupLightbox(promotion);
         }
         break;
       case "raw_code":
