@@ -33,6 +33,28 @@ window.addEventListener("DOMContentLoaded", () => {
 
   window.rawCodeTriggers = [];
 
+  // Kick off ad-blocker detection once per page load; resolves to true/false.
+  // Used by ab_test promos to pick between the main and ad-blocker variants.
+  window.fsAdBlockerDetection = window.fsAdBlockerDetection || new Promise((resolve) => {
+    // Create an element that mimics an ad and inject it into the page
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<ins data-adBlockTest class="adsbygoogle ad-zone ad-space ad-unit textads banner-ads banner_ads" style="display: block !important; width:1px !important; height: 1px !important; visibility: hidden !important;"></ins>'
+    );
+    const ad = document.querySelector("[data-adBlockTest]");
+
+    // Check to see if the visitor is running an Ad Blocker
+    let blocked = false;
+    if (ad) {
+      const width = ad.offsetWidth;
+      if (width == 0) {
+        blocked = true;
+      }
+    }
+
+    resolve(blocked);
+  });
+
   for (let i = 0; i < client_side_triggered_config.length; i++) {
     // skip if there is already a cookie set for this promo
     const cookie = client_side_triggered_config[i].cookie_name;
@@ -176,6 +198,28 @@ window.addEventListener("DOMContentLoaded", () => {
     else console.error('EN Lightbox script not loaded');
   }
 
+  function runAbTest(promotion) {
+    if (!Array.isArray(promotion.variants) || promotion.variants.length === 0) {
+      return;
+    }
+    const variant = promotion.variants[Math.floor(Math.random() * promotion.variants.length)];
+    window.fsAdBlockerDetection.then((blocked) => {
+      const selected = (blocked && variant.ad_blocker_promotion)
+        ? variant.ad_blocker_promotion
+        : variant.promotion;
+      if (selected) {
+        window.dispatchEvent(
+          new CustomEvent("ab_test_result", {
+            detail: { test_id: promotion.id, selected_id: selected.id }
+          })
+        );
+        launchPromotion(selected);
+      }
+    }).catch((error) => {
+      console.error("Error during ad blocker detection for AB test promotion:", promotion, "Error:", error);
+    });
+  }
+
   function launchPromotion(promotion) {
     switch (promotion.promotion_type) {
       case "cta_lightbox":
@@ -253,6 +297,14 @@ window.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        break;
+      case "redirect":
+        if (promotion.url) {
+          window.location.assign(promotion.url);
+        }
+        break;
+      case "ab_test":
+        runAbTest(promotion);
         break;
     }
 

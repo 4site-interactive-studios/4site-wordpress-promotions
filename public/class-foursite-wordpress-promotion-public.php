@@ -129,7 +129,7 @@ class Foursite_Wordpress_Promotion_Public
 					if($show_on_404 == 'Y') {
 						$skip_checks = true;
 					} else {
-						continue;	
+						continue;
 					}
 				}
 
@@ -154,7 +154,7 @@ class Foursite_Wordpress_Promotion_Public
 							continue;
 						}
 					}
-	
+
 					if (is_array($hide_on) && count($hide_on) && in_array($current_page_id, $hide_on)) {
 						continue;
 					}
@@ -181,14 +181,14 @@ class Foursite_Wordpress_Promotion_Public
 							$eligible = true;
 						}
 					}
-	
+
 					if (is_array($show_on)) {
 						$whitelist_check_enabled = true;
 						if (in_array($current_page_id, $show_on)) {
 							$eligible = true;
 						}
 					}
-	
+
 					if ($whitelist_check_enabled && !$eligible) {
 						continue;
 					}
@@ -236,564 +236,9 @@ class Foursite_Wordpress_Promotion_Public
 		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
 
 		foreach ($lightbox_ids as $lightbox_id) {
-			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
-			$engrid_dp_append_chain = get_field('engrid_dp_append_chain', $lightbox_id);
-			$engrid_promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
-
-			$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
-			if($engrid_trigger_type) $engrid_trigger_type = trim($engrid_trigger_type);
-
-			$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
-			$engrid_image = get_field('engrid_image', $lightbox_id);
-			$engrid_image_url = get_field('engrid_image_link', $lightbox_id);
-			$engrid_video = get_field('engrid_video', $lightbox_id);
-			$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
-			$engrid_logo = ($engrid_use_logo || $engrid_promotion_type == 'signup_lightbox') ? get_field('engrid_logo', $lightbox_id) : '';
-			$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
-			$engrid_raw_html = get_field('engrid_raw_html', $lightbox_id);
-			$engrid_divider = get_field('engrid_divider', $lightbox_id);
-			$engrid_title = get_field('engrid_title', $lightbox_id);
-			$engrid_paragraph = get_field('engrid_paragraph', $lightbox_id);
-			$engrid_footer = get_field('engrid_footer', $lightbox_id);
-			$engrid_bg_color = get_field('engrid_bg_color', $lightbox_id);
-			$engrid_text_color = get_field('engrid_text_color', $lightbox_id);
-			$engrid_form_color = get_field('engrid_form_color', $lightbox_id);
-			$engrid_start_date = get_field('engrid_start_date', $lightbox_id);
-			$engrid_end_date = get_field('engrid_end_date', $lightbox_id);
-			$engrid_cookie_hours = (int) get_field('engrid_cookie_hours', $lightbox_id);
-			$engrid_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
-			$engrid_trigger_seconds = get_field('engrid_trigger_seconds', $lightbox_id);
-			$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
-			$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
-			$engrid_gtm_open_event_name = get_field('engrid_gtm_open_event_name', $lightbox_id);
-			$engrid_gtm_close_event_name = get_field('engrid_gtm_close_event_name', $lightbox_id);
-			$engrid_gtm_suppressed_event_name = get_field('engrid_gtm_suppressed_event_name', $lightbox_id);
-			$engrid_display = get_field('engrid_lightbox_display', $lightbox_id);
-			$engrid_js = get_field('engrid_javascript', $lightbox_id);
-			if($engrid_js) {
-				$engrid_js = $this->make_js_replacements($engrid_js);
-			}
-			$engrid_html = get_field('engrid_html', $lightbox_id);
-			$engrid_css = get_field('engrid_css', $lightbox_id);
-			$engrid_view_more = get_field('engrid_show_view_more', $lightbox_id);
-			$engrid_append_query_string = get_field('engrid_append_query_string', $lightbox_id);
-
-			$confetti = array();
-
-			if ($engrid_dp_append_chain) {
-				if (strpos($engrid_donation_page, '?') === false) {
-					$engrid_donation_page .= '?chain';
-				} else {
-					$engrid_donation_page .= '&chain';
-				}
-			}
-
-			if (have_rows('engrid_confetti', $lightbox_id)) {
-				while (have_rows('engrid_confetti', $lightbox_id)) {
-					the_row();
-					$confetti[] = get_sub_field('color');
-				}
-			}
-
-			$trigger = 0;
-			switch ($engrid_trigger_type) {
-				case "0":
-					$trigger = 0;
-					break;
-				case 'seconds':
-					$trigger = $engrid_trigger_seconds;
-					break;
-				case 'px':
-					$trigger = $engrid_trigger_scroll_pixels . 'px';
-					break;
-				case '%':
-					$trigger = $engrid_trigger_scroll_percentage . '%';
-					break;
-				case 'exit':
-					$trigger = 'exit';
-					break;
-				case 'js':
-					$trigger = 'js';
-					break;
-			}
-
-			$engrid_video_auto_play = ($engrid_hero_type == 'autoplay-video');
-			$engrid_confetti = json_encode($confetti);
-			$logo_position_options = isset($engrid_logo_position['position_options']) ? $engrid_logo_position['position_options'] : [];
-			if (!is_array($logo_position_options)) {
-				$logo_position_options = [];
-			}
-
-			if ($engrid_promotion_type == "multistep_lightbox") {
-
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'url' => $engrid_donation_page,
-					'image' => $engrid_image,
-					'logo' => $engrid_logo,
-					'video' => ($engrid_hero_type == 'autoplay-video' || $engrid_hero_type == 'click-to-play-video') ? $engrid_video : "",
-					'autoplay' => $engrid_video_auto_play,
-					'logo_position_top' => in_array('top', $logo_position_options) ? "{$engrid_logo_position['top']}px" : "unset",
-					'logo_position_left' => in_array('left', $logo_position_options) ? "{$engrid_logo_position['left']}px" : "unset",
-					'logo_position_right' => in_array('right', $logo_position_options) ? "{$engrid_logo_position['right']}px" : "unset",
-					'logo_position_bottom' => in_array('bottom', $logo_position_options) ? "{$engrid_logo_position['bottom']}px" : "unset",
-					'divider' => $engrid_divider,
-					'view_more' => $engrid_view_more,
-					'title' => $engrid_title,
-					'paragraph' => $engrid_paragraph,
-					'footer' => $engrid_footer,
-					'bg_color' => $engrid_bg_color,
-					'txt_color' => $engrid_text_color,
-					'form_color' => $engrid_form_color,
-					'custom_css' => $engrid_css,
-					'custom_js' => $engrid_js,
-					'cookie_hours' => $engrid_cookie_hours,
-					'cookie_name' => $engrid_cookie_name,
-					'trigger' => $trigger,
-					'gtm_open_event_name' => $engrid_gtm_open_event_name,
-					'gtm_close_event_name' => $engrid_gtm_close_event_name,
-					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
-					'confetti' => $engrid_confetti,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date,
-					'raw_html' => $engrid_raw_html,
-					'page_host' => get_field('page_host', $lightbox_id),
-					'promo_style' => get_field('ea_promo_style', $lightbox_id),
-					'media_credit' => get_field('media_credit', $lightbox_id),
-					'text_position' => 'top', // used by the EA multistep script
-					'view_more_text' => 'Read More' // used by the EA multistep script
-				];
-			} else if ($engrid_promotion_type == "floating_signup") {
-				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
-				$button_colors = get_field('fes_button_colors', $lightbox_id);
-				$post_submission_button = get_field('fes_post_submission_button', $lightbox_id);
-				if(!$post_submission_button) {
-					$post_submission_button = ['title' => '', 'url' => '', 'target' => ''];
-				}
-				$gravity_form_id = get_field('fes_gravity_form_id', $lightbox_id);
-				$gravity_form_email_field_id = get_field('fes_gravity_form_email_field_id', $lightbox_id);
-				$fes_nonce = wp_create_nonce('fes_nonce');
-
-				$recaptcha_site_key = get_field('promotion_lightbox_recaptcha_site_key', 'options');
-				if($recaptcha_site_key) {
-					wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js?render=' . $recaptcha_site_key);
-				}
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'fg_color' => $fsft_colors['foreground'],
-					'bg_color' => $fsft_colors['background'],
-					'button_fg_color' => $button_colors['foreground'],
-					'button_bg_color' => $button_colors['background'],
-					'title' => $engrid_title,
-					'paragraph' => $engrid_paragraph,
-					'custom_css' => $engrid_css,
-					'gtm_open_event_name' => $engrid_gtm_open_event_name,
-					'gtm_close_event_name' => $engrid_gtm_close_event_name,
-					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'close_cookie_hours' => get_field('fes_closed_cookie_hours', $lightbox_id),
-					'cookie_name' => $engrid_cookie_name,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date,
-					'trigger' => $trigger,
-					'post_submission_title' => get_field('fes_post_submission_title', $lightbox_id),
-					'post_submission_paragraph' => get_field('fes_post_submission_paragraph', $lightbox_id),
-					'post_submission_button' => $post_submission_button,
-					'recaptcha' => $recaptcha_site_key,
-					'submit_url' => ($gravity_form_id && $gravity_form_email_field_id) ? admin_url('admin-ajax.php?action=fes_submit&nonce=' . $fes_nonce . '&promo_id=' . $lightbox_id) : ''
-				];
-
-			} else if ($engrid_promotion_type == "raw_code") {
-
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'html' => $engrid_html,
-					'js' => $engrid_js,
-					'css' => $engrid_css,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'trigger' => $trigger,
-					'is_lightbox' => boolval(get_field('is_lightbox', $lightbox_id)),
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
-				];
-			} else if ($engrid_promotion_type == 'overlay') {
-
-				$styles = get_field('modal_overlay', $lightbox_id);
-				$formatted_styles = [];
-				if (!empty($styles['screen_overlay_background_color'])) {
-					$formatted_styles['--bg-overlay-color'] = $styles['screen_overlay_background_color'];
-				}
-
-				if (!empty($styles['background_image_overlay']['gradient_start_color'])) {
-					$formatted_styles['--bg-img-overlay-start-color'] = $styles['background_image_overlay']['gradient_start_color'];
-				}
-				if (!empty($styles['background_image_overlay']['gradient_end_color'])) {
-					$formatted_styles['--bg-img-overlay-end-color'] = $styles['background_image_overlay']['gradient_end_color'];
-				}
-
-				if (!empty($styles['title']['color'])) {
-					$formatted_styles['--title-color'] = $styles['title']['color'];
-				}
-				if (!empty($styles['title']['font'])) {
-					$formatted_styles['--title-font'] = $styles['title']['font'];
-				}
-				if (!empty($styles['subtitle']['color'])) {
-					$formatted_styles['--subtitle-color'] = $styles['subtitle']['color'];
-				}
-				if (!empty($styles['subtitle']['font'])) {
-					$formatted_styles['--subtitle-font'] = $styles['subtitle']['font'];
-				}
-				if (!empty($styles['paragraph']['color'])) {
-					$formatted_styles['--paragraph-color'] = $styles['paragraph']['color'];
-				}
-				if (!empty($styles['paragraph']['font'])) {
-					$formatted_styles['--paragraph-font'] = $styles['paragraph']['font'];
-				}
-				if (!empty($styles['divider_line'])) {
-					$formatted_styles['--divider-border'] = $styles['divider_line'];
-				}
-
-				if (!empty($styles['amount_button']['background_color'])) {
-					$formatted_styles['--amount-button-bg-color'] = $styles['amount_button']['background_color'];
-				}
-				if (!empty($styles['amount_button']['text_color'])) {
-					$formatted_styles['--amount-button-color'] = $styles['amount_button']['text_color'];
-				}
-				if (!empty($styles['amount_button']['border'])) {
-					$formatted_styles['--amount-button-border'] = $styles['amount_button']['border'];
-				}
-				if (!empty($styles['amount_button']['border_radius'])) {
-					$formatted_styles['--amount-button-border-radius'] = $styles['amount_button']['border_radius'];
-				}
-
-				if (!empty($styles['amount_button_hover']['background_color'])) {
-					$formatted_styles['--amount-button-hover-bg-color'] = $styles['amount_button_hover']['background_color'];
-				}
-				if (!empty($styles['amount_button_hover']['text_color'])) {
-					$formatted_styles['--amount-button-hover-color'] = $styles['amount_button_hover']['text_color'];
-				}
-				if (!empty($styles['amount_button_hover']['border'])) {
-					$formatted_styles['--amount-button-hover-border'] = $styles['amount_button_hover']['border'];
-				}
-				if (!empty($styles['amount_button_hover']['border_radius'])) {
-					$formatted_styles['--amount-button-hover-border-radius'] = $styles['amount_button_hover']['border_radius'];
-				}
-
-				if (!empty($styles['amount_button_selected']['background_color'])) {
-					$formatted_styles['--amount-button-selected-bg-color'] = $styles['amount_button_selected']['background_color'];
-				}
-				if (!empty($styles['amount_button_selected']['text_color'])) {
-					$formatted_styles['--amount-button-selected-color'] = $styles['amount_button_selected']['text_color'];
-				}
-				if (!empty($styles['amount_button_selected']['border'])) {
-					$formatted_styles['--amount-button-selected-border'] = $styles['amount_button_selected']['border'];
-				}
-				if (!empty($styles['amount_button_selected']['border_radius'])) {
-					$formatted_styles['--amount-button-selected-border-radius'] = $styles['amount_button_selected']['border_radius'];
-				}
-
-				if (!empty($styles['submit_button']['background_color'])) {
-					$formatted_styles['--submit-button-bg-color'] = $styles['submit_button']['background_color'];
-				}
-				if (!empty($styles['submit_button']['text_color'])) {
-					$formatted_styles['--submit-button-color'] = $styles['submit_button']['text_color'];
-				}
-				if (!empty($styles['submit_button']['border'])) {
-					$formatted_styles['--submit-button-border'] = $styles['submit_button']['border'];
-				}
-				if (!empty($styles['submit_button']['border_radius'])) {
-					$formatted_styles['--submit-button-border-radius'] = $styles['submit_button']['border_radius'];
-				}
-
-				if (!empty($styles['submit_button_hover']['background_color'])) {
-					$formatted_styles['--submit-button-hover-bg-color'] = $styles['submit_button_hover']['background_color'];
-				}
-				if (!empty($styles['submit_button_hover']['text_color'])) {
-					$formatted_styles['--submit-button-hover-color'] = $styles['submit_button_hover']['text_color'];
-				}
-				if (!empty($styles['submit_button_hover']['border'])) {
-					$formatted_styles['--submit-button-hover-border'] = $styles['submit_button_hover']['border'];
-				}
-				if (!empty($styles['submit_button_hover']['border_radius'])) {
-					$formatted_styles['--submit-button-hover-border-radius'] = $styles['submit_button_hover']['border_radius'];
-				}
-
-				$formated_styles_string = '';
-				foreach ($formatted_styles as $key => $value) {
-					$formated_styles_string .= "{$key}: {$value};";
-				}
-
-				$image_url = (!empty($styles['background_image']['sizes']['large'])) ? $styles['background_image']['sizes']['large'] : '';
-				$cta_type = get_field('cta_type', $lightbox_id);
-				$submit_label = get_field('submit_button_label', $lightbox_id);
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'title' => $engrid_title,
-					'subtitle' => get_field('engrid_subtitle', $lightbox_id),
-					'paragraph' => $engrid_paragraph,
-					'cookie_expiry' => $engrid_cookie_hours,
-					'cookie_name' => $engrid_cookie_name,
-					'logo' => get_field('engrid_logo', $lightbox_id),
-					'button_label' => ($submit_label) ? $submit_label : 'Donate Now',
-					'image' => $image_url,
-					'other_label' => ($cta_type == 'fundraising') ? get_field('other_amount_label', $lightbox_id) : '',
-					'donation_form' => $engrid_donation_page,
-					'trigger' => $trigger,
-					'max_width' => $styles['modal_dimensions']['max_width'],
-					'max_height' => $styles['modal_dimensions']['max_height'],
-					'cta_type' => $cta_type,
-					'amounts' => ($cta_type == 'fundraising') ? str_replace(' ', '', get_field('amount_options', $lightbox_id)) : '',
-					'custom_css' => ".foursite-en-overlay { {$formated_styles_string} } {$engrid_css}",
-					'js_url' => plugin_dir_url(__FILE__) . 'overlay/dist/foursite-en-overlay.js',
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
-				];
-			} else if ($engrid_promotion_type == "pushdown") {
-
-				$engrid_pushdown_type = get_field('engrid_pushdown_type', $lightbox_id);
-				$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
-				$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
-				$engrid_pushdown_link = get_field('engrid_pushdown_link', $lightbox_id);
-				$engrid_pushdown_title = get_field('engrid_pushdown_title', $lightbox_id);
-				$engrid_pushdown_paragraph = get_field('pushdown_paragraph', $lightbox_id);
-				$engrid_pushdown_button = get_field('pushdown_button_label', $lightbox_id);
-				$resized_pushdown_image = '';
-				if (isset($engrid_pushdown_image["sizes"]["2048x2048"])) {
-					$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
-				} else if (isset($engrid_pushdown_image["url"])) {
-					$resized_pushdown_image = $engrid_pushdown_image["url"];
-				}
-
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'url' => $engrid_pushdown_link,
-					'pushdown_type' => $engrid_pushdown_type,
-					'pushdown_title' => $engrid_pushdown_title,
-					'pushdown_paragraph' => $engrid_pushdown_paragraph,
-					'pushdown_button' => $engrid_pushdown_button,
-					'image' => esc_url($resized_pushdown_image),
-					'gif' => $engrid_pushdown_gif,
-					'trigger' => $trigger,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
-					'bg_color' => $engrid_bg_color,
-					'fg_color' => $engrid_text_color,
-					'image_id' => isset($engrid_pushdown_image['ID']) ? $engrid_pushdown_image['ID'] : 0,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date,
-					'custom_css' => $engrid_css
-				];
-			} else if ($engrid_promotion_type == "signup_lightbox") {
-
-				$layout = get_field('layout', $lightbox_id);
-				if ($layout == 'one-col') {
-					$max_width = get_field('max_width', $lightbox_id);
-					if ($max_width) {
-						$engrid_css = "
-						.fs-signup-container,
-						.fs-signup-lightbox .fs-signup-lightbox-content,
-						.fs-signup-container-form {
-							max-width: {$max_width};
-						}
-						" . $engrid_css;
-					}
-				}
-
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'css' => $engrid_css,
-					'cookie_hours' => $engrid_cookie_hours,
-					'cookie_name' => $engrid_cookie_name,
-					'gtm_open_event_name' => $engrid_gtm_open_event_name,
-					'gtm_close_event_name' => $engrid_gtm_close_event_name,
-					'gtm_suppressed_event_name' => $engrid_gtm_suppressed_event_name,
-					'trigger' => $trigger,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date,
-					'display' => $engrid_display,
-					'url' => $engrid_donation_page,
-					'imageURL' => $engrid_image,
-					'logoURL' => $engrid_logo,
-					'title' => $engrid_title,
-					'paragraph' => $engrid_paragraph,
-					'footer' => $engrid_footer,
-					'layout' => $layout
-				];
-
-				wp_enqueue_script('foursite-wordpress-signup-lightbox', plugin_dir_url(__FILE__) . 'signup/js/website-lightbox.js', array(), $script_ver, false);
-
-			} else if ($engrid_promotion_type == "floating_tab") {
-
-				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__), [], '1.0');
-
-				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
-				$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
-				$fsft_location = get_field('engrid_fsft_location', $lightbox_id);
-				$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
-				$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
-				$engrid_js = get_field('engrid_js', $lightbox_id);
-				if($engrid_js) {
-					$engrid_js = $this->make_js_replacements($engrid_js);
-				}
-				$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
-				$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);				
-				$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
-				$fsft_id = 'fs-donation-tab';
-
-				$trigger = 0;
-				switch ($fsft_trigger) {
-					case "0":
-						$trigger = 0;
-						break;
-					case 'px':
-						$trigger = $engrid_trigger_scroll_pixels . 'px';
-						break;
-					case '%':
-						$trigger = $engrid_trigger_scroll_percentage . '%';
-						break;
-					case 'js':
-						$trigger = 'js';
-						break;
-				}
-
-				$style = '';
-				if (!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";
-				if (!empty($fsft_colors['background'])) $style .= "background-color: {$fsft_colors['background']};";
-				if (!empty($fsft_radius)) $style .= "border-radius: {$fsft_radius} {$fsft_radius} 0 0;";
-
-				$classes = "{$fsft_location}";
-
-				$attributes = '';
-
-				if (is_array($fsft_link['attributes'])) {
-					for ($i = 0; $i < count($fsft_link['attributes']); $i++) {
-						$key = $fsft_link['attributes'][$i]['key'];
-						$value = $fsft_link['attributes'][$i]['value'];
-
-						if (stripos($key, 'class') !== false) {
-							$classes .= " {$value}";
-						} else if (stripos($key, 'id') !== false) {
-							$fsft_id = $value;
-						} else if (stripos($key, 'href') !== false) {
-							// ignore this key -- we set href via the $fsft_link['url'] field
-						} else {
-							$value = str_replace('"', '&quot;', $value);
-							$value = str_replace("'", '&apos;', $value);
-							$attributes .= "{$key}=\"{$value}\" ";
-						}
-					}
-				}
-
-				if ($fsft_link['engrid_use_lightbox'] == 'yes') {
-					$attributes .= "data-donation-lightbox";
-				}
-
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'css' => $engrid_css,
-					'js' => $engrid_js,
-					'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
-					'trigger' => $trigger,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
-				];
-			} else if ($engrid_promotion_type == "rollup") {
-				$rollup_settings = get_field('rollup', $lightbox_id);
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'image' => !empty($rollup_settings['image']['sizes']['2048x2048']) ? $rollup_settings['image']['sizes']['2048x2048'] : '',
-					'link' => $rollup_settings['link'],
-					'target' => ($rollup_settings['target']) ? '_blank' : '',
-					'hide_under' => $rollup_settings['hide_under'],
-					'close_if_oustide_click' => $rollup_settings['close_if_outside_click'],
-					'close_if_inside_click' => $rollup_settings['close_if_inside_click'],
-					'close_cookie_hours' => $rollup_settings['cookie_hours'],
-					'html' => $engrid_html,
-					'js' => $engrid_js,
-					'css' => $engrid_css,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'trigger' => $trigger,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date
-				];
-
-				if ($rollup_settings['enqueue_jquery']) {
-					wp_enqueue_script('jquery-cdn', 'https://code.jquery.com/jquery-3.7.1.min.js', [], '3.7.1');
-				}
-			} else if ($engrid_promotion_type == "cta_lightbox") {
-				$config = get_field('cta_lightbox', $lightbox_id);
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'trigger' => $trigger,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'display' => $engrid_display,
-					'start' => $engrid_start_date,
-					'end' => $engrid_end_date,
-					'header' => $config['copy_header'],
-					'body' => $config['copy_body'],
-					'bg_color' => $config['copy_bg_color'],
-					'fg_color' => $config['copy_fg_color'],
-					'cta_1' => [
-						'label' => $config['cta_1_label'],
-						'link' => $config['cta_1_link'],
-						'bg_color' => $config['cta_1_bg_color'],
-						'fg_color' => $config['cta_1_fg_color']
-					],
-					'cta_2' => [
-						'label' => $config['cta_2_label'],
-						'link' => $config['cta_2_link'],
-						'bg_color' => $config['cta_2_bg_color'],
-						'fg_color' => $config['cta_2_fg_color']
-					],
-					'image' => [
-						'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
-						'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
-						'position' => $config['image_position'],
-						'bg_color' => $config['image_bg_color']
-					],
-					'css' => $config['custom_css']
-				];
-			} else if ($engrid_promotion_type == "video") {
-				$video_settings = get_field('video', $lightbox_id);
-				$client_side_triggered_config[] = [
-					'id' => $lightbox_id,
-					'promotion_type' => $engrid_promotion_type,
-					'trigger' => $trigger,
-					'cookie_name' => $engrid_cookie_name,
-					'cookie_hours' => $engrid_cookie_hours,
-					'video_url' => $video_settings['url'],
-					'thumbnail' => isset($video_settings['thumbnail']['sizes']['large']) ? $video_settings['thumbnail']['sizes']['large'] : '',
-					'options' => $video_settings['options'],
-					'background_color' => $video_settings['background'],
-					'foreground_color' => $video_settings['foreground'],
-					'button' => $video_settings['button'],
-					'button_background_color' => $video_settings['button_background'],
-					'button_foreground_color' => $video_settings['button_foreground'],
-					'css' => $engrid_css
-				];
+			$config = $this->prepare_config_for_promo($lightbox_id);
+			if ($config !== null) {
+				$client_side_triggered_config[] = $config;
 			}
 		}
 
@@ -803,7 +248,7 @@ class Foursite_Wordpress_Promotion_Public
 
 			// move the floating_tab promo above any lightbox promos
 			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
-			
+
 			if ($multistep_script_url) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
 				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
@@ -812,6 +257,645 @@ class Foursite_Wordpress_Promotion_Public
 			}
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
 		}
+	}
+
+	private function prepare_config_for_promo($lightbox_id)
+	{
+		$promotion_type = trim(get_field('engrid_promotion_type', $lightbox_id));
+
+		switch ($promotion_type) {
+			case 'multistep_lightbox':
+				return $this->prepare_multistep_lightbox_config($lightbox_id);
+			case 'floating_signup':
+				return $this->prepare_floating_signup_config($lightbox_id);
+			case 'raw_code':
+				return $this->prepare_raw_code_config($lightbox_id);
+			case 'overlay':
+				return $this->prepare_overlay_config($lightbox_id);
+			case 'pushdown':
+				return $this->prepare_pushdown_config($lightbox_id);
+			case 'signup_lightbox':
+				return $this->prepare_signup_lightbox_config($lightbox_id);
+			case 'floating_tab':
+				return $this->prepare_floating_tab_config($lightbox_id);
+			case 'rollup':
+				return $this->prepare_rollup_config($lightbox_id);
+			case 'cta_lightbox':
+				return $this->prepare_cta_lightbox_config($lightbox_id);
+			case 'video':
+				return $this->prepare_video_config($lightbox_id);
+			case 'redirect':
+				return $this->prepare_redirect_config($lightbox_id);
+			case 'ab_test':
+				return $this->prepare_ab_test_config($lightbox_id);
+			default:
+				return null;
+		}
+	}
+
+	private function compute_trigger_from_lightbox($lightbox_id)
+	{
+		$engrid_trigger_type = get_field('engrid_trigger_type', $lightbox_id);
+		if ($engrid_trigger_type) $engrid_trigger_type = trim($engrid_trigger_type);
+
+		switch ($engrid_trigger_type) {
+			case 'seconds':
+				return get_field('engrid_trigger_seconds', $lightbox_id);
+			case 'px':
+				return get_field('engrid_trigger_scroll_pixels', $lightbox_id) . 'px';
+			case '%':
+				return get_field('engrid_trigger_scroll_percentage', $lightbox_id) . '%';
+			case 'exit':
+				return 'exit';
+			case 'js':
+				return 'js';
+			default:
+				return 0;
+		}
+	}
+
+	private function get_donation_page_url($lightbox_id)
+	{
+		$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
+		$engrid_dp_append_chain = get_field('engrid_dp_append_chain', $lightbox_id);
+		if ($engrid_dp_append_chain) {
+			if (strpos($engrid_donation_page, '?') === false) {
+				$engrid_donation_page .= '?chain';
+			} else {
+				$engrid_donation_page .= '&chain';
+			}
+		}
+		return $engrid_donation_page;
+	}
+
+	private function prepare_multistep_lightbox_config($lightbox_id)
+	{
+		$engrid_hero_type = get_field('engrid_hero_type', $lightbox_id);
+		$engrid_use_logo = get_field('engrid_use_logo', $lightbox_id);
+		$engrid_logo = $engrid_use_logo ? get_field('engrid_logo', $lightbox_id) : '';
+		$engrid_logo_position = get_field('engrid_logo_position', $lightbox_id);
+		$logo_position_options = isset($engrid_logo_position['position_options']) ? $engrid_logo_position['position_options'] : [];
+		if (!is_array($logo_position_options)) {
+			$logo_position_options = [];
+		}
+
+		$engrid_js = get_field('engrid_javascript', $lightbox_id);
+		if ($engrid_js) {
+			$engrid_js = $this->make_js_replacements($engrid_js);
+		}
+
+		$confetti = array();
+		if (have_rows('engrid_confetti', $lightbox_id)) {
+			while (have_rows('engrid_confetti', $lightbox_id)) {
+				the_row();
+				$confetti[] = get_sub_field('color');
+			}
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'multistep_lightbox',
+			'url' => $this->get_donation_page_url($lightbox_id),
+			'image' => get_field('engrid_image', $lightbox_id),
+			'logo' => $engrid_logo,
+			'video' => ($engrid_hero_type == 'autoplay-video' || $engrid_hero_type == 'click-to-play-video') ? get_field('engrid_video', $lightbox_id) : "",
+			'autoplay' => ($engrid_hero_type == 'autoplay-video'),
+			'logo_position_top' => in_array('top', $logo_position_options) ? "{$engrid_logo_position['top']}px" : "unset",
+			'logo_position_left' => in_array('left', $logo_position_options) ? "{$engrid_logo_position['left']}px" : "unset",
+			'logo_position_right' => in_array('right', $logo_position_options) ? "{$engrid_logo_position['right']}px" : "unset",
+			'logo_position_bottom' => in_array('bottom', $logo_position_options) ? "{$engrid_logo_position['bottom']}px" : "unset",
+			'divider' => get_field('engrid_divider', $lightbox_id),
+			'view_more' => get_field('engrid_show_view_more', $lightbox_id),
+			'title' => get_field('engrid_title', $lightbox_id),
+			'paragraph' => get_field('engrid_paragraph', $lightbox_id),
+			'footer' => get_field('engrid_footer', $lightbox_id),
+			'bg_color' => get_field('engrid_bg_color', $lightbox_id),
+			'txt_color' => get_field('engrid_text_color', $lightbox_id),
+			'form_color' => get_field('engrid_form_color', $lightbox_id),
+			'custom_css' => get_field('engrid_css', $lightbox_id),
+			'custom_js' => $engrid_js,
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'gtm_open_event_name' => get_field('engrid_gtm_open_event_name', $lightbox_id),
+			'gtm_close_event_name' => get_field('engrid_gtm_close_event_name', $lightbox_id),
+			'gtm_suppressed_event_name' => get_field('engrid_gtm_suppressed_event_name', $lightbox_id),
+			'confetti' => json_encode($confetti),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'raw_html' => get_field('engrid_raw_html', $lightbox_id),
+			'page_host' => get_field('page_host', $lightbox_id),
+			'promo_style' => get_field('ea_promo_style', $lightbox_id),
+			'media_credit' => get_field('media_credit', $lightbox_id),
+			'text_position' => 'top', // used by the EA multistep script
+			'view_more_text' => 'Read More' // used by the EA multistep script
+		];
+	}
+
+	private function prepare_floating_signup_config($lightbox_id)
+	{
+		$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
+		$button_colors = get_field('fes_button_colors', $lightbox_id);
+		$post_submission_button = get_field('fes_post_submission_button', $lightbox_id);
+		if (!$post_submission_button) {
+			$post_submission_button = ['title' => '', 'url' => '', 'target' => ''];
+		}
+		$gravity_form_id = get_field('fes_gravity_form_id', $lightbox_id);
+		$gravity_form_email_field_id = get_field('fes_gravity_form_email_field_id', $lightbox_id);
+		$fes_nonce = wp_create_nonce('fes_nonce');
+
+		$recaptcha_site_key = get_field('promotion_lightbox_recaptcha_site_key', 'options');
+		if ($recaptcha_site_key) {
+			wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js?render=' . $recaptcha_site_key);
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'floating_signup',
+			'fg_color' => $fsft_colors['foreground'],
+			'bg_color' => $fsft_colors['background'],
+			'button_fg_color' => $button_colors['foreground'],
+			'button_bg_color' => $button_colors['background'],
+			'title' => get_field('engrid_title', $lightbox_id),
+			'paragraph' => get_field('engrid_paragraph', $lightbox_id),
+			'custom_css' => get_field('engrid_css', $lightbox_id),
+			'gtm_open_event_name' => get_field('engrid_gtm_open_event_name', $lightbox_id),
+			'gtm_close_event_name' => get_field('engrid_gtm_close_event_name', $lightbox_id),
+			'gtm_suppressed_event_name' => get_field('engrid_gtm_suppressed_event_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'close_cookie_hours' => get_field('fes_closed_cookie_hours', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'post_submission_title' => get_field('fes_post_submission_title', $lightbox_id),
+			'post_submission_paragraph' => get_field('fes_post_submission_paragraph', $lightbox_id),
+			'post_submission_button' => $post_submission_button,
+			'recaptcha' => $recaptcha_site_key,
+			'submit_url' => ($gravity_form_id && $gravity_form_email_field_id) ? admin_url('admin-ajax.php?action=fes_submit&nonce=' . $fes_nonce . '&promo_id=' . $lightbox_id) : ''
+		];
+	}
+
+	private function prepare_raw_code_config($lightbox_id)
+	{
+		$engrid_js = get_field('engrid_javascript', $lightbox_id);
+		if ($engrid_js) {
+			$engrid_js = $this->make_js_replacements($engrid_js);
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'raw_code',
+			'html' => get_field('engrid_html', $lightbox_id),
+			'js' => $engrid_js,
+			'css' => get_field('engrid_css', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'is_lightbox' => boolval(get_field('is_lightbox', $lightbox_id)),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id)
+		];
+	}
+
+	private function prepare_overlay_config($lightbox_id)
+	{
+		$styles = get_field('modal_overlay', $lightbox_id);
+		$formatted_styles = [];
+		if (!empty($styles['screen_overlay_background_color'])) {
+			$formatted_styles['--bg-overlay-color'] = $styles['screen_overlay_background_color'];
+		}
+
+		if (!empty($styles['background_image_overlay']['gradient_start_color'])) {
+			$formatted_styles['--bg-img-overlay-start-color'] = $styles['background_image_overlay']['gradient_start_color'];
+		}
+		if (!empty($styles['background_image_overlay']['gradient_end_color'])) {
+			$formatted_styles['--bg-img-overlay-end-color'] = $styles['background_image_overlay']['gradient_end_color'];
+		}
+
+		if (!empty($styles['title']['color'])) {
+			$formatted_styles['--title-color'] = $styles['title']['color'];
+		}
+		if (!empty($styles['title']['font'])) {
+			$formatted_styles['--title-font'] = $styles['title']['font'];
+		}
+		if (!empty($styles['subtitle']['color'])) {
+			$formatted_styles['--subtitle-color'] = $styles['subtitle']['color'];
+		}
+		if (!empty($styles['subtitle']['font'])) {
+			$formatted_styles['--subtitle-font'] = $styles['subtitle']['font'];
+		}
+		if (!empty($styles['paragraph']['color'])) {
+			$formatted_styles['--paragraph-color'] = $styles['paragraph']['color'];
+		}
+		if (!empty($styles['paragraph']['font'])) {
+			$formatted_styles['--paragraph-font'] = $styles['paragraph']['font'];
+		}
+		if (!empty($styles['divider_line'])) {
+			$formatted_styles['--divider-border'] = $styles['divider_line'];
+		}
+
+		if (!empty($styles['amount_button']['background_color'])) {
+			$formatted_styles['--amount-button-bg-color'] = $styles['amount_button']['background_color'];
+		}
+		if (!empty($styles['amount_button']['text_color'])) {
+			$formatted_styles['--amount-button-color'] = $styles['amount_button']['text_color'];
+		}
+		if (!empty($styles['amount_button']['border'])) {
+			$formatted_styles['--amount-button-border'] = $styles['amount_button']['border'];
+		}
+		if (!empty($styles['amount_button']['border_radius'])) {
+			$formatted_styles['--amount-button-border-radius'] = $styles['amount_button']['border_radius'];
+		}
+
+		if (!empty($styles['amount_button_hover']['background_color'])) {
+			$formatted_styles['--amount-button-hover-bg-color'] = $styles['amount_button_hover']['background_color'];
+		}
+		if (!empty($styles['amount_button_hover']['text_color'])) {
+			$formatted_styles['--amount-button-hover-color'] = $styles['amount_button_hover']['text_color'];
+		}
+		if (!empty($styles['amount_button_hover']['border'])) {
+			$formatted_styles['--amount-button-hover-border'] = $styles['amount_button_hover']['border'];
+		}
+		if (!empty($styles['amount_button_hover']['border_radius'])) {
+			$formatted_styles['--amount-button-hover-border-radius'] = $styles['amount_button_hover']['border_radius'];
+		}
+
+		if (!empty($styles['amount_button_selected']['background_color'])) {
+			$formatted_styles['--amount-button-selected-bg-color'] = $styles['amount_button_selected']['background_color'];
+		}
+		if (!empty($styles['amount_button_selected']['text_color'])) {
+			$formatted_styles['--amount-button-selected-color'] = $styles['amount_button_selected']['text_color'];
+		}
+		if (!empty($styles['amount_button_selected']['border'])) {
+			$formatted_styles['--amount-button-selected-border'] = $styles['amount_button_selected']['border'];
+		}
+		if (!empty($styles['amount_button_selected']['border_radius'])) {
+			$formatted_styles['--amount-button-selected-border-radius'] = $styles['amount_button_selected']['border_radius'];
+		}
+
+		if (!empty($styles['submit_button']['background_color'])) {
+			$formatted_styles['--submit-button-bg-color'] = $styles['submit_button']['background_color'];
+		}
+		if (!empty($styles['submit_button']['text_color'])) {
+			$formatted_styles['--submit-button-color'] = $styles['submit_button']['text_color'];
+		}
+		if (!empty($styles['submit_button']['border'])) {
+			$formatted_styles['--submit-button-border'] = $styles['submit_button']['border'];
+		}
+		if (!empty($styles['submit_button']['border_radius'])) {
+			$formatted_styles['--submit-button-border-radius'] = $styles['submit_button']['border_radius'];
+		}
+
+		if (!empty($styles['submit_button_hover']['background_color'])) {
+			$formatted_styles['--submit-button-hover-bg-color'] = $styles['submit_button_hover']['background_color'];
+		}
+		if (!empty($styles['submit_button_hover']['text_color'])) {
+			$formatted_styles['--submit-button-hover-color'] = $styles['submit_button_hover']['text_color'];
+		}
+		if (!empty($styles['submit_button_hover']['border'])) {
+			$formatted_styles['--submit-button-hover-border'] = $styles['submit_button_hover']['border'];
+		}
+		if (!empty($styles['submit_button_hover']['border_radius'])) {
+			$formatted_styles['--submit-button-hover-border-radius'] = $styles['submit_button_hover']['border_radius'];
+		}
+
+		$formated_styles_string = '';
+		foreach ($formatted_styles as $key => $value) {
+			$formated_styles_string .= "{$key}: {$value};";
+		}
+
+		$engrid_css = get_field('engrid_css', $lightbox_id);
+		$image_url = (!empty($styles['background_image']['sizes']['large'])) ? $styles['background_image']['sizes']['large'] : '';
+		$cta_type = get_field('cta_type', $lightbox_id);
+		$submit_label = get_field('submit_button_label', $lightbox_id);
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'overlay',
+			'title' => get_field('engrid_title', $lightbox_id),
+			'subtitle' => get_field('engrid_subtitle', $lightbox_id),
+			'paragraph' => get_field('engrid_paragraph', $lightbox_id),
+			'cookie_expiry' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'logo' => get_field('engrid_logo', $lightbox_id),
+			'button_label' => ($submit_label) ? $submit_label : 'Donate Now',
+			'image' => $image_url,
+			'other_label' => ($cta_type == 'fundraising') ? get_field('other_amount_label', $lightbox_id) : '',
+			'donation_form' => $this->get_donation_page_url($lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'max_width' => $styles['modal_dimensions']['max_width'],
+			'max_height' => $styles['modal_dimensions']['max_height'],
+			'cta_type' => $cta_type,
+			'amounts' => ($cta_type == 'fundraising') ? str_replace(' ', '', get_field('amount_options', $lightbox_id)) : '',
+			'custom_css' => ".foursite-en-overlay { {$formated_styles_string} } {$engrid_css}",
+			'js_url' => plugin_dir_url(__FILE__) . 'overlay/dist/foursite-en-overlay.js',
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id)
+		];
+	}
+
+	private function prepare_pushdown_config($lightbox_id)
+	{
+		$engrid_pushdown_image = get_field('engrid_pushdown_image', $lightbox_id);
+		$engrid_pushdown_gif = get_field('engrid_pushdown_gif', $lightbox_id) ? get_field('engrid_pushdown_gif', $lightbox_id) : "";
+
+		$resized_pushdown_image = '';
+		if (isset($engrid_pushdown_image["sizes"]["2048x2048"])) {
+			$resized_pushdown_image = $engrid_pushdown_image["sizes"]["2048x2048"];
+		} else if (isset($engrid_pushdown_image["url"])) {
+			$resized_pushdown_image = $engrid_pushdown_image["url"];
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'pushdown',
+			'url' => get_field('engrid_pushdown_link', $lightbox_id),
+			'pushdown_type' => get_field('engrid_pushdown_type', $lightbox_id),
+			'pushdown_title' => get_field('engrid_pushdown_title', $lightbox_id),
+			'pushdown_paragraph' => get_field('pushdown_paragraph', $lightbox_id),
+			'pushdown_button' => get_field('pushdown_button_label', $lightbox_id),
+			'image' => esc_url($resized_pushdown_image),
+			'gif' => $engrid_pushdown_gif,
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'src' => plugins_url('pushdown/js/pushdown.js', __FILE__),
+			'bg_color' => get_field('engrid_bg_color', $lightbox_id),
+			'fg_color' => get_field('engrid_text_color', $lightbox_id),
+			'image_id' => isset($engrid_pushdown_image['ID']) ? $engrid_pushdown_image['ID'] : 0,
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'custom_css' => get_field('engrid_css', $lightbox_id)
+		];
+	}
+
+	private function prepare_signup_lightbox_config($lightbox_id)
+	{
+		$engrid_css = get_field('engrid_css', $lightbox_id);
+		$layout = get_field('layout', $lightbox_id);
+		if ($layout == 'one-col') {
+			$max_width = get_field('max_width', $lightbox_id);
+			if ($max_width) {
+				$engrid_css = "
+						.fs-signup-container,
+						.fs-signup-lightbox .fs-signup-lightbox-content,
+						.fs-signup-container-form {
+							max-width: {$max_width};
+						}
+						" . $engrid_css;
+			}
+		}
+
+		wp_enqueue_script('foursite-wordpress-signup-lightbox', plugin_dir_url(__FILE__) . 'signup/js/website-lightbox.js', array(), $this->version, false);
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'signup_lightbox',
+			'css' => $engrid_css,
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'gtm_open_event_name' => get_field('engrid_gtm_open_event_name', $lightbox_id),
+			'gtm_close_event_name' => get_field('engrid_gtm_close_event_name', $lightbox_id),
+			'gtm_suppressed_event_name' => get_field('engrid_gtm_suppressed_event_name', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'url' => $this->get_donation_page_url($lightbox_id),
+			'imageURL' => get_field('engrid_image', $lightbox_id),
+			'logoURL' => get_field('engrid_logo', $lightbox_id),
+			'title' => get_field('engrid_title', $lightbox_id),
+			'paragraph' => get_field('engrid_paragraph', $lightbox_id),
+			'footer' => get_field('engrid_footer', $lightbox_id),
+			'layout' => $layout
+		];
+	}
+
+	private function prepare_floating_tab_config($lightbox_id)
+	{
+		wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__), [], '1.0');
+
+		$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
+		$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
+		$fsft_location = get_field('engrid_fsft_location', $lightbox_id);
+		$fsft_link = get_field('engrid_fsft_link', $lightbox_id);
+		$fsft_trigger = get_field('engrid_fsft_trigger_type', $lightbox_id);
+		$engrid_js = get_field('engrid_js', $lightbox_id);
+		if ($engrid_js) {
+			$engrid_js = $this->make_js_replacements($engrid_js);
+		}
+		$engrid_trigger_scroll_pixels = get_field('engrid_trigger_scroll_pixels', $lightbox_id);
+		$engrid_trigger_scroll_percentage = get_field('engrid_trigger_scroll_percentage', $lightbox_id);
+		$fsft_svg = get_field('engrid_custom_svg', $lightbox_id);
+		$fsft_id = 'fs-donation-tab';
+
+		$trigger = 0;
+		switch ($fsft_trigger) {
+			case "0":
+				$trigger = 0;
+				break;
+			case 'px':
+				$trigger = $engrid_trigger_scroll_pixels . 'px';
+				break;
+			case '%':
+				$trigger = $engrid_trigger_scroll_percentage . '%';
+				break;
+			case 'js':
+				$trigger = 'js';
+				break;
+		}
+
+		$style = '';
+		if (!empty($fsft_colors['foreground'])) $style .= "color: {$fsft_colors['foreground']};";
+		if (!empty($fsft_colors['background'])) $style .= "background-color: {$fsft_colors['background']};";
+		if (!empty($fsft_radius)) $style .= "border-radius: {$fsft_radius} {$fsft_radius} 0 0;";
+
+		$classes = "{$fsft_location}";
+
+		$attributes = '';
+
+		if (is_array($fsft_link['attributes'])) {
+			for ($i = 0; $i < count($fsft_link['attributes']); $i++) {
+				$key = $fsft_link['attributes'][$i]['key'];
+				$value = $fsft_link['attributes'][$i]['value'];
+
+				if (stripos($key, 'class') !== false) {
+					$classes .= " {$value}";
+				} else if (stripos($key, 'id') !== false) {
+					$fsft_id = $value;
+				} else if (stripos($key, 'href') !== false) {
+					// ignore this key -- we set href via the $fsft_link['url'] field
+				} else {
+					$value = str_replace('"', '&quot;', $value);
+					$value = str_replace("'", '&apos;', $value);
+					$attributes .= "{$key}=\"{$value}\" ";
+				}
+			}
+		}
+
+		if ($fsft_link['engrid_use_lightbox'] == 'yes') {
+			$attributes .= "data-donation-lightbox";
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'floating_tab',
+			'css' => get_field('engrid_css', $lightbox_id),
+			'js' => $engrid_js,
+			'html' => "<a href='{$fsft_link['url']}' id='{$fsft_id}' style='{$style}' class='{$classes} hover-candle' {$attributes}>{$fsft_link['label']}{$fsft_svg}</a>",
+			'trigger' => $trigger,
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'open_lightbox' => ($fsft_link['engrid_use_lightbox'] == 'yes') ? true : false,
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id)
+		];
+	}
+
+	private function prepare_rollup_config($lightbox_id)
+	{
+		$rollup_settings = get_field('rollup', $lightbox_id);
+		$engrid_js = get_field('engrid_javascript', $lightbox_id);
+		if ($engrid_js) {
+			$engrid_js = $this->make_js_replacements($engrid_js);
+		}
+
+		if ($rollup_settings['enqueue_jquery']) {
+			wp_enqueue_script('jquery-cdn', 'https://code.jquery.com/jquery-3.7.1.min.js', [], '3.7.1');
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'rollup',
+			'image' => !empty($rollup_settings['image']['sizes']['2048x2048']) ? $rollup_settings['image']['sizes']['2048x2048'] : '',
+			'link' => $rollup_settings['link'],
+			'target' => ($rollup_settings['target']) ? '_blank' : '',
+			'hide_under' => $rollup_settings['hide_under'],
+			'close_if_oustide_click' => $rollup_settings['close_if_outside_click'],
+			'close_if_inside_click' => $rollup_settings['close_if_inside_click'],
+			'close_cookie_hours' => $rollup_settings['cookie_hours'],
+			'html' => get_field('engrid_html', $lightbox_id),
+			'js' => $engrid_js,
+			'css' => get_field('engrid_css', $lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id)
+		];
+	}
+
+	private function prepare_cta_lightbox_config($lightbox_id)
+	{
+		$config = get_field('cta_lightbox', $lightbox_id);
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'cta_lightbox',
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'header' => $config['copy_header'],
+			'body' => $config['copy_body'],
+			'bg_color' => $config['copy_bg_color'],
+			'fg_color' => $config['copy_fg_color'],
+			'cta_1' => [
+				'label' => $config['cta_1_label'],
+				'link' => $config['cta_1_link'],
+				'bg_color' => $config['cta_1_bg_color'],
+				'fg_color' => $config['cta_1_fg_color']
+			],
+			'cta_2' => [
+				'label' => $config['cta_2_label'],
+				'link' => $config['cta_2_link'],
+				'bg_color' => $config['cta_2_bg_color'],
+				'fg_color' => $config['cta_2_fg_color']
+			],
+			'image' => [
+				'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
+				'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+				'position' => $config['image_position'],
+				'bg_color' => $config['image_bg_color']
+			],
+			'css' => $config['custom_css']
+		];
+	}
+
+	private function prepare_video_config($lightbox_id)
+	{
+		$video_settings = get_field('video', $lightbox_id);
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'video',
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'video_url' => $video_settings['url'],
+			'thumbnail' => isset($video_settings['thumbnail']['sizes']['large']) ? $video_settings['thumbnail']['sizes']['large'] : '',
+			'options' => $video_settings['options'],
+			'background_color' => $video_settings['background'],
+			'foreground_color' => $video_settings['foreground'],
+			'button' => $video_settings['button'],
+			'button_background_color' => $video_settings['button_background'],
+			'button_foreground_color' => $video_settings['button_foreground'],
+			'css' => get_field('engrid_css', $lightbox_id)
+		];
+	}
+
+	private function prepare_redirect_config($lightbox_id)
+	{
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'redirect',
+			'url' => get_field('redirect', $lightbox_id),
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id)
+		];
+	}
+
+	private function prepare_ab_test_config($lightbox_id)
+	{
+		$variants = [];
+		if (have_rows('engrid_promotions', $lightbox_id)) {
+			while (have_rows('engrid_promotions', $lightbox_id)) {
+				the_row();
+				$promo_id = get_sub_field('promotion');
+				$ad_blocker_id = get_sub_field('ad_blocker_promotion');
+
+				$variants[] = [
+					'promotion' => $promo_id ? $this->prepare_config_for_promo($promo_id) : null,
+					'ad_blocker_promotion' => $ad_blocker_id ? $this->prepare_config_for_promo($ad_blocker_id) : null
+				];
+			}
+		}
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'ab_test',
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'variants' => $variants
+		];
 	}
 
 	function is_lightbox($promotion) {
@@ -853,7 +937,7 @@ class Foursite_Wordpress_Promotion_Public
 					// already at the top
 					break;
 				}
-				
+
 				$promo_to_move = $client_side_triggered_config[$i];
 				array_splice($client_side_triggered_config, $i, 1);
 				array_splice($client_side_triggered_config, 0, 0, [$promo_to_move]);
