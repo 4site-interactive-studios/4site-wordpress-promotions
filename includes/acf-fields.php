@@ -268,7 +268,7 @@ add_action( 'acf/include_fields', function() {
 					'name' => 'ad_blocker_promotion',
 					'aria-label' => '',
 					'type' => 'post_object',
-					'instructions' => '',
+					'instructions' => 'Ad Blocker should be separate from other promotions included in the test',
 					'required' => 0,
 					'conditional_logic' => 0,
 					'wrapper' => array(

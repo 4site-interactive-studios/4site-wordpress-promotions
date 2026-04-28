@@ -871,17 +871,39 @@ class Foursite_Wordpress_Promotion_Public
 
 	private function prepare_ab_test_config($lightbox_id)
 	{
+		$parent_cookie_name = get_field('engrid_cookie_name', $lightbox_id);
 		$variants = [];
 		if (have_rows('ab_promotions', $lightbox_id)) {
+			$variant_index = 0;
 			while (have_rows('ab_promotions', $lightbox_id)) {
 				the_row();
 				$promo_id = get_sub_field('promotion');
 				$ad_blocker_id = get_sub_field('ad_blocker_promotion');
 
+				$promo_config = $promo_id ? $this->prepare_config_for_promo($promo_id) : null;
+				$ad_blocker_config = $ad_blocker_id ? $this->prepare_config_for_promo($ad_blocker_id) : null;
+
+				$child_cookie_name = $parent_cookie_name . '_' . $variant_index;
+				if ($promo_config) {
+					$promo_config['cookie_name'] = $child_cookie_name;
+					$promo_config['cookie_hours'] = 0;
+					if (array_key_exists('close_cookie_hours', $promo_config)) {
+						$promo_config['close_cookie_hours'] = 0;
+					}
+				}
+				if ($ad_blocker_config) {
+					$ad_blocker_config['cookie_name'] = $child_cookie_name;
+					$ad_blocker_config['cookie_hours'] = 0;
+					if (array_key_exists('close_cookie_hours', $ad_blocker_config)) {
+						$ad_blocker_config['close_cookie_hours'] = 0;
+					}
+				}
+
 				$variants[] = [
-					'promotion' => $promo_id ? $this->prepare_config_for_promo($promo_id) : null,
-					'ad_blocker_promotion' => $ad_blocker_id ? $this->prepare_config_for_promo($ad_blocker_id) : null
+					'promotion' => $promo_config,
+					'ad_blocker_promotion' => $ad_blocker_config
 				];
+				$variant_index++;
 			}
 		}
 
@@ -889,7 +911,7 @@ class Foursite_Wordpress_Promotion_Public
 			'id' => $lightbox_id,
 			'promotion_type' => 'ab_test',
 			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
-			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_name' => $parent_cookie_name,
 			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
 			'display' => get_field('engrid_lightbox_display', $lightbox_id),
 			'start' => get_field('engrid_start_date', $lightbox_id),
