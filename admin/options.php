@@ -99,7 +99,6 @@ function smashing_add_new_columns($columns)
   $columns['post_id'] = __('Post ID', 'smashing');
   $columns['promotion_type'] = __('Type', 'smashing');
   $columns['trigger'] = __('Trigger', 'smashing');
-  $columns['fwp_references'] = __('References', 'smashing');
   return $columns;
 }
 
@@ -261,26 +260,53 @@ function smashing_wordpress_promotion_column($column, $post_id)
       $trigger = $seconds == 0 ? "0" : "seconds";
     }
 
+    $trigger_text = '';
     switch ($trigger) {
       case "0":
-        echo "Immediately";
+        $trigger_text = "Immediately";
         break;
       case "seconds":
-        echo "After $seconds seconds";
+        $trigger_text = "After $seconds seconds";
         break;
       case "px":
-        echo "After scrolling $pixels pixels";
+        $trigger_text = "After scrolling $pixels pixels";
         break;
       case "%":
-        echo "After scrolling $percentage% of the page";
+        $trigger_text = "After scrolling $percentage% of the page";
         break;
       case "exit":
-        echo "On exit";
+        $trigger_text = "On exit";
         break;
       case "js":
-        echo "Javascript Trigger";
+        $trigger_text = "Javascript Trigger";
         break;
     }
+
+    $ab_parent_links = [];
+    $ab_parent_ids = fwp_get_ab_parent_ids($post_id);
+    if (!empty($ab_parent_ids)) {
+      $active_promo_ids = fwp_get_active_promo_ids();
+      foreach ($ab_parent_ids as $parent_id) {
+        if (!in_array($parent_id, $active_promo_ids, true)) {
+          continue;
+        }
+        $edit_link = get_edit_post_link($parent_id);
+        $parent_title = get_the_title($parent_id);
+        if (!$parent_title) {
+          $parent_title = '(no title)';
+        }
+        $ab_parent_links[] = "<a href='" . esc_url($edit_link) . "' title='" . esc_attr($parent_title) . "'>AB Test Candidate</a>";
+      }
+    }
+
+    $parts = [];
+    if ($trigger_text !== '') {
+      $parts[] = $trigger_text;
+    }
+    if (!empty($ab_parent_links)) {
+      $parts[] = implode('<br>', $ab_parent_links);
+    }
+    echo implode('<br>', $parts);
   }
 
   if ('custom_date' === $column) {
@@ -291,38 +317,27 @@ function smashing_wordpress_promotion_column($column, $post_id)
     echo $post_id;
   }
 
-  if ('fwp_references' === $column) {
-    global $wpdb;
-    $referencing_ids = $wpdb->get_col($wpdb->prepare("
-      SELECT DISTINCT pm.post_id
-      FROM {$wpdb->postmeta} pm
-      JOIN {$wpdb->postmeta} type_pm
-        ON type_pm.post_id = pm.post_id
-        AND type_pm.meta_key = 'engrid_promotion_type'
-        AND type_pm.meta_value = 'ab_test'
-      JOIN {$wpdb->posts} p
-        ON p.ID = pm.post_id
-        AND p.post_status != 'trash'
-      WHERE pm.meta_value = %s
-      AND pm.meta_key REGEXP '^ab_promotions_[0-9]+_(promotion|ad_blocker_promotion)$'
-      AND pm.post_id != %d
-    ", $post_id, $post_id));
+}
 
-    if (empty($referencing_ids)) {
-      echo '--';
-    } else {
-      $links = [];
-      foreach ($referencing_ids as $ref_id) {
-        $title = get_the_title($ref_id);
-        if (!$title) {
-          $title = '(no title)';
-        }
-        $edit_link = get_edit_post_link($ref_id);
-        $links[] = "<a href='" . esc_url($edit_link) . "'>" . esc_html($title) . "</a>";
-      }
-      echo implode('<br>', $links);
-    }
-  }
+// Returns IDs of A/B test promotions that reference $post_id as a candidate.
+function fwp_get_ab_parent_ids($post_id)
+{
+  global $wpdb;
+  $ids = $wpdb->get_col($wpdb->prepare("
+    SELECT DISTINCT pm.post_id
+    FROM {$wpdb->postmeta} pm
+    JOIN {$wpdb->postmeta} type_pm
+      ON type_pm.post_id = pm.post_id
+      AND type_pm.meta_key = 'engrid_promotion_type'
+      AND type_pm.meta_value = 'ab_test'
+    JOIN {$wpdb->posts} p
+      ON p.ID = pm.post_id
+      AND p.post_status != 'trash'
+    WHERE pm.meta_value = %s
+    AND pm.meta_key REGEXP '^ab_promotions_[0-9]+_(promotion|ad_blocker_promotion)$'
+    AND pm.post_id != %d
+  ", $post_id, $post_id));
+  return array_map('intval', $ids);
 }
 
 add_filter('manage_edit-wordpress_promotion_sortable_columns', 'smashing_wordpress_promotion_sortable_columns');
@@ -429,6 +444,10 @@ function fwp_filter_request_query($query)
   } else if ('off-expired' == $_REQUEST['fwp_status']) {
     $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('expired'));
     $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('off'));
+  } else if ('ab-test-candidate' == $_REQUEST['fwp_status']) {
+    $post_ids = fwp_get_active_ab_candidate_ids();
+  } else if ('ab-test-candidate-inactive' == $_REQUEST['fwp_status']) {
+    $post_ids = fwp_get_inactive_ab_candidate_ids();
   } else {
     $post_ids = fwp_get_post_ids_for_status($_REQUEST['fwp_status']);
   }
@@ -525,6 +544,78 @@ function fwp_get_post_ids_for_status($status)
   return $post_ids;
 }
 
+// Returns IDs of all promotions whose status is On, Scheduled - Upcoming, or
+// Scheduled - Active. Cached per-request because resolving the three statuses
+// involves multiple meta queries.
+function fwp_get_active_promo_ids()
+{
+  static $ids = null;
+  if ($ids === null) {
+    $ids = array_unique(array_map('intval', array_merge(
+      fwp_get_post_ids_for_status('on'),
+      fwp_get_post_ids_for_status('upcoming'),
+      fwp_get_post_ids_for_status('active')
+    )));
+  }
+  return $ids;
+}
+
+// Returns IDs of promotions referenced as candidates by an A/B parent that is
+// currently On, Scheduled - Upcoming, or Scheduled - Active.
+function fwp_get_active_ab_candidate_ids()
+{
+  $parent_ids = fwp_get_active_promo_ids();
+  if (empty($parent_ids)) {
+    return [];
+  }
+
+  global $wpdb;
+  $placeholders = implode(',', array_fill(0, count($parent_ids), '%d'));
+  $sql = $wpdb->prepare("
+    SELECT DISTINCT ab_pm.meta_value + 0 AS candidate_id
+    FROM {$wpdb->postmeta} ab_pm
+    JOIN {$wpdb->postmeta} type_pm
+      ON type_pm.post_id = ab_pm.post_id
+      AND type_pm.meta_key = 'engrid_promotion_type'
+      AND type_pm.meta_value = 'ab_test'
+    JOIN {$wpdb->posts} candidate
+      ON candidate.ID = ab_pm.meta_value + 0
+      AND candidate.post_status != 'trash'
+    WHERE ab_pm.post_id IN ({$placeholders})
+      AND ab_pm.meta_key REGEXP '^ab_promotions_[0-9]+_(promotion|ad_blocker_promotion)\$'
+      AND ab_pm.meta_value + 0 > 0
+  ", $parent_ids);
+  $ids = $wpdb->get_col($sql);
+  return array_map('intval', $ids);
+}
+
+// Returns IDs of promotions referenced as candidates by any A/B parent that is
+// NOT currently active (i.e. parent is off, expired, template, unpublished, etc.),
+// and that are not also referenced by an active A/B parent.
+function fwp_get_inactive_ab_candidate_ids()
+{
+  global $wpdb;
+  $sql = "
+    SELECT DISTINCT ab_pm.meta_value + 0 AS candidate_id
+    FROM {$wpdb->postmeta} ab_pm
+    JOIN {$wpdb->postmeta} type_pm
+      ON type_pm.post_id = ab_pm.post_id
+      AND type_pm.meta_key = 'engrid_promotion_type'
+      AND type_pm.meta_value = 'ab_test'
+    JOIN {$wpdb->posts} parent
+      ON parent.ID = ab_pm.post_id
+      AND parent.post_status != 'trash'
+    JOIN {$wpdb->posts} candidate
+      ON candidate.ID = ab_pm.meta_value + 0
+      AND candidate.post_status != 'trash'
+    WHERE ab_pm.meta_key REGEXP '^ab_promotions_[0-9]+_(promotion|ad_blocker_promotion)\$'
+      AND ab_pm.meta_value + 0 > 0
+  ";
+  $all = array_map('intval', $wpdb->get_col($sql));
+  $active = fwp_get_active_ab_candidate_ids();
+  return array_values(array_diff($all, $active));
+}
+
 function fwp_format_option($label, $key, $selected_key, $disabled = false)
 {
   $selected_string = (!$disabled && $key == $selected_key) ? " selected" : "";
@@ -550,6 +641,9 @@ function fwp_table_filtering($post_type)
   $options[] = fwp_format_option(__('Scheduled - Expired', 'foursite-wordpress-promotions'), 'expired', $current_fwp_status);
   $options[] = fwp_format_option(__('Scheduled - Upcoming', 'foursite-wordpress-promotions'), 'upcoming', $current_fwp_status);
   $options[] = fwp_format_option(__('Scheduled - Active', 'foursite-wordpress-promotions'), 'active', $current_fwp_status);
+  $options[] = fwp_format_option('<hr><br><br>', '', $current_fwp_status, true);
+  $options[] = fwp_format_option(__('Active A/B Test Candidate', 'foursite-wordpress-promotions'), 'ab-test-candidate', $current_fwp_status);
+  $options[] = fwp_format_option(__('Inactive A/B Test Candidate', 'foursite-wordpress-promotions'), 'ab-test-candidate-inactive', $current_fwp_status);
   $options_string = implode('', $options);
   echo "<select class='' id='' name='fwp_status'>{$options_string}</select>";
 }
