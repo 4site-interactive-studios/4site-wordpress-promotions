@@ -1,4 +1,3 @@
-<?php
 add_action( 'acf/include_fields', function() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -219,7 +218,7 @@ add_action( 'acf/include_fields', function() {
 				'id' => '',
 			),
 			'acfe_repeater_stylised_button' => 0,
-			'layout' => 'table',
+			'layout' => 'block',
 			'pagination' => 0,
 			'min' => 0,
 			'max' => 0,
@@ -5204,3 +5203,4 @@ If there are domains provided, upon saving these options, a rememberme.html file
 	'acfe_note' => '',
 ) );
 } );
+
