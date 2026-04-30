@@ -234,7 +234,7 @@ add_action( 'acf/include_fields', function() {
 					'name' => 'promotion',
 					'aria-label' => '',
 					'type' => 'post_object',
-					'instructions' => '',
+					'instructions' => 'Promotions added to an A/B test will follow the status and display settings of the A/B test regardless of their own individual status.',
 					'required' => 0,
 					'conditional_logic' => 0,
 					'wrapper' => array(
