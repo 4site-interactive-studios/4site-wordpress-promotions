@@ -283,20 +283,13 @@ function smashing_wordpress_promotion_column($column, $post_id)
     }
 
     $ab_parent_links = [];
-    $ab_parent_ids = fwp_get_ab_parent_ids($post_id);
-    if (!empty($ab_parent_ids)) {
-      $active_promo_ids = fwp_get_active_promo_ids();
-      foreach ($ab_parent_ids as $parent_id) {
-        if (!in_array($parent_id, $active_promo_ids, true)) {
-          continue;
-        }
-        $edit_link = get_edit_post_link($parent_id);
-        $parent_title = get_the_title($parent_id);
-        if (!$parent_title) {
-          $parent_title = '(no title)';
-        }
-        $ab_parent_links[] = "<a href='" . esc_url($edit_link) . "' title='" . esc_attr($parent_title) . "'>AB Test Candidate</a>";
+    foreach (fwp_get_ab_parent_ids($post_id) as $parent_id) {
+      $edit_link = get_edit_post_link($parent_id);
+      $parent_title = get_the_title($parent_id);
+      if (!$parent_title) {
+        $parent_title = '(no title)';
       }
+      $ab_parent_links[] = "<a href='" . esc_url($edit_link) . "' title='" . esc_attr($parent_title) . "'>AB Test Candidate</a>";
     }
 
     $parts = [];
