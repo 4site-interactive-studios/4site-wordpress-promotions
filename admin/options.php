@@ -78,6 +78,14 @@ function register_wordpress_promotion_post_type()
 
 add_action('init', 'register_wordpress_promotion_post_type', 0);
 
+// Show raw titles on the promotions listing — straight quotes/dashes/ellipses
+// often encode meaning (A/B variants, naming conventions) that wptexturize mangles.
+add_action('current_screen', function ($screen) {
+  if ($screen && $screen->id === 'edit-wordpress_promotion') {
+    remove_filter('the_title', 'wptexturize');
+  }
+});
+
 // Admin listing columns, sorting, and filtering for wordpress_promotion post type
 add_filter('manage_wordpress_promotion_posts_columns', 'smashing_add_new_columns');
 function smashing_add_new_columns($columns)
