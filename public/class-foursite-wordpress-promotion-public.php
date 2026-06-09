@@ -215,6 +215,48 @@ class Foursite_Wordpress_Promotion_Public
 		return $lightbox_ids;
 	}
 
+	/**
+	 * Remove promotions that are used as candidates by an AB Test promotion in the list.
+	 *
+	 * When an AB Test promotion is eligible for the current page, its candidate promotions
+	 * (the "promotion" and "ad_blocker_promotion" sub-fields of each ab_promotions row) are
+	 * displayed via the AB Test itself. If such a candidate is also independently eligible for
+	 * the current page it would otherwise be displayed twice, so we strip it from the list here.
+	 *
+	 * @param array $lightbox_ids
+	 * @return array
+	 */
+	private function remove_ab_test_candidates($lightbox_ids)
+	{
+		$candidate_ids = [];
+		foreach ($lightbox_ids as $lightbox_id) {
+			if (trim(get_field('engrid_promotion_type', $lightbox_id)) !== 'ab_test') {
+				continue;
+			}
+			if (have_rows('ab_promotions', $lightbox_id)) {
+				while (have_rows('ab_promotions', $lightbox_id)) {
+					the_row();
+					$promo_id = get_sub_field('promotion');
+					$ad_blocker_id = get_sub_field('ad_blocker_promotion');
+					if ($promo_id) {
+						$candidate_ids[] = (int) $promo_id;
+					}
+					if ($ad_blocker_id) {
+						$candidate_ids[] = (int) $ad_blocker_id;
+					}
+				}
+			}
+		}
+
+		if (count($candidate_ids) == 0) {
+			return $lightbox_ids;
+		}
+
+		return array_values(array_filter($lightbox_ids, function ($lightbox_id) use ($candidate_ids) {
+			return !in_array((int) $lightbox_id, $candidate_ids, true);
+		}));
+	}
+
 
 
 	/**
@@ -225,6 +267,11 @@ class Foursite_Wordpress_Promotion_Public
 	public function enqueue_scripts()
 	{
 		$lightbox_ids = $this->get_lightbox_ids();
+		if (count($lightbox_ids) == 0) return;
+
+		// remove any promotions that are candidates of an AB Test promotion in the list,
+		// so a candidate isn't also displayed on its own when its AB Test parent is eligible
+		$lightbox_ids = $this->remove_ab_test_candidates($lightbox_ids);
 		if (count($lightbox_ids) == 0) return;
 
 		// populate this with raw html configs & js-triggered multisteps
