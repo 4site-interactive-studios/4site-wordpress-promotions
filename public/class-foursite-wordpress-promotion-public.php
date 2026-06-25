@@ -329,6 +329,8 @@ class Foursite_Wordpress_Promotion_Public
 				return $this->prepare_rollup_config($lightbox_id);
 			case 'cta_lightbox':
 				return $this->prepare_cta_lightbox_config($lightbox_id);
+			case 'email_capture_lightbox':
+				return $this->prepare_email_capture_lightbox_config($lightbox_id);
 			case 'video':
 				return $this->prepare_video_config($lightbox_id);
 			case 'redirect':
@@ -879,6 +881,67 @@ class Foursite_Wordpress_Promotion_Public
 		];
 	}
 
+	private function prepare_email_capture_lightbox_config($lightbox_id)
+	{
+		$config = get_field('email_capture_lightbox', $lightbox_id);
+
+		$success_button = $config['success_button'];
+		if (!$success_button) {
+			$success_button = ['title' => '', 'url' => '', 'target' => ''];
+		}
+
+		// Submission is "ready" when either path is fully configured: the proxy (preferred when the
+		// API token is IP-restricted / this host has no fixed outbound IP) or the direct EN Data API.
+		$en_use_proxy = get_field('promotion_en_use_proxy', 'options');
+		$en_proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
+		$proxy_ready = $en_use_proxy && $en_proxy_url;
+
+		$en_api_base_url = get_field('promotion_en_api_base_url', 'options');
+		$en_api_token = get_field('promotion_en_api_token', 'options');
+		$direct_ready = $config['en_page_id'] && $en_api_base_url && $en_api_token;
+
+		$en_ready = $proxy_ready || $direct_ready;
+		$eclb_nonce = wp_create_nonce('eclb_nonce');
+
+		return [
+			'id' => $lightbox_id,
+			'promotion_type' => 'email_capture_lightbox',
+			'trigger' => $this->compute_trigger_from_lightbox($lightbox_id),
+			'cookie_name' => get_field('engrid_cookie_name', $lightbox_id),
+			'cookie_hours' => (int) get_field('engrid_cookie_hours', $lightbox_id),
+			'display' => get_field('engrid_lightbox_display', $lightbox_id),
+			'start' => get_field('engrid_start_date', $lightbox_id),
+			'end' => get_field('engrid_end_date', $lightbox_id),
+			'header' => $config['copy_header'],
+			'body' => $config['copy_body'],
+			'bg_color' => $config['copy_bg_color'],
+			'fg_color' => $config['copy_fg_color'],
+			'email_placeholder' => $config['email_placeholder'] ? $config['email_placeholder'] : 'Email Address',
+			'submit' => [
+				'label' => $config['cta_1_label'],
+				'bg_color' => $config['cta_1_bg_color'],
+				'fg_color' => $config['cta_1_fg_color']
+			],
+			'submit_url' => $en_ready ? admin_url('admin-ajax.php?action=eclb_submit&nonce=' . $eclb_nonce . '&promo_id=' . $lightbox_id) : '',
+			'success' => [
+				'header' => $config['success_header'],
+				'body' => $config['success_body'],
+				'button' => [
+					'title' => $success_button['title'],
+					'url' => $success_button['url'],
+					'target' => $success_button['target']
+				]
+			],
+			'image' => [
+				'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
+				'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+				'position' => $config['image_position'],
+				'bg_color' => $config['image_bg_color']
+			],
+			'css' => $config['custom_css']
+		];
+	}
+
 	private function prepare_video_config($lightbox_id)
 	{
 		$video_settings = get_field('video', $lightbox_id);
@@ -968,7 +1031,7 @@ class Foursite_Wordpress_Promotion_Public
 	}
 
 	function is_lightbox($promotion) {
-		$is_lightbox = in_array($promotion['promotion_type'], ['multistep_lightbox', 'overlay', 'signup_lightbox', 'cta_lightbox']);
+		$is_lightbox = in_array($promotion['promotion_type'], ['multistep_lightbox', 'overlay', 'signup_lightbox', 'cta_lightbox', 'email_capture_lightbox']);
 		if(!$is_lightbox && $promotion['promotion_type'] == 'raw_code' && $promotion['is_lightbox']) {
 			$is_lightbox = true;
 		}

@@ -230,6 +230,14 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         addCtaLightbox(promotion);
         break;
+      case "email_capture_lightbox":
+        if (window.lightbox_triggered) {
+          return;
+        } else {
+          window.lightbox_triggered = true;
+        }
+        addEmailCaptureLightbox(promotion);
+        break;
       case "rollup":
         if (promotion.hide_under && window.innerWidth <= promotion.hide_under) {
         } else {
@@ -697,6 +705,440 @@ window.addEventListener("DOMContentLoaded", () => {
     document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
     document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
     document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
+  }
+
+  function addEmailCaptureLightbox(promotion) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("fs-ecl-modal-container");
+    overlay.setAttribute("promotion-id", promotion.id);
+
+    const modal = document.createElement("div");
+    modal.classList.add("fs-ecl-modal");
+
+    const modal_close_button = document.createElement("div");
+    modal_close_button.classList.add("fs-ecl-modal-close-button");
+    if (promotion.image.bg_color) {
+      modal_close_button.style.color = promotion.image.bg_color;
+      modal_close_button.style.borderColor = promotion.image.bg_color;
+    }
+    modal.appendChild(modal_close_button);
+
+    if (promotion.image.url && promotion.image.position === "left") {
+      modal.classList.add("fs-ecl-modal-image-left");
+    } else if (promotion.image.url && promotion.image.position === "right") {
+      modal.classList.add("fs-ecl-modal-image-right");
+    } else {
+      modal.classList.add("fs-ecl-modal-no-image");
+    }
+
+    if (promotion.bg_color) {
+      modal.style.backgroundColor = promotion.bg_color;
+    }
+    if (promotion.fg_color) {
+      modal.style.color = promotion.fg_color;
+    }
+
+    const modal_text_column = document.createElement("div");
+    modal_text_column.classList.add("fs-ecl-modal-text-column");
+
+    if (promotion.header) {
+      const modal_header = document.createElement("div");
+      modal_header.classList.add("fs-ecl-modal-header");
+      modal_header.classList.add("fs-ecl-pre-submission-show");
+      modal_header.innerHTML = promotion.header;
+      modal_text_column.appendChild(modal_header);
+    }
+
+    if (promotion.body) {
+      const modal_content = document.createElement("div");
+      modal_content.classList.add("fs-ecl-modal-content");
+      modal_content.classList.add("fs-ecl-pre-submission-show");
+      modal_content.innerHTML = promotion.body;
+      modal_text_column.appendChild(modal_content);
+    }
+
+    // Email capture form (pre-submission)
+    const modal_form = document.createElement("form");
+    modal_form.classList.add("fs-ecl-modal-form");
+    modal_form.classList.add("fs-ecl-pre-submission-show");
+
+    const modal_email = document.createElement("input");
+    modal_email.classList.add("fs-ecl-modal-email");
+    modal_email.setAttribute("type", "email");
+    modal_email.setAttribute("name", "email");
+    modal_email.setAttribute("placeholder", promotion.email_placeholder || "Email Address");
+    modal_email.required = true;
+
+    const modal_submit = document.createElement("button");
+    modal_submit.classList.add("fs-ecl-modal-submit");
+    modal_submit.setAttribute("type", "submit");
+    modal_submit.innerHTML = promotion.submit.label || "Submit";
+    if (promotion.submit.bg_color) {
+      modal_submit.style.backgroundColor = promotion.submit.bg_color;
+    }
+    if (promotion.submit.fg_color) {
+      modal_submit.style.color = promotion.submit.fg_color;
+    }
+
+    const modal_error = document.createElement("div");
+    modal_error.classList.add("fs-ecl-modal-error");
+    modal_error.innerHTML = "The email address is invalid, please try again.";
+
+    modal_form.appendChild(modal_email);
+    modal_form.appendChild(modal_submit);
+    modal_form.appendChild(modal_error);
+    modal_text_column.appendChild(modal_form);
+
+    // Success message (post-submission)
+    const modal_success = document.createElement("div");
+    modal_success.classList.add("fs-ecl-modal-success");
+    modal_success.classList.add("fs-ecl-post-submission-show");
+
+    if (promotion.success.header) {
+      const success_header = document.createElement("div");
+      success_header.classList.add("fs-ecl-modal-header");
+      success_header.innerHTML = promotion.success.header;
+      modal_success.appendChild(success_header);
+    }
+    if (promotion.success.body) {
+      const success_body = document.createElement("div");
+      success_body.classList.add("fs-ecl-modal-content");
+      success_body.innerHTML = promotion.success.body;
+      modal_success.appendChild(success_body);
+    }
+    if (promotion.success.button.title && promotion.success.button.url) {
+      const success_button = document.createElement("a");
+      success_button.classList.add("fs-ecl-modal-success-button");
+      success_button.href = promotion.success.button.url;
+      success_button.innerHTML = promotion.success.button.title;
+      if (promotion.success.button.target) {
+        success_button.target = promotion.success.button.target;
+      }
+      if (promotion.submit.bg_color) {
+        success_button.style.backgroundColor = promotion.submit.bg_color;
+      }
+      if (promotion.submit.fg_color) {
+        success_button.style.color = promotion.submit.fg_color;
+      }
+      modal_success.appendChild(success_button);
+    }
+    modal_text_column.appendChild(modal_success);
+
+    modal.appendChild(modal_text_column);
+
+    if (promotion.image.url) {
+      const modal_image_column = document.createElement("div");
+      modal_image_column.classList.add("fs-ecl-modal-image-column");
+
+      const modal_image = document.createElement("img");
+      modal_image.src = promotion.image.url;
+      modal_image.alt = promotion.image.alt;
+      modal_image.classList.add("fs-ecl-modal-image");
+
+      const modal_image_container = document.createElement("div");
+      modal_image_container.classList.add("fs-ecl-modal-image-container");
+      modal_image_container.style.backgroundImage = `url(${promotion.image.url})`;
+      modal_image_container.appendChild(modal_image);
+
+      modal_image_column.appendChild(modal_image_container);
+      modal.appendChild(modal_image_column);
+    }
+
+    const css = `
+      .fs-ecl-modal-container {
+        z-index: 9999;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-animation: fadeIn 0.5s;
+        animation: fadeIn 0.5s;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0,0,0,0.45);
+        overflow-y: scroll;
+      }
+      .fs-ecl-modal {
+        margin: 10vh auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        position: relative;
+        width: 95%;
+        max-width: 880px;
+        height: fit-content;
+      }
+      .fs-ecl-modal.fs-ecl-modal-image-left {
+        flex-direction: row-reverse;
+      }
+      .fs-ecl-modal-header {
+        font-size: 32px;
+        font-weight: 600;
+      }
+      .fs-ecl-modal-content {
+        font-size: 20px;
+        line-height: 1.5;
+        font-weight: 400;
+      }
+      .fs-ecl-modal-text-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+        width: 50%;
+        padding: 30px 30px;
+      }
+      .fs-ecl-modal.fs-ecl-modal-no-image .fs-ecl-modal-text-column {
+        width: 100%;
+      }
+      .fs-ecl-modal-image-column {
+        width: 50%;
+      }
+      .fs-ecl-modal-image-container {
+        overflow: hidden;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .fs-ecl-modal-image {
+        max-width: unset;
+        object-fit: cover;
+        display: none;
+      }
+      .fs-ecl-modal-form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        width: 100%;
+      }
+      .fs-ecl-modal-email {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+      }
+      .fs-ecl-modal-submit {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        font-size: 18px;
+        opacity: 1;
+        transition: opacity 0.7s;
+      }
+      .fs-ecl-modal-submit:hover {
+        opacity: 0.8;
+      }
+      .fs-ecl-modal-success-button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        opacity: 1;
+        transition: opacity 0.7s;
+      }
+      .fs-ecl-modal-success-button:hover {
+        text-decoration: none;
+        opacity: 0.8;
+      }
+      .fs-ecl-modal-error {
+        display: none;
+        color: #F04245;
+        font-size: 16px;
+      }
+      .fs-ecl-modal-form.has-error .fs-ecl-modal-error {
+        display: block;
+      }
+      .fs-ecl-post-submission-show {
+        display: none;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-pre-submission-show {
+        display: none;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-post-submission-show {
+        display: block;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-success {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        width: 100%;
+      }
+
+      .fs-ecl-modal-close-button {
+        position: absolute;
+        box-sizing: content-box;
+        right: 10px;
+        top: 10px;
+        width: 25px;
+        height: 25px;
+        z-index: 1000;
+        padding: 5px;
+        border: 3px solid #f6f7f8;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.3s opacity ease-in-out;
+      }
+      .fs-ecl-modal-close-button:hover {
+        opacity: 1;
+      }
+      .fs-ecl-modal-close-button:hover::before {
+        transform: rotate(45deg) scale(1.5);
+      }
+      .fs-ecl-modal-close-button:hover::after {
+        transform: rotate(-45deg) scale(1.5);
+      }
+      .fs-ecl-modal-close-button::before,
+      .fs-ecl-modal-close-button::after {
+        transition: 0.3s transform ease-in-out, 0.3s background-color ease-in-out;
+        position: absolute;
+        content: " ";
+        height: 19px;
+        width: 2px;
+        background-color: #f6f7f8;
+        left: 17px;
+        top: 8px;
+      }
+      .fs-ecl-modal-close-button::before {
+        transform: rotate(45deg);
+      }
+      .fs-ecl-modal-close-button::after {
+        transform: rotate(-45deg);
+      }
+
+      .fs-ecl-modal-noscroll {
+        overflow: hidden;
+      }
+
+      @media (max-width: 700px) {
+        .fs-ecl-modal-container {
+          align-items: flex-start;
+        }
+        .fs-ecl-modal,
+        .fs-ecl-modal.fs-ecl-modal-image-left,
+        .fs-ecl-modal.fs-ecl-modal-image-right {
+          flex-direction: column-reverse;
+        }
+        .fs-ecl-modal-text-column,
+        .fs-ecl-modal-image-column {
+          width: 100%;
+        }
+        .fs-ecl-modal-container {
+          background-image: unset;
+        }
+        .fs-ecl-modal-image {
+          object-fit: contain;
+          max-width: 100%;
+          display: block;
+        }
+        .fs-ecl-modal-header {
+          font-size: 24px;
+        }
+        .fs-ecl-modal-content {
+          font-size: 18px;
+        }
+        .fs-ecl-modal-submit {
+          font-size: 18px;
+        }
+      }
+      ${promotion.css}
+    `;
+    insertCss(promotion.id, css);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Prevent scrolling of the page while the modal is open
+    document.body.classList.add('fs-ecl-modal-noscroll');
+
+    // Handle form submission -> POST to the WP proxy, which submits to Engaging Networks
+    modal_form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const is_valid = validateEmail(modal_email);
+      if (!is_valid) {
+        modal_form.classList.add("has-error");
+        return;
+      }
+      modal_form.classList.remove("has-error");
+      submitEmailCaptureToEn(promotion, modal_email.value, modal, modal_form);
+    });
+
+    // Handle closure of the modal
+    function detectEscape(e) {
+      if (e.key === "Escape") {
+        closeEclModal();
+      }
+    }
+    function clickOutsideModal(e) {
+      closeEclModal();
+    }
+    function clickWithinModal(e) {
+      e.stopPropagation();
+    }
+    function closeEclModal() {
+      document.body.removeEventListener('keyup', detectEscape);
+      document.querySelector('.fs-ecl-modal-close-button').removeEventListener('click', closeEclModal);
+      document.querySelector('.fs-ecl-modal-container').removeEventListener('click', clickOutsideModal);
+      document.querySelector('.fs-ecl-modal').removeEventListener('click', clickWithinModal);
+      document.querySelector('.fs-ecl-modal-container').style.display = 'none';
+      document.body.classList.remove('fs-ecl-modal-noscroll');
+    }
+    document.body.addEventListener('keyup', detectEscape);
+    document.querySelector('.fs-ecl-modal-close-button').addEventListener('click', closeEclModal);
+    document.querySelector('.fs-ecl-modal').addEventListener('click', clickWithinModal);
+    document.querySelector('.fs-ecl-modal-container').addEventListener('click', clickOutsideModal);
+  }
+
+  async function submitEmailCaptureToEn(promotion, email, modal, form) {
+    function showSuccess() {
+      modal.classList.add("submitted");
+      if (parseInt(promotion.cookie_hours) > 0) {
+        setCookie(promotion.cookie_name, promotion.cookie_hours);
+      }
+    }
+
+    // If the EN proxy isn't configured, just show the success state.
+    if (!promotion.submit_url) {
+      showSuccess();
+      return;
+    }
+
+    form.classList.add("processing");
+    try {
+      const response = await fetch(promotion.submit_url, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({ email: email }),
+      });
+      const r = await response.json();
+      if (r.success) {
+        showSuccess();
+      } else {
+        form.classList.add("has-error");
+        console.error('Error submitting email capture to Engaging Networks', r.error);
+      }
+    } catch (error) {
+      form.classList.add("has-error");
+      console.error('Error submitting email capture to Engaging Networks', error);
+    }
+    form.classList.remove("processing");
   }
 
   function addRawCode(promotion) {

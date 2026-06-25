@@ -108,6 +108,7 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 			'engrid_custom_svg',
 			'rollup',
 			'cta_lightbox',
+			'email_capture_lightbox',
 			'attributes'
 		];
 	}
