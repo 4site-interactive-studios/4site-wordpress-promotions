@@ -1106,6 +1106,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   async function submitEmailCaptureToEn(promotion, email, modal, form) {
     function showSuccess() {
+      // Lock the text column to its current (pre-submission) height so swapping the form for the
+      // success message doesn't change the lightbox height.
+      const text_column = modal.querySelector(".fs-ecl-modal-text-column");
+      if (text_column) {
+        text_column.style.minHeight = text_column.offsetHeight + "px";
+      }
       modal.classList.add("submitted");
       if (parseInt(promotion.cookie_hours) > 0) {
         setCookie(promotion.cookie_name, promotion.cookie_hours);
