@@ -16,7 +16,7 @@
  * Plugin Name:       4Site Promotions Plugin
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.12.8
+ * Version:           1.13.0
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.12.8' );
+define( 'foursite_wordpress_promotion_VERSION', '1.13.0' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -439,23 +439,21 @@ function foursite_wordpress_promotion_fes_submit() {
 /**
  * Submit an email capture through the Engaging Networks proxy endpoint.
  *
- * The proxy authenticates to EN with its own (whitelisted) API token and maps the
- * email + opt-in values to the correct EN supporter fields. We send a simple
- * form-urlencoded body: email, optin, development_optin.
+ * The proxy authenticates to EN with its own (whitelisted) API token and writes the
+ * supporter. We send a form-urlencoded body: the email plus any number of question
+ * name/value pairs as questions[Name]=Value, which the proxy forwards to EN's questions.
  *
- * @param string $proxy_url               Full proxy endpoint URL.
- * @param string $email                   Validated supporter email address.
- * @param string $global_optin_value      Value for the Global Opt-In (e.g. "Y"), or empty to omit.
- * @param string $development_optin_value Value for the Development Opt-In (e.g. "Y"), or empty to omit.
+ * @param string $proxy_url Full proxy endpoint URL.
+ * @param string $email     Validated supporter email address.
+ * @param array  $questions Map of EN question name => value (e.g. ['Global Opt-In' => 'Y']).
  * @return void  Emits a JSON response and returns.
  */
-function foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $global_optin_value, $development_optin_value) {
+function foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions) {
     $body = ['email' => $email];
-    if($global_optin_value !== '') {
-        $body['optin'] = $global_optin_value;
-    }
-    if($development_optin_value !== '') {
-        $body['development_optin'] = $development_optin_value;
+    if(!empty($questions)) {
+        // wp_remote_post encodes this as questions[Name]=Value, which PHP rebuilds into
+        // $_REQUEST['questions'] on the proxy.
+        $body['questions'] = $questions;
     }
 
     // The proxy reads $_REQUEST / form-urlencoded input, so send it as a form post (not JSON).
@@ -503,9 +501,18 @@ function foursite_wordpress_promotion_eclb_submit() {
 
     $config = get_field('email_capture_lightbox', $promo_id);
 
-    // Opt-in values. The proxy owns the EN field/opt-in name mapping; we only send values.
-    $global_optin_value = !empty($config['global_optin_value']) ? $config['global_optin_value'] : '';
-    $development_optin_value = !empty($config['development_optin_value']) ? $config['development_optin_value'] : '';
+    // Build the question name/value pairs from the Opt-Ins repeater. Each row maps an EN question
+    // name/ID to a value; the proxy forwards these verbatim to EN's questions object.
+    $questions = [];
+    if(!empty($config['en_optins']) && is_array($config['en_optins'])) {
+        foreach($config['en_optins'] as $row) {
+            $name = isset($row['optin_name']) ? trim($row['optin_name']) : '';
+            $value = isset($row['optin_value']) ? trim($row['optin_value']) : '';
+            if($name !== '' && $value !== '') {
+                $questions[$name] = $value;
+            }
+        }
+    }
 
     // Submissions are handled by a server-side proxy that holds the API token on a whitelisted host.
     // This keeps the token off the client and works from hosts without a fixed outbound IP (e.g. Pantheon).
@@ -514,7 +521,7 @@ function foursite_wordpress_promotion_eclb_submit() {
         return wp_send_json(['success' => false, 'error' => 'Engaging Networks proxy endpoint is not configured.']);
     }
 
-    return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $global_optin_value, $development_optin_value);
+    return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions);
 }
 
 function foursite_wordpress_promotion_plugin_data() {
