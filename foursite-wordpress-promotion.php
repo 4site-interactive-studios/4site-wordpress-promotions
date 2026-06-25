@@ -16,7 +16,7 @@
  * Plugin Name:       4Site Promotions Plugin
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.11.0
+ * Version:           1.12.0
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.11.0' );
+define( 'foursite_wordpress_promotion_VERSION', '1.12.0' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -437,50 +437,6 @@ function foursite_wordpress_promotion_fes_submit() {
 }
 
 /**
- * Authenticate against the Engaging Networks Data API and return a session token.
- * The token is cached in a transient for the duration of its lifetime so we don't
- * re-authenticate on every submission.
- *
- * @param string $base_url  EN data center base URL, no trailing slash.
- * @param string $api_token EN public API token.
- * @return string|WP_Error  The ens-auth-token, or a WP_Error on failure.
- */
-function foursite_wordpress_promotion_en_auth_token($base_url, $api_token) {
-    // Guard against whitespace/newlines introduced when copy-pasting into the options fields.
-    $base_url = trim($base_url);
-    $api_token = trim($api_token);
-    $cache_key = 'fwp_en_auth_' . md5($base_url . '|' . $api_token);
-    $cached = get_transient($cache_key);
-    if($cached) {
-        return $cached;
-    }
-
-    $auth_url = rtrim($base_url, '/') . '/ens/service/authenticate';
-    $response = wp_remote_post($auth_url, [
-        'headers' => ['Content-Type' => 'application/json; charset=UTF-8'],
-        'body' => $api_token,
-        'timeout' => 15,
-    ]);
-    if(is_wp_error($response)) {
-        return $response;
-    }
-    $code = wp_remote_retrieve_response_code($response);
-    $raw_body = wp_remote_retrieve_body($response);
-    $body = json_decode($raw_body, true);
-    if($code < 200 || $code >= 300 || empty($body['ens-auth-token'])) {
-        return new WP_Error('en_auth_failed', 'Engaging Networks authentication failed (HTTP ' . $code . ').', $body);
-    }
-
-    $token = $body['ens-auth-token'];
-    // "expires" is the token lifetime in milliseconds. Cache for slightly less, in seconds.
-    $lifetime_seconds = isset($body['expires']) ? intval($body['expires'] / 1000) : 600;
-    $ttl = max(60, $lifetime_seconds - 60);
-    set_transient($cache_key, $token, $ttl);
-
-    return $token;
-}
-
-/**
  * Submit an email capture through the Engaging Networks proxy endpoint.
  *
  * The proxy authenticates to EN with its own (whitelisted) API token and maps the
@@ -546,72 +502,19 @@ function foursite_wordpress_promotion_eclb_submit() {
     $promo_id = $_GET['promo_id'];
 
     $config = get_field('email_capture_lightbox', $promo_id);
-    $email_field = !empty($config['email_field_name']) ? $config['email_field_name'] : 'Email Address';
 
-    // Opt-in values (the question name/ID mapping is handled differently per submission method below).
+    // Opt-in values. The proxy owns the EN field/opt-in name mapping; we only send values.
     $global_optin_value = !empty($config['global_optin_value']) ? $config['global_optin_value'] : '';
     $development_optin_value = !empty($config['development_optin_value']) ? $config['development_optin_value'] : '';
 
-    // When the proxy is enabled, hand off to a server-side proxy that holds the API token on a
-    // whitelisted host. This avoids exposing the token here and works from hosts without a fixed
-    // outbound IP (e.g. Pantheon). The proxy owns the EN field/opt-in name mapping; we only send values.
-    $use_proxy = get_field('promotion_en_use_proxy', 'options');
+    // Submissions are handled by a server-side proxy that holds the API token on a whitelisted host.
+    // This keeps the token off the client and works from hosts without a fixed outbound IP (e.g. Pantheon).
     $proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
-    if($use_proxy && $proxy_url) {
-        return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $global_optin_value, $development_optin_value);
+    if(!$proxy_url) {
+        return wp_send_json(['success' => false, 'error' => 'Engaging Networks proxy endpoint is not configured.']);
     }
 
-    // Direct Engaging Networks Data API path (authenticate + page process).
-    $page_id = $config['en_page_id'] ?? '';
-    $base_url = get_field('promotion_en_api_base_url', 'options');
-    $api_token = get_field('promotion_en_api_token', 'options');
-
-    if(!$page_id || !$base_url || !$api_token) {
-        return wp_send_json(['success' => false, 'error' => 'Engaging Networks is not fully configured.']);
-    }
-
-    // Build the opt-in questions object from the configured question name/ID + value pairs.
-    $questions = [];
-    if(!empty($config['global_optin_field'])) {
-        $questions[$config['global_optin_field']] = $config['global_optin_value'];
-    }
-    if(!empty($config['development_optin_field'])) {
-        $questions[$config['development_optin_field']] = $config['development_optin_value'];
-    }
-
-    $payload = [$email_field => $email];
-    if(!empty($questions)) {
-        $payload['questions'] = $questions;
-    }
-
-    $token = foursite_wordpress_promotion_en_auth_token($base_url, $api_token);
-    if(is_wp_error($token)) {
-        return wp_send_json(['success' => false, 'error' => 'Could not authenticate with Engaging Networks. ' . $token->get_error_message()]);
-    }
-
-    $process_url = rtrim($base_url, '/') . '/ens/service/page/' . rawurlencode($page_id) . '/process';
-    $response = wp_remote_post($process_url, [
-        'headers' => [
-            'Content-Type' => 'application/json; charset=UTF-8',
-            'ens-auth-token' => $token,
-        ],
-        'body' => wp_json_encode($payload),
-        'timeout' => 15,
-    ]);
-    if(is_wp_error($response)) {
-        return wp_send_json(['success' => false, 'error' => 'Could not reach Engaging Networks.']);
-    }
-
-    // EN can return HTTP 200 while signalling an error in the body via an "errors" array or a
-    // "messageId" envelope; treat either (or a non-2xx status) as a failure.
-    $code = wp_remote_retrieve_response_code($response);
-    $body = json_decode(wp_remote_retrieve_body($response), true);
-    $en_error = is_array($body) && (!empty($body['errors']) || isset($body['messageId']));
-    if($code < 200 || $code >= 300 || $en_error) {
-        return wp_send_json(['success' => false, 'error' => 'Engaging Networks rejected the submission.']);
-    }
-
-    return wp_send_json(['success' => true]);
+    return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $global_optin_value, $development_optin_value);
 }
 
 function foursite_wordpress_promotion_plugin_data() {

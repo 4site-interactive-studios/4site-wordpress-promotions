@@ -890,17 +890,10 @@ class Foursite_Wordpress_Promotion_Public
 			$success_button = ['title' => '', 'url' => '', 'target' => ''];
 		}
 
-		// Submission is "ready" when either path is fully configured: the proxy (preferred when the
-		// API token is IP-restricted / this host has no fixed outbound IP) or the direct EN Data API.
-		$en_use_proxy = get_field('promotion_en_use_proxy', 'options');
-		$en_proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
-		$proxy_ready = $en_use_proxy && $en_proxy_url;
-
-		$en_api_base_url = get_field('promotion_en_api_base_url', 'options');
-		$en_api_token = get_field('promotion_en_api_token', 'options');
-		$direct_ready = $config['en_page_id'] && $en_api_base_url && $en_api_token;
-
-		$en_ready = $proxy_ready || $direct_ready;
+		// Submission is "ready" once the proxy endpoint is configured. The proxy holds the EN API
+		// token on a whitelisted host, which is required when the token is IP-restricted / this host
+		// has no fixed outbound IP (e.g. Pantheon).
+		$en_ready = trim((string) get_field('promotion_en_proxy_url', 'options')) !== '';
 		$eclb_nonce = wp_create_nonce('eclb_nonce');
 
 		return [
