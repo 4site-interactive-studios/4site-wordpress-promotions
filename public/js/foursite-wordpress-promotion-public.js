@@ -848,6 +848,10 @@ window.addEventListener("DOMContentLoaded", () => {
       modal.appendChild(modal_image_column);
     }
 
+    // Theme the success-body scrollbar to blend with the modal: thumb uses the submit button's
+    // background color (falling back to the text color, then a neutral), track stays transparent.
+    const scrollbar_thumb = promotion.submit.bg_color || promotion.fg_color || "rgba(0,0,0,0.4)";
+
     const css = `
       .fs-ecl-modal-container {
         z-index: 9999;
@@ -991,6 +995,18 @@ window.addEventListener("DOMContentLoaded", () => {
         min-height: 0;
         overflow-y: auto;
         width: 100%;
+        scrollbar-width: thin;
+        scrollbar-color: ${scrollbar_thumb} transparent;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar-thumb {
+        background-color: ${scrollbar_thumb};
+        border-radius: 8px;
       }
 
       .fs-ecl-modal-close-button {
