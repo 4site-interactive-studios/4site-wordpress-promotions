@@ -560,6 +560,7 @@ window.addEventListener("DOMContentLoaded", () => {
         gap: 20px;
         width: 50%;
         padding: 30px 30px;
+        box-sizing: border-box;
       }
       .fs-cta-modal.fs-cta-modal-no-image .fs-cta-modal-text-column {
         width: 100%;
@@ -587,6 +588,7 @@ window.addEventListener("DOMContentLoaded", () => {
         text-decoration: none;
         cursor: pointer;
         width: 100%;
+        box-sizing: border-box;
         opacity: 1;
         transition: opacity 0.7s;
       }
