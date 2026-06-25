@@ -448,8 +448,22 @@ function foursite_wordpress_promotion_fes_submit() {
  * @param array  $questions Map of EN question name => value (e.g. ['Global Opt-In' => 'Y']).
  * @return void  Emits a JSON response and returns.
  */
-function foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions) {
+function foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions, $page_id = '', $appeal_code = '', $origin_source = '') {
     $body = ['email' => $email];
+    if($page_id !== '') {
+        // Page-submission mode: the proxy submits the email through this EN page. Any opt-ins are sent
+        // alongside the page's own opt-in config.
+        $body['page_id'] = $page_id;
+        // Per-transaction tracking. Only meaningful in page mode (recorded on the page's transaction):
+        // appeal code has no page default in EN, so it can only come from here; origin source overrides
+        // the page default and is written only to brand-new supporter records.
+        if($appeal_code !== '') {
+            $body['appeal_code'] = $appeal_code;
+        }
+        if($origin_source !== '') {
+            $body['origin_source'] = $origin_source;
+        }
+    }
     if(!empty($questions)) {
         // wp_remote_post encodes this as questions[Name]=Value, which PHP rebuilds into
         // $_REQUEST['questions'] on the proxy.
@@ -501,8 +515,16 @@ function foursite_wordpress_promotion_eclb_submit() {
 
     $config = get_field('email_capture_lightbox', $promo_id);
 
+    // Submissions are handled by a server-side proxy that holds the API token on a whitelisted host.
+    // This keeps the token off the client and works from hosts without a fixed outbound IP (e.g. Pantheon).
+    $proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
+    if(!$proxy_url) {
+        return wp_send_json(['success' => false, 'error' => 'Engaging Networks proxy endpoint is not configured.']);
+    }
+
     // Build the question name/value pairs from the Opt-Ins repeater. Each row maps an EN question
-    // name/ID to a value; the proxy forwards these verbatim to EN's questions object.
+    // name/ID to a value; the proxy forwards these verbatim to EN's questions object. Opt-ins apply to
+    // both submission methods (in page mode they are submitted alongside the page's own opt-in config).
     $questions = [];
     if(!empty($config['en_optins']) && is_array($config['en_optins'])) {
         foreach($config['en_optins'] as $row) {
@@ -514,11 +536,19 @@ function foursite_wordpress_promotion_eclb_submit() {
         }
     }
 
-    // Submissions are handled by a server-side proxy that holds the API token on a whitelisted host.
-    // This keeps the token off the client and works from hosts without a fixed outbound IP (e.g. Pantheon).
-    $proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
-    if(!$proxy_url) {
-        return wp_send_json(['success' => false, 'error' => 'Engaging Networks proxy endpoint is not configured.']);
+    // The Submission Method field selects where the email goes:
+    //   - 'page'   : submit through a specific EN page (which also applies its own opt-in config).
+    //   - 'optins' : submit the supporter directly. Opt-ins are sent in either case.
+    $method = isset($config['en_submit_method']) && $config['en_submit_method'] ? $config['en_submit_method'] : 'optins';
+
+    if($method === 'page') {
+        $page_id = isset($config['en_page_id']) ? trim((string) $config['en_page_id']) : '';
+        if($page_id === '') {
+            return wp_send_json(['success' => false, 'error' => 'Engaging Networks page is not configured.']);
+        }
+        $appeal_code = isset($config['en_appeal_code']) ? trim((string) $config['en_appeal_code']) : '';
+        $origin_source = isset($config['en_origin_source']) ? trim((string) $config['en_origin_source']) : '';
+        return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions, $page_id, $appeal_code, $origin_source);
     }
 
     return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions);

@@ -1130,6 +1130,9 @@ window.addEventListener("DOMContentLoaded", () => {
       if (!debug) {
         const is_valid = validateEmail(modal_email);
         if (!is_valid) {
+          // Validation failure: show the invalid-email message (reset in case a prior submission
+          // attempt replaced it with the server-error message).
+          modal_error.innerHTML = "The email address is invalid, please try again.";
           modal_form.classList.add("has-error");
           return;
         }
@@ -1165,6 +1168,15 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   async function submitEmailCaptureToEn(promotion, email, modal, form) {
+    // The form's error element is shared with email validation, so set an accurate, submission-specific
+    // message here rather than letting the default "invalid email" text show for a server/proxy failure.
+    function showSubmitError(form) {
+      const err_el = form.querySelector(".fs-ecl-modal-error");
+      if (err_el) {
+        err_el.innerHTML = "Sorry, something went wrong and we couldn't sign you up. Please try again.";
+      }
+      form.classList.add("has-error");
+    }
     function showSuccess(skip_cookie) {
       // Lock the text column to its current (pre-submission) height so swapping the form for the
       // success message doesn't change the lightbox height. The column clips; only the success body
@@ -1227,11 +1239,11 @@ window.addEventListener("DOMContentLoaded", () => {
       if (r.success) {
         showSuccess();
       } else {
-        form.classList.add("has-error");
+        showSubmitError(form);
         console.error('Error submitting email capture to Engaging Networks', r.error);
       }
     } catch (error) {
-      form.classList.add("has-error");
+      showSubmitError(form);
       console.error('Error submitting email capture to Engaging Networks', error);
     }
     form.classList.remove("processing");
