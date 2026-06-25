@@ -980,6 +980,13 @@ window.addEventListener("DOMContentLoaded", () => {
         gap: 20px;
         width: 100%;
         flex: 1 1 auto;
+        min-height: 0;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        width: 100%;
       }
 
       .fs-ecl-modal-close-button {
@@ -1109,12 +1116,12 @@ window.addEventListener("DOMContentLoaded", () => {
   async function submitEmailCaptureToEn(promotion, email, modal, form) {
     function showSuccess() {
       // Lock the text column to its current (pre-submission) height so swapping the form for the
-      // success message doesn't change the lightbox height. If the success content is taller, it
-      // scrolls within the locked height rather than growing the lightbox.
+      // success message doesn't change the lightbox height. The column clips; only the success body
+      // (.fs-ecl-modal-content) scrolls, keeping the header and button fixed in place.
       const text_column = modal.querySelector(".fs-ecl-modal-text-column");
       if (text_column) {
         text_column.style.height = text_column.offsetHeight + "px";
-        text_column.style.overflowY = "auto";
+        text_column.style.overflow = "hidden";
       }
       modal.classList.add("submitted");
       if (parseInt(promotion.cookie_hours) > 0) {
