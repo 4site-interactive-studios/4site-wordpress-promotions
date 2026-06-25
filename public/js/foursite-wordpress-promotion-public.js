@@ -761,6 +761,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const modal_form = document.createElement("form");
     modal_form.classList.add("fs-ecl-modal-form");
     modal_form.classList.add("fs-ecl-pre-submission-show");
+    // Debug: disable native validation so ?eclb_debug can submit (preview success) with an empty field.
+    if (new URLSearchParams(window.location.search).has("eclb_debug")) {
+      modal_form.setAttribute("novalidate", "");
+    }
 
     const modal_email = document.createElement("input");
     modal_email.classList.add("fs-ecl-modal-email");
