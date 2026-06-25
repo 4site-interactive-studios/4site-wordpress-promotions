@@ -992,6 +992,29 @@ window.addEventListener("DOMContentLoaded", () => {
         flex: 1 1 auto;
         min-height: 0;
       }
+      /* Blur/fade transition between the pre- and post-submission content. */
+      .fs-ecl-pre-submission-show,
+      .fs-ecl-modal-success {
+        transition: opacity 0.3s ease, filter 0.3s ease;
+      }
+      .fs-ecl-modal.transitioning .fs-ecl-pre-submission-show {
+        opacity: 0;
+        filter: blur(8px);
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-success {
+        opacity: 0;
+        filter: blur(8px);
+      }
+      .fs-ecl-modal.submitted.revealed .fs-ecl-modal-success {
+        opacity: 1;
+        filter: blur(0);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fs-ecl-pre-submission-show,
+        .fs-ecl-modal-success {
+          transition: none;
+        }
+      }
       .fs-ecl-modal.submitted .fs-ecl-modal-content {
         flex: 1 1 auto;
         min-height: 0;
@@ -1143,16 +1166,36 @@ window.addEventListener("DOMContentLoaded", () => {
     function showSuccess(skip_cookie) {
       // Lock the text column to its current (pre-submission) height so swapping the form for the
       // success message doesn't change the lightbox height. The column clips; only the success body
-      // (.fs-ecl-modal-content) scrolls, keeping the header and button fixed in place.
+      // (.fs-ecl-modal-content) scrolls, keeping the header and button fixed in place. Measure before
+      // any blur is applied (filter/opacity don't affect layout, but height must reflect the form).
       const text_column = modal.querySelector(".fs-ecl-modal-text-column");
       if (text_column) {
         text_column.style.height = text_column.offsetHeight + "px";
         text_column.style.overflow = "hidden";
       }
-      modal.classList.add("submitted");
       if (!skip_cookie && parseInt(promotion.cookie_hours) > 0) {
         setCookie(promotion.cookie_name, promotion.cookie_hours);
       }
+
+      // Honor reduced-motion: swap instantly with no blur/fade.
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) {
+        modal.classList.add("submitted", "revealed");
+        return;
+      }
+
+      // Blur + fade the current content out, then swap and blur + fade the success content in.
+      modal.classList.add("transitioning");
+      setTimeout(function () {
+        modal.classList.remove("transitioning");
+        modal.classList.add("submitted");
+        // Two frames so the blurred initial state paints before transitioning to clear.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("revealed");
+          });
+        });
+      }, 300);
     }
 
     // Debug: ?eclb_debug previews the post-submit content without submitting. Skip the suppression
