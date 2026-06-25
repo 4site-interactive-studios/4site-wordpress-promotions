@@ -889,6 +889,7 @@ window.addEventListener("DOMContentLoaded", () => {
         gap: 20px;
         width: 50%;
         padding: 30px 30px;
+        box-sizing: border-box;
       }
       .fs-ecl-modal.fs-ecl-modal-no-image .fs-ecl-modal-text-column {
         width: 100%;
