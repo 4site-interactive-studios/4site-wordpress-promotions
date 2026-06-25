@@ -1078,12 +1078,16 @@ window.addEventListener("DOMContentLoaded", () => {
     // Handle form submission -> POST to the WP proxy, which submits to Engaging Networks
     modal_form.addEventListener("submit", function (e) {
       e.preventDefault();
-      const is_valid = validateEmail(modal_email);
-      if (!is_valid) {
-        modal_form.classList.add("has-error");
-        return;
+      // Debug: ?eclb_debug shows the post-submit content on click without validating or submitting.
+      const debug = new URLSearchParams(window.location.search).has("eclb_debug");
+      if (!debug) {
+        const is_valid = validateEmail(modal_email);
+        if (!is_valid) {
+          modal_form.classList.add("has-error");
+          return;
+        }
+        modal_form.classList.remove("has-error");
       }
-      modal_form.classList.remove("has-error");
       submitEmailCaptureToEn(promotion, modal_email.value, modal, modal_form);
     });
 
@@ -1114,7 +1118,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   async function submitEmailCaptureToEn(promotion, email, modal, form) {
-    function showSuccess() {
+    function showSuccess(skip_cookie) {
       // Lock the text column to its current (pre-submission) height so swapping the form for the
       // success message doesn't change the lightbox height. The column clips; only the success body
       // (.fs-ecl-modal-content) scrolls, keeping the header and button fixed in place.
@@ -1124,9 +1128,16 @@ window.addEventListener("DOMContentLoaded", () => {
         text_column.style.overflow = "hidden";
       }
       modal.classList.add("submitted");
-      if (parseInt(promotion.cookie_hours) > 0) {
+      if (!skip_cookie && parseInt(promotion.cookie_hours) > 0) {
         setCookie(promotion.cookie_name, promotion.cookie_hours);
       }
+    }
+
+    // Debug: ?eclb_debug previews the post-submit content without submitting. Skip the suppression
+    // cookie so the lightbox keeps showing on reload while testing.
+    if (new URLSearchParams(window.location.search).has("eclb_debug")) {
+      showSuccess(true);
+      return;
     }
 
     // If the EN proxy isn't configured, just show the success state.
