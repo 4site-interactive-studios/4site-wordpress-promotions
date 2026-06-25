@@ -950,6 +950,7 @@ window.addEventListener("DOMContentLoaded", () => {
         cursor: pointer;
         opacity: 1;
         transition: opacity 0.7s;
+        margin-top: auto;
       }
       .fs-ecl-modal-success-button:hover {
         text-decoration: none;
@@ -978,6 +979,7 @@ window.addEventListener("DOMContentLoaded", () => {
         align-items: flex-start;
         gap: 20px;
         width: 100%;
+        flex: 1 1 auto;
       }
 
       .fs-ecl-modal-close-button {
