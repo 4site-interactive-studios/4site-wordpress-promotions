@@ -933,6 +933,8 @@ window.addEventListener("DOMContentLoaded", () => {
         padding: 10px;
         font-size: 18px;
         border: 1px solid #ccc;
+        /* Set an explicit text color; themes commonly reset inputs to color: inherit. */
+        color: #000;
       }
       .fs-ecl-modal-submit {
         display: block;
