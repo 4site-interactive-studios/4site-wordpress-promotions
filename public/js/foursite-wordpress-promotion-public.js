@@ -121,7 +121,75 @@ window.addEventListener("DOMContentLoaded", () => {
     //return (promotion.url.indexOf('/a/') >= 0);
   }
 
+  // The lightbox parent script (which defines DonationLightbox /
+  // EADonationLightbox) may be loaded one of two ways, controlled by the
+  // "Lazy-load Lightbox Script" plugin setting:
+  //   - OFF (default): it's enqueued up front, so the constructor is already
+  //     present here -- the check below short-circuits and runs immediately.
+  //   - ON: PHP passes its URL via `foursite_promotion_multistep_script` and we
+  //     load it on demand, the first time a promo actually needs it. Lazy mode
+  //     requires a parent script that registers its constructor on load (not
+  //     only on DOMContentLoaded), since we inject it after that event fires.
+  let multistepScriptState = "unloaded"; // "unloaded" | "loading" | "loaded"
+  const multistepScriptCallbacks = [];
+
+  function ensureMultistepScript(callback) {
+    // Already available (loaded up front, or already lazy-loaded by us).
+    if (window.DonationLightbox || window.EADonationLightbox) {
+      callback();
+      return;
+    }
+
+    multistepScriptCallbacks.push(callback);
+
+    // Already loading, or done loading (success or failure) -- don't load again.
+    if (multistepScriptState !== "unloaded") return;
+
+    const scriptUrl =
+      typeof foursite_promotion_multistep_script !== "undefined"
+        ? foursite_promotion_multistep_script.url
+        : undefined;
+    if (!scriptUrl) {
+      console.error(
+        "Lightbox script is not loaded and no URL was provided to lazy-load it."
+      );
+      multistepScriptCallbacks.length = 0;
+      return;
+    }
+
+    multistepScriptState = "loading";
+    const s = document.createElement("script");
+    s.src = scriptUrl;
+    s.onload = () => {
+      multistepScriptState = "loaded";
+      if (!window.DonationLightbox && !window.EADonationLightbox) {
+        // The script loaded but didn't expose a constructor. This almost always
+        // means lazy-load is enabled against a script that only registers on
+        // DOMContentLoaded (which has already fired). Use a lazy-load-capable
+        // build, or turn the "Lazy-load Lightbox Script" setting off.
+        console.error(
+          "Lightbox script loaded but did not register a lightbox constructor; it may not support lazy-loading."
+        );
+        multistepScriptCallbacks.length = 0;
+        return;
+      }
+      while (multistepScriptCallbacks.length) {
+        multistepScriptCallbacks.shift()();
+      }
+    };
+    s.onerror = () => {
+      multistepScriptState = "unloaded";
+      multistepScriptCallbacks.length = 0;
+      console.error("Failed to load lightbox script.");
+    };
+    document.head.appendChild(s);
+  }
+
   function addMultistepLightbox(promotion) {
+    ensureMultistepScript(() => addMultistepLightboxNow(promotion));
+  }
+
+  function addMultistepLightboxNow(promotion) {
     if(isEveryAction(promotion)) {
       if (window.EADonationLightboxObj) {
         delete window.EADonationLightboxObj;
@@ -943,14 +1011,18 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     if (promotion.open_lightbox) {
-      if (window.DonationLightboxOptions) {
-        delete window.DonationLightboxOptions;
-      }
-      if (window.donationLightboxObj) {
-        delete window.donationLightboxObj;
-      }
-      clearEventsForFloatingTab();
-      window.donationLightboxObj = new DonationLightbox();
+      // This floating tab opens a donation lightbox, which also needs the
+      // lazy-loaded parent script. Ensure it's loaded before instantiating.
+      ensureMultistepScript(() => {
+        if (window.DonationLightboxOptions) {
+          delete window.DonationLightboxOptions;
+        }
+        if (window.donationLightboxObj) {
+          delete window.donationLightboxObj;
+        }
+        clearEventsForFloatingTab();
+        window.donationLightboxObj = new DonationLightbox();
+      });
     }
     if(hide_floating_tab) {
       hideFloatingTab();

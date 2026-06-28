@@ -231,6 +231,7 @@ class Foursite_Wordpress_Promotion_Public
 		$client_side_triggered_config = [];
 
 		$multistep_script_url = get_field('promotion_lightbox_script', 'options');
+		$lazy_load_lightbox = get_field('promotion_lightbox_lazy_load', 'options');
 
 		$script_ver = $this->version;
 		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
@@ -804,13 +805,24 @@ class Foursite_Wordpress_Promotion_Public
 			// move the floating_tab promo above any lightbox promos
 			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
 			
-			if ($multistep_script_url) {
+			// When lazy-loading is OFF (the default), keep the original behavior: load
+			// the lightbox parent script up front, before the main script depends on it.
+			// When ON, we hand the URL to the main script instead (see below) and let it
+			// load the parent script on demand only if a promo actually needs it. Lazy
+			// mode requires a parent script that registers its constructor on load (not
+			// only on DOMContentLoaded), so it stays opt-in per client.
+			$main_deps = array();
+			if ($multistep_script_url && !$lazy_load_lightbox) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
-				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
-			} else {
-				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array(), $script_ver, false);
+				$main_deps[] = 'multistep-lightbox';
 			}
+
+			wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, $main_deps, $script_ver, false);
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
+
+			if ($multistep_script_url && $lazy_load_lightbox) {
+				wp_localize_script('foursite-wordpress-promotion-public', 'foursite_promotion_multistep_script', array('url' => $multistep_script_url));
+			}
 		}
 	}
 
