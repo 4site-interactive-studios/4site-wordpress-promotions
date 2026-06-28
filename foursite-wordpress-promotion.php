@@ -39,6 +39,13 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  */
 define( 'foursite_wordpress_promotion_VERSION', '1.8.9.2' );
 
+/**
+ * Suffix for enqueued asset filenames. Resolves to '' when SCRIPT_DEBUG is on so
+ * the readable source files are loaded during development, and '.min' otherwise
+ * so the esbuild-minified versions are served in production. See `npm run build`.
+ */
+define( 'foursite_wordpress_promotion_MIN', ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min' );
+
 // Gutenberg Block
 function promotions_en_form_block() {
     register_block_type(__DIR__ . '/blocks/en-form');

@@ -73,7 +73,7 @@ class Foursite_Wordpress_Promotion_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'css/foursite-wordpress-promotion-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'css/foursite-wordpress-promotion-admin' . foursite_wordpress_promotion_MIN . '.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +96,7 @@ class Foursite_Wordpress_Promotion_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->foursite_wordpress_promotion, plugin_dir_url( __FILE__ ) . 'js/foursite-wordpress-promotion-admin' . foursite_wordpress_promotion_MIN . '.js', array( 'jquery' ), $this->version, false );
 
 	}
 

@@ -75,7 +75,7 @@ class Foursite_Wordpress_Promotion_Public
 		 * class.
 		 */
 
-		wp_enqueue_style($this->foursite_wordpress_promotion, plugin_dir_url(__FILE__) . 'css/foursite-wordpress-promotion-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->foursite_wordpress_promotion, plugin_dir_url(__FILE__) . 'css/foursite-wordpress-promotion-public' . foursite_wordpress_promotion_MIN . '.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -234,7 +234,7 @@ class Foursite_Wordpress_Promotion_Public
 		$lazy_load_lightbox = get_field('promotion_lightbox_lazy_load', 'options');
 
 		$script_ver = $this->version;
-		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
+		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public' . foursite_wordpress_promotion_MIN . '.js';
 
 		foreach ($lightbox_ids as $lightbox_id) {
 			$engrid_donation_page = get_field('engrid_donation_page', $lightbox_id);
@@ -638,7 +638,7 @@ class Foursite_Wordpress_Promotion_Public
 
 			} else if ($engrid_promotion_type == "floating_tab") {
 
-				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__), [], '1.0');
+				wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab' . foursite_wordpress_promotion_MIN . '.css', __FILE__), [], '1.0');
 
 				$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
 				$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);
