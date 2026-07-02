@@ -2,157 +2,173 @@
 
 require_once('class-foursite-wordpress-promotion-migration-base.php');
 
+/**
+ * Exports selected promotions to a single self-describing JSON document.
+ *
+ * The document carries each promotion's ACF values (assembled, unformatted) as
+ * native JSON, plus the metadata for every media attachment and page they
+ * reference. No per-value serialization is used -- json_encode round-trips
+ * HTML, newlines, ampersands and unicode losslessly, which the previous
+ * XML + serialize() approach could not.
+ */
 class Foursite_Wordpress_Promotion_Export extends Foursite_Wordpress_Promotion_Migration_Base {
 	public function __construct() {
-		add_filter('bulk_actions-edit-wordpress_promotion',					[$this, 'bulk_actions']);
-		add_filter('handle_bulk_actions-edit-wordpress_promotion',	[$this, 'bulk_action_handler'], 10, 3);
-		add_action('rest_api_init', 																[$this, 'register_rest_routes']);
+		add_filter('bulk_actions-edit-wordpress_promotion',        [$this, 'bulk_actions']);
+		add_filter('handle_bulk_actions-edit-wordpress_promotion', [$this, 'bulk_action_handler'], 10, 3);
+		add_action('rest_api_init',                                [$this, 'register_rest_routes']);
 	}
 
 	function register_rest_routes() {
-		register_rest_route('fswp/v1', '/exports/(.+)', array(
-			'methods' => 'GET',
-			'callback' => [$this, 'download_export'],
+		register_rest_route('fswp/v1', '/exports/(?P<file>[A-Za-z0-9._-]+)', array(
+			'methods'             => 'GET',
+			'callback'            => [$this, 'download_export'],
 			'permission_callback' => [$this, 'export_permissions_check'],
 		));
 	}
+
 	function export_permissions_check() {
-		// Current user is being views as anonymous/not logged in, so this isn't working as expected.
-		/*
-    if(!current_user_can('edit_posts')) {
-        return new WP_Error('rest_forbidden', esc_html__('You do not possess sufficient permissions to export promotions.', 'foursite-wordpress-promotion'), array('status' => 401));
-    }
-		*/
-    return true;
-}
-	function download_export($data) {
-		$ud = wp_upload_dir();
-		$download_filename = basename($data->get_route());
-		$download_file_path = $ud['basedir'] . '/fwp-assets/' . $download_filename;
-		if(file_exists($download_file_path)) {
-			header("Content-type: application/xhtml+xml");
-			header("Content-Length: " . filesize($download_file_path));
-			header('Content-disposition: attachment; filename="' . $download_filename . '"');
-			readfile($download_file_path);
-			wp_delete_file($download_file_path);
-			exit;	
+		// The download URL is opened via a normal browser navigation, so it
+		// carries the auth cookie; the redirect appends a `wp_rest` nonce that
+		// lets cookie auth resolve the current user for this REST request.
+		return current_user_can('edit_posts');
+	}
+
+	function download_export($request) {
+		$filename = basename($request['file']);
+
+		// Only serve files we created, and never allow path traversal.
+		if (strpos($filename, 'fswp-export-') !== 0 || substr($filename, -5) !== '.json') {
+			return new WP_Error('rest_not_found', 'Export not found.', ['status' => 404]);
 		}
+
+		$path = $this->assets_dir() . $filename;
+		if (!file_exists($path)) {
+			return new WP_Error('rest_not_found', 'Export not found.', ['status' => 404]);
+		}
+
+		header('Content-Type: application/json');
+		header('Content-Length: ' . filesize($path));
+		header('Content-Disposition: attachment; filename="' . $filename . '"');
+		readfile($path);
+		// Remove immediately: the file lives under a web-accessible uploads dir,
+		// so we don't leave promotion data sitting there after it's collected.
+		wp_delete_file($path);
+		exit;
 	}
 
 	function bulk_actions($bulk_actions) {
-		$bulk_actions['fswp_export'] = __( 'Export', 'foursite-wordpress-promotions' );
+		$bulk_actions['fswp_export'] = __('Export', 'foursite-wordpress-promotions');
 		return $bulk_actions;
 	}
 
-	function addXmlFromRepeaterAcf(&$xml, $post_id, $field_name) {
-		global $wpdb;
-		$repeater_field_records = $wpdb->get_results("SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$field_name}%' AND post_id = {$post_id}");
-		if($repeater_field_records) {
-			foreach($repeater_field_records as $rf_rec) {
-				$xml->addChild('ACF_' . $rf_rec->meta_key, serialize($rf_rec->meta_value));
-			}	
+	/**
+	 * Build the export document for the given promotion IDs.
+	 */
+	function build_document($post_ids) {
+		$fields    = $this->schema_fields();
+		$media_ids = [];
+		$page_ids  = [];
+		$promotions = [];
+
+		foreach ($post_ids as $post_id) {
+			$post = get_post($post_id);
+			if (!$post || $post->post_type !== self::POST_TYPE) {
+				continue;
+			}
+
+			$values = function_exists('get_fields') ? get_fields($post_id, false) : [];
+			if (!is_array($values)) {
+				$values = [];
+			}
+
+			$this->collect_reference_ids($fields, $values, $media_ids, $page_ids);
+
+			$promotions[] = [
+				'source_id' => (int) $post_id,
+				'title'     => $post->post_title,
+				'status'    => $post->post_status,
+				'pub_date'  => mysql2date('c', $post->post_date_gmt ?: $post->post_date),
+				'acf'       => $values,
+			];
 		}
+
+		return [
+			'format'         => self::EXPORT_FORMAT,
+			'format_version' => self::FORMAT_VERSION,
+			'plugin_version' => foursite_wordpress_promotion_VERSION,
+			'exported_at'    => gmdate('c'),
+			'source_site'    => home_url(),
+			'media'          => $this->build_media_manifest(array_keys($media_ids)),
+			'pages'          => $this->build_page_manifest(array_keys($page_ids)),
+			'promotions'     => $promotions,
+		];
 	}
 
-	function addXmlFromAcf(&$xml, $post_id, $field_name) {
-		$value = get_post_meta($post_id, $field_name, true);		
-		if($field_name == 'engrid_donation_page' && $value) {
-			$value = urlencode($value);
+	function build_media_manifest($media_ids) {
+		$media = [];
+		foreach ($media_ids as $id) {
+			$url = wp_get_attachment_url($id);
+			if (!$url) {
+				continue;
+			}
+			$attachment = get_post($id);
+			$media[$id] = [
+				'title'    => $attachment ? $attachment->post_title : '',
+				'url'      => $url,
+				'filename' => basename(parse_url($url, PHP_URL_PATH)),
+			];
 		}
-		if(in_array($field_name, ['engrid_javascript', 'engrid_footer', 'engrid_paragraph'])) {
-			$value = htmlspecialchars($value);
-		}
-		if($value !== null) {
-			$xml->addChild('ACF_' . $field_name, serialize($value));
-		}
-		return $value;
+		return $media;
 	}
 
-
-	function add_promo_xml(&$xml, $post_id) {
-		$promotion = get_post($post_id);
-
-		if($promotion) {
-			$acf_field_names = Foursite_Wordpress_Promotion_Export::acf_field_names();
-			$acf_image_field_names = Foursite_Wordpress_Promotion_Export::acf_image_field_names();
-			$acf_page_field_names = Foursite_Wordpress_Promotion_Export::acf_page_field_names();
-			$acf_repeater_field_names = Foursite_Wordpress_Promotion_Export::acf_repeater_field_names();
-
-			$xml_promo = $xml->addChild('promotion');
-			$xml_promo->addChild('title', $promotion->post_title);
-			$xml_promo->addChild('ID', $post_id);
-			$xml_promo->addChild('pubDate', date('r', strtotime($promotion->post_date)));
-			$xml_promo->addChild('status', $promotion->post_status);
-
-			foreach($acf_field_names as $field_name) {
-				if(in_array($field_name, $acf_repeater_field_names)) {
-					$acf_field_value = $this->addXmlFromRepeaterAcf($xml_promo, $post_id, $field_name);
-				} else {
-					$acf_field_value = $this->addXmlFromAcf($xml_promo, $post_id, $field_name);
-					if(array_key_exists($field_name, $acf_image_field_names)) {
-						$subkey = $acf_image_field_names[$field_name];
-						$media_id = null;
-		
-						if($subkey) {
-							$media_id = $acf_field_value[$subkey] ?? null;
-						} else {
-							$media_id = $acf_field_value ?? null;
-						}
-						if($media_id) {
-							$media = get_post($media_id);
-							$xml_media = $xml->addChild('media');
-							$xml_media->addChild('ID', $media_id);
-							$xml_media->addChild('title', $media->post_title);
-							$xml_media->addChild('url', wp_get_attachment_url($media_id));
-						}
-					} else if(array_key_exists($field_name, $acf_page_field_names)) {
-						$pages = $acf_field_value;
-						if($pages) {
-							if(!is_array($pages)) {
-								$pages = [$pages];
-							}
-							foreach($pages as $page_id) {
-								$page = get_post($page_id);
-								$xml_page = $xml->addChild('page');
-								$xml_page->addChild('ID', $page_id);
-								$xml_page->addChild('title', $page->post_title);
-								$xml_page->addChild('url', get_permalink($page_id));
-							}
-						}
-					}
-				}
-			}	
+	function build_page_manifest($page_ids) {
+		$pages = [];
+		foreach ($page_ids as $id) {
+			$page = get_post($id);
+			if (!$page) {
+				continue;
+			}
+			$pages[$id] = [
+				'title' => $page->post_title,
+				'url'   => get_permalink($id),
+			];
 		}
+		return $pages;
 	}
 
 	function bulk_action_handler($redirect_to, $action, $post_ids) {
-		if($action !== 'fswp_export') {
+		if ($action !== 'fswp_export') {
 			return $redirect_to;
 		}
-	
-		if(is_array($post_ids) && count($post_ids) > 0) {
-			$file_name = 'fswp-export-data-' . foursite_wordpress_promotion_VERSION . '--' . time() . '.xml';
-			$ud = wp_upload_dir();
-			$base_file_path = $ud['basedir'] . '/fwp-assets/';
-
-			if (!file_exists($base_file_path)) {
-				wp_mkdir_p($base_file_path);
-			}
-			$fp = fopen($base_file_path . $file_name, 'w');
-	
-			$xml = new SimpleXMLElement('<xml/>');
-			$xml->addChild('plugin_version', foursite_wordpress_promotion_VERSION);
-	
-			foreach($post_ids as $post_id) {
-				$this->add_promo_xml($xml, $post_id);
-			}
-			fwrite($fp, $xml->asXML());
-			fclose($fp);
-	
-			$redirect_to = '/wp-json/fswp/v1/exports/' . $file_name;
+		if (!current_user_can('edit_posts') || !is_array($post_ids) || count($post_ids) === 0) {
+			return $redirect_to;
 		}
-	
-		return $redirect_to;
+
+		$dir = $this->assets_dir();
+		if (!file_exists($dir)) {
+			wp_mkdir_p($dir);
+		}
+		$this->cleanup_stale_exports($dir);
+
+		// Unguessable filename: the uploads dir is web-readable, so the token
+		// (not just the nonce on the REST route) is what protects the file.
+		$file_name = 'fswp-export-' . foursite_wordpress_promotion_VERSION . '-' . time()
+			. '-' . wp_generate_password(20, false) . '.json';
+
+		$document = $this->build_document($post_ids);
+		file_put_contents($dir . $file_name, wp_json_encode($document));
+
+		$url = rest_url('fswp/v1/exports/' . $file_name);
+		return add_query_arg('_wpnonce', wp_create_nonce('wp_rest'), $url);
+	}
+
+	/** Delete export files older than an hour that were never downloaded. */
+	function cleanup_stale_exports($dir) {
+		foreach ((array) glob($dir . 'fswp-export-*.json') as $file) {
+			if (is_file($file) && (time() - filemtime($file)) > HOUR_IN_SECONDS) {
+				wp_delete_file($file);
+			}
+		}
 	}
 }
 
