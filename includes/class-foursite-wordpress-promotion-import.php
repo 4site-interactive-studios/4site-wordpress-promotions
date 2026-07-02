@@ -2,7 +2,20 @@
 
 require_once('class-foursite-wordpress-promotion-migration-base.php');
 
+/**
+ * Imports promotions from a JSON export document produced by the export class.
+ *
+ * Media referenced by the export is downloaded (or matched to existing local
+ * media by filename) and remapped to local attachment IDs; page references are
+ * remapped to same-titled local pages where they exist. ACF values are written
+ * with update_field() so groups/repeaters are decomposed correctly and each
+ * value's `_fieldname` field-key reference is stored -- meaning imported values
+ * actually populate the ACF editor UI.
+ */
 class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_Migration_Base {
+	/** Human-readable messages for media that failed to import, shown in the report. */
+	protected $media_errors = [];
+
 	public function __construct() {
 		add_action('admin_menu', [$this, 'admin_menu']);
 	}
@@ -19,212 +32,214 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 	}
 
 	function render_import_promos_page() {
-		if(isset($_FILES['export_file']['tmp_name'])) {
-			$this->import_promos_from_xml($_FILES['export_file']['tmp_name']);
+		if (!current_user_can('manage_options')) {
+			return;
 		}
 
+		if (
+			isset($_POST['fswp_import_nonce'])
+			&& wp_verify_nonce($_POST['fswp_import_nonce'], 'fswp_import_promos')
+			&& !empty($_FILES['export_file']['tmp_name'])
+			&& is_uploaded_file($_FILES['export_file']['tmp_name'])
+		) {
+			$this->import_promos_from_file($_FILES['export_file']['tmp_name']);
+		}
+
+		$nonce_field = wp_nonce_field('fswp_import_promos', 'fswp_import_nonce', true, false);
 		echo "
-			<form method='post' enctype='multipart/form-data'>
-				<h3>Select XML export to upload:</h3>
-				<input type='file' name='export_file' id='export_file'>
-				<input type='submit' value='Upload XML export' name='submit'>
-			</form>
+			<div class='wrap'>
+				<form method='post' enctype='multipart/form-data'>
+					{$nonce_field}
+					<h3>Select a JSON export to upload:</h3>
+					<input type='file' name='export_file' id='export_file' accept='.json,application/json'>
+					<input type='submit' class='button button-primary' value='Upload export' name='submit'>
+				</form>
+			</div>
 		";
 	}
 
-	function does_media_exist($fid, $url) {
-		$filename = basename($url);
-		$local_media_url = wp_get_attachment_url($fid);
-		if($local_media_url) {
-			$local_filename = basename($local_media_url);
-			if($filename == $local_filename) {
-				return true;
+	function import_promos_from_file($file) {
+		// download_url() / media_handle_sideload() live in these admin includes,
+		// which are not guaranteed to be loaded on this request.
+		require_once(ABSPATH . 'wp-admin/includes/file.php');
+		require_once(ABSPATH . 'wp-admin/includes/media.php');
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+		$document = json_decode((string) file_get_contents($file), true);
+
+		if (!is_array($document) || ($document['format'] ?? '') !== self::EXPORT_FORMAT) {
+			echo "<p>Import failed: this file is not a valid promotions export.</p>";
+			return;
+		}
+		if ((int) ($document['format_version'] ?? 0) !== self::FORMAT_VERSION) {
+			echo "<p>Import failed: this export was made with an incompatible version of the plugin.</p>";
+			return;
+		}
+
+		$this->media_errors = [];
+
+		// WordPress blocks HTTP requests to hosts that resolve to private/loopback
+		// IPs (SSRF protection). That stops us pulling media from the source site
+		// when both sites are local (e.g. *.local -> 127.0.0.1). Permit fetches
+		// from this export's declared source host for the duration of the media
+		// import, then restore the default policy.
+		$source_host = wp_parse_url($document['source_site'] ?? '', PHP_URL_HOST);
+		$allow_source = null;
+		if ($source_host) {
+			$allow_source = function ($is_external, $host) use ($source_host) {
+				return (strcasecmp($host, $source_host) === 0) ? true : $is_external;
+			};
+			add_filter('http_request_host_is_external', $allow_source, 10, 2);
+		}
+
+		$media_map = $this->build_media_map($document['media'] ?? []);
+
+		if ($allow_source) {
+			remove_filter('http_request_host_is_external', $allow_source, 10);
+		}
+
+		$page_map  = $this->build_page_map($document['pages'] ?? []);
+		$fields_by_name = $this->schema_fields_by_name();
+
+		foreach (($document['promotions'] ?? []) as $promo) {
+			$this->import_single_promo($promo, $fields_by_name, $media_map, $page_map);
+		}
+
+		if ($this->media_errors) {
+			echo "<div class='notice notice-error'><p><strong>Some images could not be imported</strong> and were left empty on the affected promos — fix the cause and re-import, or set them manually:</p><ul style='list-style:disc;margin-left:2em;'>";
+			foreach ($this->media_errors as $err) {
+				echo '<li>' . esc_html($err) . '</li>';
 			}
-		}
-		return false;
-	}
-	
-	function import_external_media($url) {
-		$tmp = download_url($url);
-		if(is_wp_error($tmp)) {
-			@unlink($tmp);
-			return null;
-		}
-
-		$file_array = array(
-			'name' => basename($url),
-			'tmp_name' => $tmp
-		);
-
-		$fid = media_handle_sideload($file_array, 0);
-		if(is_wp_error($fid)) {
-			@unlink($tmp);
-			return null;
-		}
-
-		return $fid;
-	}
-
-	function import_media_if_not_exist($media) {
-		$media_map = [];
-		foreach($media as $fid => $file_data) {
-			$url = $file_data['url'];
-			$file_exists = $this->does_media_exist($fid, $url);
-			if($file_exists) {
-				$media_map[$fid] = $fid;
-			} else {
-				$local_fid = $this->import_external_media($url);
-				$media_map[$fid] = $local_fid;
-			}
-		}
-		return $media_map;
-	}
-
-	function check_if_pages_exist($pages) {
-		$page_map = [];		
-
-		foreach($pages as $id => $page) {
-			$local_title = get_the_title($id);
-			if($local_title === $page['title']) {
-				$page_map[$id] = $id;
-			} else {
-				$page_map[$id] = null;
-			}
-		}
-
-		return $page_map;
-	}
-
-	function import_promos_from_xml($xml_file) {
-		$xml = simplexml_load_file($xml_file);
-
-		$media = [];
-		if(isset($xml->media)) {
-			foreach($xml->media as $media_item) {
-				$media[(int) $media_item->ID] = ['title' => (string) $media_item->title, 'url' => (string) $media_item->url];
-			}
-		}
-
-		$pages = [];
-		if(isset($xml->page)) {
-			foreach($xml->page as $page_item) {
-				$pages[(int) $page_item->ID] = ['title' => (string) $page_item->title, 'url' => (string) $page_item->url];
-			}
-		}
-
-		$force_field_names = Foursite_Wordpress_Promotion_Import::acf_include_if_empty_field_names();
-
-		$promos = [];
-		if(isset($xml->promotion)) {
-			foreach($xml->promotion as $xml_promo) {
-				$promo_data = ['acf' => []];
-				foreach($xml_promo->children() as $child) {
-					$field_name = $child->getName();
-					if(strpos($field_name, 'ACF_') === 0) {
-						$field_name = substr($field_name, 4);
-						// the ACF fields are serialized to account for different data types
-						$field_value = unserialize((string) $child);
-						if($field_name == 'engrid_donation_page') {
-							$field_value = urldecode($field_value);
-						} else if(in_array($field_name, ['engrid_javascript', 'engrid_footer', 'engrid_paragraph'])) {
-							$field_value = htmlspecialchars_decode($field_value);
-						}
-						$promo_data['acf'][$field_name] = $field_value;
-					} else {
-						$promo_data[$field_name] = (string) $child;
-					}
-				}
-
-				// Set all imported promos to be turned off
-				$promo_data['acf']['engrid_lightbox_display'] = 'turned-off';
-
-				foreach($force_field_names as $field_name => $default_value) {
-					if(!array_key_exists($field_name, $promo_data['acf'])) {
-						$promo_data['acf'][$field_name] = $default_value;
-					}
-				}
-
-				$promos[(int) $xml_promo->ID] = $promo_data;
-			}
-		}
-
-		// Update invalid media IDs with imported media IDs
-		$media_map = $this->import_media_if_not_exist($media);
-		$acf_image_field_names = Foursite_Wordpress_Promotion_Export::acf_image_field_names();
-		foreach($promos as $promo_id => $promo_data) {
-			foreach($promos[$promo_id]['acf'] as $field_name => $field_value) {
-				if(array_key_exists($field_name, $acf_image_field_names)) {
-					$subkey = $acf_image_field_names[$field_name];
-					if($subkey) {
-						if(!is_array($promos[$promo_id]['acf'][$field_name])) {
-							$promos[$promo_id]['acf'][$field_name] = [];
-						}
-						if(is_array($field_value)) {
-							$promos[$promo_id]['acf'][$field_name][$subkey] = $media_map[$field_value[$subkey]] ?? null;
-						} else {
-							$promos[$promo_id]['acf'][$field_name][$subkey] = null;
-						}
-					} else {						
-						$promos[$promo_id]['acf'][$field_name] = $media_map[$field_value] ?? null;
-					}
-				}
-			}
-		}
-
-		// Update invalid page IDs with nulls -- we're not going to import pages
-		$page_map = $this->check_if_pages_exist($pages);
-		$acf_page_field_names = Foursite_Wordpress_Promotion_Export::acf_page_field_names();
-		foreach($promos as $promo_id => $promo_data) {
-			foreach($promos[$promo_id]['acf'] as $field_name => $field_value) {
-				if(array_key_exists($field_name, $acf_page_field_names)) {
-					$subkey = $acf_page_field_names[$field_name];
-					if($subkey) {
-						if(is_array($field_value[$subkey])) {
-							foreach($field_value[$subkey] as $idx => $page_id) {
-								$promos[$promo_id]['acf'][$field_name][$subkey][$idx] = $page_map[$page_id] ?? null;
-							}
-						} else {
-							$promos[$promo_id]['acf'][$field_name][$subkey] = $page_map[$field_value[$subkey]] ?? null;
-						}
-					} else {
-						if(is_array($field_value)) {
-							foreach($field_value as $idx => $page_id) {
-								$promos[$promo_id]['acf'][$field_name][$idx] = $page_map[$page_id] ?? null;
-							}
-						} else {
-							$promos[$promo_id]['acf'][$field_name] = $page_map[$field_value] ?? null;
-						}
-					}
-				}
-			}
-		}
-
-		foreach($promos as $promo_id => $promo_data) {
-			$insert_data = [
-				'post_title' => $promo_data['title'], 
-				'post_status' => $promo_data['status'], 
-				//'post_date' => date('Y-m-d h:i:s', strtotime($promo_data['pubDate'])),
-				'post_type' => 'wordpress_promotion', 
-				'meta_input' => $promo_data['acf']
-			];
-
-			$insert_result = wp_insert_post($insert_data);
-			if(is_wp_error($insert_result)) {
-				echo "<p>Error importing promo: {$insert_result->get_error_message()}</p>";
-			} else {
-				$promo_title = get_the_title($insert_result);
-				echo "
-					<p>Imported promo: <a href='/wp-admin/post.php?post={$insert_result}&action=edit'>{$insert_result} | {$promo_title}</a></p>
-				";
-			}
+			echo "</ul></div>";
 		}
 
 		echo "
 			<p>
-				NOTE: The imported promos are turned off by default.<br>
-				NOTE: Pages where promos are scheduled to appear are NOT be imported. You will need to manually set these.<br>
+				NOTE: Imported promos are turned off by default.<br>
+				NOTE: Page targeting is only carried over where a page with the same title exists on this site; otherwise you will need to set it manually.<br>
 			</p>
 		";
+	}
+
+	function import_single_promo($promo, $fields_by_name, array $media_map, array $page_map) {
+		$acf = is_array($promo['acf'] ?? null) ? $promo['acf'] : [];
+		$acf = $this->remap_reference_ids($fields_by_name, $acf, $media_map, $page_map);
+
+		// Imported promos always start disabled.
+		$acf['engrid_lightbox_display'] = 'turned-off';
+
+		$post_data = [
+			'post_title'  => $promo['title'] ?? '',
+			'post_status' => $promo['status'] ?? 'draft',
+			'post_type'   => self::POST_TYPE,
+		];
+		if (!empty($promo['pub_date'])) {
+			$post_data['post_date'] = get_date_from_gmt(gmdate('Y-m-d H:i:s', strtotime($promo['pub_date'])));
+		}
+
+		$new_id = wp_insert_post($post_data, true);
+		if (is_wp_error($new_id)) {
+			echo "<p>Error importing promo: {$new_id->get_error_message()}</p>";
+			return;
+		}
+
+		// Write via ACF so containers decompose and field-key references are set.
+		// update_field() runs the value through wp_unslash() (it expects slashed,
+		// form-style input), so wp_slash() our already-clean JSON values first to
+		// keep literal backslashes (CSS codes, regexes, Windows paths) intact.
+		foreach ($acf as $name => $value) {
+			$selector = isset($fields_by_name[$name]) ? $fields_by_name[$name]['key'] : $name;
+			update_field($selector, wp_slash($value), $new_id);
+		}
+
+		$title = get_the_title($new_id);
+		echo "<p>Imported promo: <a href='" . esc_url(admin_url("post.php?post={$new_id}&action=edit")) . "'>{$new_id} | " . esc_html($title) . "</a></p>";
+	}
+
+	/**
+	 * Map source attachment IDs to local IDs, importing files that aren't
+	 * already present (matched by filename, so it works across sites/domains).
+	 */
+	function build_media_map($media) {
+		$map = [];
+		foreach ($media as $source_id => $info) {
+			$source_id = (int) $source_id;
+			$url = $info['url'] ?? '';
+
+			$existing = $this->find_existing_media($url);
+			if ($existing) {
+				$map[$source_id] = $existing;
+				continue;
+			}
+			$map[$source_id] = $this->import_external_media($url);
+		}
+		return $map;
+	}
+
+	function find_existing_media($url) {
+		if (!$url) {
+			return null;
+		}
+		$filename = basename(parse_url($url, PHP_URL_PATH));
+		if (!$filename) {
+			return null;
+		}
+
+		global $wpdb;
+		$id = $wpdb->get_var($wpdb->prepare(
+			"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s LIMIT 1",
+			'%/' . $wpdb->esc_like($filename)
+		));
+		return $id ? (int) $id : null;
+	}
+
+	function import_external_media($url) {
+		if (!$url) {
+			return null;
+		}
+		$tmp = download_url($url);
+		if (is_wp_error($tmp)) {
+			$this->media_errors[] = $url . ' — could not be downloaded: ' . $tmp->get_error_message();
+			return null;
+		}
+
+		$file_array = [
+			'name'     => basename(parse_url($url, PHP_URL_PATH)),
+			'tmp_name' => $tmp,
+		];
+		$fid = media_handle_sideload($file_array, 0);
+		if (is_wp_error($fid)) {
+			@unlink($tmp);
+			$this->media_errors[] = $url . ' — could not be imported: ' . $fid->get_error_message();
+			return null;
+		}
+		return (int) $fid;
+	}
+
+	/**
+	 * Map source page IDs to local pages that share the same title. Pages are
+	 * not created; unmatched references map to null (dropped on remap).
+	 */
+	function build_page_map($pages) {
+		$map = [];
+		foreach ($pages as $source_id => $info) {
+			$source_id = (int) $source_id;
+			$title = $info['title'] ?? '';
+			$map[$source_id] = $title !== '' ? $this->find_page_by_title($title) : null;
+		}
+		return $map;
+	}
+
+	function find_page_by_title($title) {
+		$query = new WP_Query([
+			'post_type'      => 'any',
+			'post_status'    => 'any',
+			'title'          => $title,
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		]);
+		return !empty($query->posts) ? (int) $query->posts[0] : null;
 	}
 }
 
