@@ -101,8 +101,29 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 		$page_map  = $this->build_page_map($document['pages'] ?? []);
 		$fields_by_name = $this->schema_fields_by_name();
 
+		// Pass 1: create every promo, remapping media and pages. Promo-to-promo
+		// references are deferred so they can point at the new local promo IDs.
+		$imported   = [];
+		$promo_map  = [];
 		foreach (($document['promotions'] ?? []) as $promo) {
-			$this->import_single_promo($promo, $fields_by_name, $media_map, $page_map);
+			$result = $this->import_single_promo($promo, $fields_by_name, $media_map, $page_map);
+			if ($result) {
+				$imported[] = $result;
+				if ($result['source_id']) {
+					$promo_map[$result['source_id']] = $result['new_id'];
+				}
+			}
+		}
+
+		// Pass 2: resolve promo-to-promo references (e.g. AB Test candidates).
+		$unresolved_refs = $this->apply_promo_reference_pass($imported, $fields_by_name, $promo_map, $document['pages'] ?? []);
+
+		if ($unresolved_refs) {
+			echo "<div class='notice notice-warning'><p><strong>Some referenced promotions could not be matched</strong> — they weren't part of this export and no existing promotion on this site shares their title, so those references (e.g. AB Test candidates) were left empty. Export them together and re-import, or set the references manually:</p><ul style='list-style:disc;margin-left:2em;'>";
+			foreach ($unresolved_refs as $title) {
+				echo '<li>' . esc_html($title) . '</li>';
+			}
+			echo "</ul></div>";
 		}
 
 		if ($this->media_errors) {
@@ -123,7 +144,9 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 
 	function import_single_promo($promo, $fields_by_name, array $media_map, array $page_map) {
 		$acf = is_array($promo['acf'] ?? null) ? $promo['acf'] : [];
-		$acf = $this->remap_reference_ids($fields_by_name, $acf, $media_map, $page_map);
+		// Remap media and pages now; leave promo-to-promo references (promo_map
+		// null) until every promo in the batch has a local ID (second pass).
+		$acf = $this->remap_reference_ids($fields_by_name, $acf, $media_map, $page_map, null);
 
 		// Imported promos always start disabled.
 		$acf['engrid_lightbox_display'] = 'turned-off';
@@ -140,7 +163,7 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 		$new_id = wp_insert_post($post_data, true);
 		if (is_wp_error($new_id)) {
 			echo "<p>Error importing promo: {$new_id->get_error_message()}</p>";
-			return;
+			return null;
 		}
 
 		// Write via ACF so containers decompose and field-key references are set.
@@ -154,6 +177,68 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 
 		$title = get_the_title($new_id);
 		echo "<p>Imported promo: <a href='" . esc_url(admin_url("post.php?post={$new_id}&action=edit")) . "'>{$new_id} | " . esc_html($title) . "</a></p>";
+
+		return ['new_id' => $new_id, 'source_id' => (int) ($promo['source_id'] ?? 0), 'acf' => $acf];
+	}
+
+	/**
+	 * Second pass: now that every promo in the batch has a local ID, resolve
+	 * promo-to-promo references (e.g. AB Test candidates) and write just those
+	 * fields. Each referenced source promo resolves to, in order of preference:
+	 * (1) the promo imported alongside it in this batch, else (2) an existing
+	 * local promo with the same title, else it is dropped and reported.
+	 */
+	function apply_promo_reference_pass(array $imported, $fields_by_name, array $promo_map, $pages) {
+		// Every source promo id referenced anywhere in the batch.
+		$referenced = [];
+		foreach ($imported as $item) {
+			$this->collect_promo_ref_ids(array_values($fields_by_name), $item['acf'], $referenced);
+		}
+
+		// Build the resolution map: batch imports first, then title fallback.
+		$resolved   = $promo_map;
+		$unresolved = [];
+		foreach (array_keys($referenced) as $src_id) {
+			if (isset($resolved[$src_id])) {
+				continue;
+			}
+			$title = $pages[$src_id]['title'] ?? '';
+			$local = $this->find_promo_by_title($title);
+			if ($local) {
+				$resolved[$src_id] = $local;
+			} else {
+				$unresolved[$src_id] = ($title !== '') ? $title : "promo #{$src_id}";
+			}
+		}
+
+		// Write the promo-reference fields using the resolved map.
+		foreach ($imported as $item) {
+			foreach ($fields_by_name as $name => $field) {
+				if (!array_key_exists($name, $item['acf']) || !$this->field_contains_promo_ref($field)) {
+					continue;
+				}
+				$remapped = $this->remap_field($field, $item['acf'][$name], null, null, $resolved);
+				update_field($field['key'], wp_slash($remapped), $item['new_id']);
+			}
+		}
+
+		return $unresolved;
+	}
+
+	/** Find an existing local promotion by exact title. */
+	function find_promo_by_title($title) {
+		if ($title === '' || $title === null) {
+			return null;
+		}
+		$query = new WP_Query([
+			'post_type'      => self::POST_TYPE,
+			'post_status'    => 'any',
+			'title'          => $title,
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		]);
+		return !empty($query->posts) ? (int) $query->posts[0] : null;
 	}
 
 	/**

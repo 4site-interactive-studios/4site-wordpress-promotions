@@ -67,6 +67,38 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 	}
 
 	/**
+	 * A reference field that specifically targets other promotions (e.g. the AB
+	 * Test candidate fields). These must be remapped against the promos imported
+	 * in the same batch, not against pages -- the referenced promo's ID changes
+	 * on import, so it can only be resolved after every promo has been created.
+	 */
+	protected function is_promo_reference_field($field) {
+		if (!$this->is_page_type($field['type'] ?? '')) {
+			return false;
+		}
+		$post_types = $field['post_type'] ?? [];
+		if (is_string($post_types)) {
+			$post_types = $post_types === '' ? [] : [$post_types];
+		}
+		return in_array(self::POST_TYPE, (array) $post_types, true);
+	}
+
+	/** Whether a field, or anything nested inside it, references a promotion. */
+	protected function field_contains_promo_ref($field) {
+		if ($this->is_promo_reference_field($field)) {
+			return true;
+		}
+		if ($this->is_container_type($field['type'] ?? '')) {
+			foreach ($field['sub_fields'] ?? [] as $sub) {
+				if ($this->field_contains_promo_ref($sub)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Normalize an ACF value (raw or formatted) to a flat list of integer IDs.
 	 * Handles: scalar ID, array of IDs, formatted ['ID' => n], array of those.
 	 */
@@ -89,6 +121,26 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 	}
 
 	/**
+	 * Locate a field's value within a container. Raw ACF values (read with
+	 * format_value = false) key top-level fields by name but nested group/
+	 * repeater sub-values by field KEY, so we accept either.
+	 */
+	protected function value_key_for($field, $container) {
+		if (!is_array($container)) {
+			return null;
+		}
+		$name = $field['name'] ?? '';
+		if ($name !== '' && array_key_exists($name, $container)) {
+			return $name;
+		}
+		$key = $field['key'] ?? '';
+		if ($key !== '' && array_key_exists($key, $container)) {
+			return $key;
+		}
+		return null;
+	}
+
+	/**
 	 * Walk a promotion's assembled ACF values (against the field defs) and
 	 * collect every referenced media ID and page ID. Recurses into groups and
 	 * repeaters, so an image nested inside a repeater row is found.
@@ -98,11 +150,11 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 			return;
 		}
 		foreach ($fields as $field) {
-			$name = $field['name'] ?? '';
-			if ($name === '' || !array_key_exists($name, $values)) {
+			$k = $this->value_key_for($field, $values);
+			if ($k === null) {
 				continue;
 			}
-			$this->collect_field_ids($field, $values[$name], $media_ids, $page_ids);
+			$this->collect_field_ids($field, $values[$k], $media_ids, $page_ids);
 		}
 	}
 
@@ -129,36 +181,43 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 	}
 
 	/**
-	 * Return a copy of a promotion's ACF values with every media/page ID
-	 * remapped to the local site's IDs (or dropped where no mapping exists).
-	 * $media_map / $page_map are source_id => local_id|null.
+	 * Return a copy of a promotion's ACF values with reference IDs remapped to
+	 * local IDs (or dropped where no mapping exists). Each map is source_id =>
+	 * local_id|null; passing null for a map leaves that category of field
+	 * untouched -- used to remap media/pages first and promo references in a
+	 * later pass, once every promo in the batch has a local ID.
 	 */
-	protected function remap_reference_ids($fields_by_name, $values, array $media_map, array $page_map) {
+	protected function remap_reference_ids($fields_by_name, $values, $media_map, $page_map, $promo_map = null) {
 		if (!is_array($values)) {
 			return $values;
 		}
 		foreach ($values as $name => $value) {
 			if (isset($fields_by_name[$name])) {
-				$values[$name] = $this->remap_field($fields_by_name[$name], $value, $media_map, $page_map);
+				$values[$name] = $this->remap_field($fields_by_name[$name], $value, $media_map, $page_map, $promo_map);
 			}
 		}
 		return $values;
 	}
 
-	protected function remap_field($field, $value, array $media_map, array $page_map) {
+	protected function remap_field($field, $value, $media_map, $page_map, $promo_map = null) {
 		$type = $field['type'] ?? '';
 
 		if ($this->is_media_type($type)) {
-			return $this->remap_value($value, $media_map);
+			return $media_map === null ? $value : $this->remap_value($value, $media_map);
+		}
+		// Promo references must be checked before the generic page test, since
+		// they are also post_object/relationship fields.
+		if ($this->is_promo_reference_field($field)) {
+			return $promo_map === null ? $value : $this->remap_value($value, $promo_map);
 		}
 		if ($this->is_page_type($type)) {
-			return $this->remap_value($value, $page_map);
+			return $page_map === null ? $value : $this->remap_value($value, $page_map);
 		}
 		if ($type === 'group' && is_array($value)) {
 			foreach ($field['sub_fields'] ?? [] as $sub) {
-				$sub_name = $sub['name'] ?? '';
-				if ($sub_name !== '' && array_key_exists($sub_name, $value)) {
-					$value[$sub_name] = $this->remap_field($sub, $value[$sub_name], $media_map, $page_map);
+				$k = $this->value_key_for($sub, $value);
+				if ($k !== null) {
+					$value[$k] = $this->remap_field($sub, $value[$k], $media_map, $page_map, $promo_map);
 				}
 			}
 			return $value;
@@ -169,15 +228,41 @@ class Foursite_Wordpress_Promotion_Migration_Base {
 					continue;
 				}
 				foreach ($field['sub_fields'] ?? [] as $sub) {
-					$sub_name = $sub['name'] ?? '';
-					if ($sub_name !== '' && array_key_exists($sub_name, $row)) {
-						$value[$i][$sub_name] = $this->remap_field($sub, $row[$sub_name], $media_map, $page_map);
+					$k = $this->value_key_for($sub, $row);
+					if ($k !== null) {
+						$value[$i][$k] = $this->remap_field($sub, $row[$k], $media_map, $page_map, $promo_map);
 					}
 				}
 			}
 			return $value;
 		}
 		return $value;
+	}
+
+	/** Collect the source promo IDs referenced by promo-reference fields. */
+	protected function collect_promo_ref_ids($fields, $values, array &$ids) {
+		if (!is_array($values)) {
+			return;
+		}
+		foreach ($fields as $field) {
+			$k = $this->value_key_for($field, $values);
+			if ($k === null) {
+				continue;
+			}
+			$value = $values[$k];
+			if ($this->is_promo_reference_field($field)) {
+				foreach ($this->value_to_ids($value) as $id) {
+					$ids[$id] = true;
+				}
+			} else if ($this->is_container_type($field['type'] ?? '') && is_array($value)) {
+				$rows = ($field['type'] === 'repeater') ? $value : [$value];
+				foreach ($rows as $row) {
+					if (is_array($row)) {
+						$this->collect_promo_ref_ids($field['sub_fields'] ?? [], $row, $ids);
+					}
+				}
+			}
+		}
 	}
 
 	/**
