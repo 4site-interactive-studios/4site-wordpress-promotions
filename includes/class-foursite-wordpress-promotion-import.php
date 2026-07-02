@@ -25,14 +25,14 @@ class Foursite_Wordpress_Promotion_Import extends Foursite_Wordpress_Promotion_M
 			'edit.php?post_type=wordpress_promotion',
 			__('Import Promos', 'four-site-wordpress-promotions'),
 			__('Import Promos', 'four-site-wordpress-promotions'),
-			'manage_options',
+			'edit_pages',
 			'fswp-import-promos',
 			[$this, 'render_import_promos_page']
 		);
 	}
 
 	function render_import_promos_page() {
-		if (!current_user_can('manage_options')) {
+		if (!current_user_can('edit_pages')) {
 			return;
 		}
 
