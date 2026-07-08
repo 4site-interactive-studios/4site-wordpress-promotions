@@ -33,6 +33,28 @@ window.addEventListener("DOMContentLoaded", () => {
 
   window.rawCodeTriggers = [];
 
+  // Kick off ad-blocker detection once per page load; resolves to true/false.
+  // Used by ab_test promos to pick between the main and ad-blocker variants.
+  window.fsAdBlockerDetection = window.fsAdBlockerDetection || new Promise((resolve) => {
+    // Create an element that mimics an ad and inject it into the page
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<ins data-adBlockTest class="adsbygoogle ad-zone ad-space ad-unit textads banner-ads banner_ads" style="display: block !important; width:1px !important; height: 1px !important; visibility: hidden !important;"></ins>'
+    );
+    const ad = document.querySelector("[data-adBlockTest]");
+
+    // Check to see if the visitor is running an Ad Blocker
+    let blocked = false;
+    if (ad) {
+      const width = ad.offsetWidth;
+      if (width == 0) {
+        blocked = true;
+      }
+    }
+
+    resolve(blocked);
+  });
+
   for (let i = 0; i < client_side_triggered_config.length; i++) {
     // skip if there is already a cookie set for this promo
     const cookie = client_side_triggered_config[i].cookie_name;
@@ -176,6 +198,28 @@ window.addEventListener("DOMContentLoaded", () => {
     else console.error('EN Lightbox script not loaded');
   }
 
+  function runAbTest(promotion) {
+    if (!Array.isArray(promotion.variants) || promotion.variants.length === 0) {
+      return;
+    }
+    const variant = promotion.variants[Math.floor(Math.random() * promotion.variants.length)];
+    window.fsAdBlockerDetection.then((blocked) => {
+      const selected = (blocked && variant.ad_blocker_promotion)
+        ? variant.ad_blocker_promotion
+        : variant.promotion;
+      if (selected) {
+        window.dispatchEvent(
+          new CustomEvent("ab_test_result", {
+            detail: { test_id: promotion.id, selected_id: selected.id }
+          })
+        );
+        launchPromotion(selected);
+      }
+    }).catch((error) => {
+      console.error("Error during ad blocker detection for AB test promotion:", promotion, "Error:", error);
+    });
+  }
+
   function launchPromotion(promotion) {
     switch (promotion.promotion_type) {
       case "cta_lightbox":
@@ -185,6 +229,14 @@ window.addEventListener("DOMContentLoaded", () => {
           window.lightbox_triggered = true;
         }
         addCtaLightbox(promotion);
+        break;
+      case "email_capture_lightbox":
+        if (window.lightbox_triggered) {
+          return;
+        } else {
+          window.lightbox_triggered = true;
+        }
+        addEmailCaptureLightbox(promotion);
         break;
       case "rollup":
         if (promotion.hide_under && window.innerWidth <= promotion.hide_under) {
@@ -253,6 +305,14 @@ window.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        break;
+      case "redirect":
+        if (promotion.url) {
+          window.location.assign(promotion.url);
+        }
+        break;
+      case "ab_test":
+        runAbTest(promotion);
         break;
     }
 
@@ -500,6 +560,7 @@ window.addEventListener("DOMContentLoaded", () => {
         gap: 20px;
         width: 50%;
         padding: 30px 30px;
+        box-sizing: border-box;
       }
       .fs-cta-modal.fs-cta-modal-no-image .fs-cta-modal-text-column {
         width: 100%;
@@ -527,6 +588,7 @@ window.addEventListener("DOMContentLoaded", () => {
         text-decoration: none;
         cursor: pointer;
         width: 100%;
+        box-sizing: border-box;
         opacity: 1;
         transition: opacity 0.7s;
       }
@@ -645,6 +707,546 @@ window.addEventListener("DOMContentLoaded", () => {
     document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
     document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
     document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
+  }
+
+  function addEmailCaptureLightbox(promotion) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("fs-ecl-modal-container");
+    overlay.setAttribute("promotion-id", promotion.id);
+
+    const modal = document.createElement("div");
+    modal.classList.add("fs-ecl-modal");
+
+    const modal_close_button = document.createElement("div");
+    modal_close_button.classList.add("fs-ecl-modal-close-button");
+    if (promotion.image.bg_color) {
+      modal_close_button.style.color = promotion.image.bg_color;
+      modal_close_button.style.borderColor = promotion.image.bg_color;
+    }
+    modal.appendChild(modal_close_button);
+
+    if (promotion.image.url && promotion.image.position === "left") {
+      modal.classList.add("fs-ecl-modal-image-left");
+    } else if (promotion.image.url && promotion.image.position === "right") {
+      modal.classList.add("fs-ecl-modal-image-right");
+    } else {
+      modal.classList.add("fs-ecl-modal-no-image");
+    }
+
+    if (promotion.bg_color) {
+      modal.style.backgroundColor = promotion.bg_color;
+    }
+    if (promotion.fg_color) {
+      modal.style.color = promotion.fg_color;
+    }
+
+    const modal_text_column = document.createElement("div");
+    modal_text_column.classList.add("fs-ecl-modal-text-column");
+
+    if (promotion.header) {
+      const modal_header = document.createElement("div");
+      modal_header.classList.add("fs-ecl-modal-header");
+      modal_header.classList.add("fs-ecl-pre-submission-show");
+      modal_header.innerHTML = promotion.header;
+      modal_text_column.appendChild(modal_header);
+    }
+
+    if (promotion.body) {
+      const modal_content = document.createElement("div");
+      modal_content.classList.add("fs-ecl-modal-content");
+      modal_content.classList.add("fs-ecl-pre-submission-show");
+      modal_content.innerHTML = promotion.body;
+      modal_text_column.appendChild(modal_content);
+    }
+
+    // Email capture form (pre-submission)
+    const modal_form = document.createElement("form");
+    modal_form.classList.add("fs-ecl-modal-form");
+    modal_form.classList.add("fs-ecl-pre-submission-show");
+    // Debug: disable native validation so ?eclb_debug can submit (preview success) with an empty field.
+    if (new URLSearchParams(window.location.search).has("eclb_debug")) {
+      modal_form.setAttribute("novalidate", "");
+    }
+
+    const modal_email = document.createElement("input");
+    modal_email.classList.add("fs-ecl-modal-email");
+    modal_email.setAttribute("type", "email");
+    modal_email.setAttribute("name", "email");
+    modal_email.setAttribute("placeholder", promotion.email_placeholder || "Email Address");
+    modal_email.required = true;
+
+    const modal_submit = document.createElement("button");
+    modal_submit.classList.add("fs-ecl-modal-submit");
+    modal_submit.setAttribute("type", "submit");
+    modal_submit.innerHTML = promotion.submit.label || "Submit";
+    if (promotion.submit.bg_color) {
+      modal_submit.style.backgroundColor = promotion.submit.bg_color;
+    }
+    if (promotion.submit.fg_color) {
+      modal_submit.style.color = promotion.submit.fg_color;
+    }
+
+    const modal_error = document.createElement("div");
+    modal_error.classList.add("fs-ecl-modal-error");
+    modal_error.innerHTML = "The email address is invalid, please try again.";
+
+    modal_form.appendChild(modal_email);
+    modal_form.appendChild(modal_submit);
+    modal_form.appendChild(modal_error);
+    modal_text_column.appendChild(modal_form);
+
+    // Success message (post-submission)
+    const modal_success = document.createElement("div");
+    modal_success.classList.add("fs-ecl-modal-success");
+    modal_success.classList.add("fs-ecl-post-submission-show");
+
+    if (promotion.success.header) {
+      const success_header = document.createElement("div");
+      success_header.classList.add("fs-ecl-modal-header");
+      success_header.innerHTML = promotion.success.header;
+      modal_success.appendChild(success_header);
+    }
+    if (promotion.success.body) {
+      const success_body = document.createElement("div");
+      success_body.classList.add("fs-ecl-modal-content");
+      success_body.innerHTML = promotion.success.body;
+      modal_success.appendChild(success_body);
+    }
+    if (promotion.success.button.title && promotion.success.button.url) {
+      const success_button = document.createElement("a");
+      success_button.classList.add("fs-ecl-modal-success-button");
+      success_button.href = promotion.success.button.url;
+      success_button.innerHTML = promotion.success.button.title;
+      if (promotion.success.button.target) {
+        success_button.target = promotion.success.button.target;
+      }
+      if (promotion.submit.bg_color) {
+        success_button.style.backgroundColor = promotion.submit.bg_color;
+      }
+      if (promotion.submit.fg_color) {
+        success_button.style.color = promotion.submit.fg_color;
+      }
+      modal_success.appendChild(success_button);
+    }
+    modal_text_column.appendChild(modal_success);
+
+    modal.appendChild(modal_text_column);
+
+    if (promotion.image.url) {
+      const modal_image_column = document.createElement("div");
+      modal_image_column.classList.add("fs-ecl-modal-image-column");
+
+      const modal_image = document.createElement("img");
+      modal_image.src = promotion.image.url;
+      modal_image.alt = promotion.image.alt;
+      modal_image.classList.add("fs-ecl-modal-image");
+
+      const modal_image_container = document.createElement("div");
+      modal_image_container.classList.add("fs-ecl-modal-image-container");
+      modal_image_container.style.backgroundImage = `url(${promotion.image.url})`;
+      modal_image_container.appendChild(modal_image);
+
+      modal_image_column.appendChild(modal_image_container);
+      modal.appendChild(modal_image_column);
+    }
+
+    // Theme the success-body scrollbar to blend with the modal: thumb uses the submit button's
+    // background color (falling back to the text color, then a neutral), track stays transparent.
+    const scrollbar_thumb = promotion.submit.bg_color || promotion.fg_color || "rgba(0,0,0,0.4)";
+
+    const css = `
+      .fs-ecl-modal-container {
+        z-index: 9999;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-animation: fadeIn 0.5s;
+        animation: fadeIn 0.5s;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0,0,0,0.45);
+        overflow-y: scroll;
+      }
+      .fs-ecl-modal {
+        margin: 10vh auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        position: relative;
+        width: 95%;
+        max-width: 880px;
+        height: fit-content;
+      }
+      .fs-ecl-modal.fs-ecl-modal-image-left {
+        flex-direction: row-reverse;
+      }
+      .fs-ecl-modal-header {
+        font-size: 32px;
+        font-weight: 600;
+      }
+      .fs-ecl-modal-content {
+        font-size: 20px;
+        line-height: 1.5;
+        font-weight: 400;
+      }
+      .fs-ecl-modal-text-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+        width: 50%;
+        padding: 30px 30px;
+        box-sizing: border-box;
+      }
+      .fs-ecl-modal.fs-ecl-modal-no-image .fs-ecl-modal-text-column {
+        width: 100%;
+      }
+      .fs-ecl-modal-image-column {
+        width: 50%;
+      }
+      .fs-ecl-modal-image-container {
+        overflow: hidden;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .fs-ecl-modal-image {
+        max-width: unset;
+        object-fit: cover;
+        display: none;
+      }
+      .fs-ecl-modal-form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        width: 100%;
+      }
+      .fs-ecl-modal-email {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        /* Set an explicit text color; themes commonly reset inputs to color: inherit. */
+        color: #000;
+      }
+      .fs-ecl-modal-submit {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        font-size: 18px;
+        opacity: 1;
+        transition: opacity 0.7s;
+      }
+      .fs-ecl-modal-submit:hover {
+        opacity: 0.8;
+      }
+      .fs-ecl-modal-success-button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        opacity: 1;
+        transition: opacity 0.7s;
+        margin-top: auto;
+      }
+      .fs-ecl-modal-success-button:hover {
+        text-decoration: none;
+        opacity: 0.8;
+      }
+      .fs-ecl-modal-error {
+        display: none;
+        color: #F04245;
+        font-size: 16px;
+      }
+      .fs-ecl-modal-form.has-error .fs-ecl-modal-error {
+        display: block;
+      }
+      .fs-ecl-post-submission-show {
+        display: none;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-pre-submission-show {
+        display: none;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-post-submission-show {
+        display: block;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-success {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      /* Blur/fade transition between the pre- and post-submission content. */
+      .fs-ecl-pre-submission-show,
+      .fs-ecl-modal-success {
+        transition: opacity 0.3s ease, filter 0.3s ease;
+      }
+      .fs-ecl-modal.transitioning .fs-ecl-pre-submission-show {
+        opacity: 0;
+        filter: blur(8px);
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-success {
+        opacity: 0;
+        filter: blur(8px);
+      }
+      .fs-ecl-modal.submitted.revealed .fs-ecl-modal-success {
+        opacity: 1;
+        filter: blur(0);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fs-ecl-pre-submission-show,
+        .fs-ecl-modal-success {
+          transition: none;
+        }
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        width: 100%;
+        scrollbar-width: thin;
+        scrollbar-color: ${scrollbar_thumb} transparent;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .fs-ecl-modal.submitted .fs-ecl-modal-content::-webkit-scrollbar-thumb {
+        background-color: ${scrollbar_thumb};
+        border-radius: 8px;
+      }
+
+      .fs-ecl-modal-close-button {
+        position: absolute;
+        box-sizing: content-box;
+        right: 10px;
+        top: 10px;
+        width: 25px;
+        height: 25px;
+        z-index: 1000;
+        padding: 5px;
+        border: 3px solid #f6f7f8;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.3s opacity ease-in-out;
+      }
+      .fs-ecl-modal-close-button:hover {
+        opacity: 1;
+      }
+      .fs-ecl-modal-close-button:hover::before {
+        transform: rotate(45deg) scale(1.5);
+      }
+      .fs-ecl-modal-close-button:hover::after {
+        transform: rotate(-45deg) scale(1.5);
+      }
+      .fs-ecl-modal-close-button::before,
+      .fs-ecl-modal-close-button::after {
+        transition: 0.3s transform ease-in-out, 0.3s background-color ease-in-out;
+        position: absolute;
+        content: " ";
+        height: 19px;
+        width: 2px;
+        background-color: #f6f7f8;
+        left: 17px;
+        top: 8px;
+      }
+      .fs-ecl-modal-close-button::before {
+        transform: rotate(45deg);
+      }
+      .fs-ecl-modal-close-button::after {
+        transform: rotate(-45deg);
+      }
+
+      .fs-ecl-modal-noscroll {
+        overflow: hidden;
+      }
+
+      @media (max-width: 700px) {
+        .fs-ecl-modal-container {
+          align-items: flex-start;
+        }
+        .fs-ecl-modal,
+        .fs-ecl-modal.fs-ecl-modal-image-left,
+        .fs-ecl-modal.fs-ecl-modal-image-right {
+          flex-direction: column-reverse;
+        }
+        .fs-ecl-modal-text-column,
+        .fs-ecl-modal-image-column {
+          width: 100%;
+        }
+        .fs-ecl-modal-container {
+          background-image: unset;
+        }
+        .fs-ecl-modal-image {
+          object-fit: contain;
+          max-width: 100%;
+          display: block;
+        }
+        .fs-ecl-modal-header {
+          font-size: 24px;
+        }
+        .fs-ecl-modal-content {
+          font-size: 18px;
+        }
+        .fs-ecl-modal-submit {
+          font-size: 18px;
+        }
+      }
+      ${promotion.css}
+    `;
+    insertCss(promotion.id, css);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Prevent scrolling of the page while the modal is open
+    document.body.classList.add('fs-ecl-modal-noscroll');
+
+    // Handle form submission -> POST to the WP proxy, which submits to Engaging Networks
+    modal_form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      // Debug: ?eclb_debug shows the post-submit content on click without validating or submitting.
+      const debug = new URLSearchParams(window.location.search).has("eclb_debug");
+      if (!debug) {
+        const is_valid = validateEmail(modal_email);
+        if (!is_valid) {
+          // Validation failure: show the invalid-email message (reset in case a prior submission
+          // attempt replaced it with the server-error message).
+          modal_error.innerHTML = "The email address is invalid, please try again.";
+          modal_form.classList.add("has-error");
+          return;
+        }
+        modal_form.classList.remove("has-error");
+      }
+      submitEmailCaptureToEn(promotion, modal_email.value, modal, modal_form);
+    });
+
+    // Handle closure of the modal
+    function detectEscape(e) {
+      if (e.key === "Escape") {
+        closeEclModal();
+      }
+    }
+    function clickOutsideModal(e) {
+      closeEclModal();
+    }
+    function clickWithinModal(e) {
+      e.stopPropagation();
+    }
+    function closeEclModal() {
+      document.body.removeEventListener('keyup', detectEscape);
+      document.querySelector('.fs-ecl-modal-close-button').removeEventListener('click', closeEclModal);
+      document.querySelector('.fs-ecl-modal-container').removeEventListener('click', clickOutsideModal);
+      document.querySelector('.fs-ecl-modal').removeEventListener('click', clickWithinModal);
+      document.querySelector('.fs-ecl-modal-container').style.display = 'none';
+      document.body.classList.remove('fs-ecl-modal-noscroll');
+    }
+    document.body.addEventListener('keyup', detectEscape);
+    document.querySelector('.fs-ecl-modal-close-button').addEventListener('click', closeEclModal);
+    document.querySelector('.fs-ecl-modal').addEventListener('click', clickWithinModal);
+    document.querySelector('.fs-ecl-modal-container').addEventListener('click', clickOutsideModal);
+  }
+
+  async function submitEmailCaptureToEn(promotion, email, modal, form) {
+    // The form's error element is shared with email validation, so set an accurate, submission-specific
+    // message here rather than letting the default "invalid email" text show for a server/proxy failure.
+    function showSubmitError(form) {
+      const err_el = form.querySelector(".fs-ecl-modal-error");
+      if (err_el) {
+        err_el.innerHTML = "Sorry, something went wrong and we couldn't sign you up. Please try again.";
+      }
+      form.classList.add("has-error");
+    }
+    function showSuccess(skip_cookie) {
+      // Lock the text column to its current (pre-submission) height so swapping the form for the
+      // success message doesn't change the lightbox height. The column clips; only the success body
+      // (.fs-ecl-modal-content) scrolls, keeping the header and button fixed in place. Measure before
+      // any blur is applied (filter/opacity don't affect layout, but height must reflect the form).
+      const text_column = modal.querySelector(".fs-ecl-modal-text-column");
+      if (text_column) {
+        text_column.style.height = text_column.offsetHeight + "px";
+        text_column.style.overflow = "hidden";
+      }
+      if (!skip_cookie && parseInt(promotion.cookie_hours) > 0) {
+        setCookie(promotion.cookie_name, promotion.cookie_hours);
+      }
+
+      // Honor reduced-motion: swap instantly with no blur/fade.
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) {
+        modal.classList.add("submitted", "revealed");
+        return;
+      }
+
+      // Blur + fade the current content out, then swap and blur + fade the success content in.
+      modal.classList.add("transitioning");
+      setTimeout(function () {
+        modal.classList.remove("transitioning");
+        modal.classList.add("submitted");
+        // Two frames so the blurred initial state paints before transitioning to clear.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("revealed");
+          });
+        });
+      }, 300);
+    }
+
+    // Debug: ?eclb_debug previews the post-submit content without submitting. Skip the suppression
+    // cookie so the lightbox keeps showing on reload while testing.
+    if (new URLSearchParams(window.location.search).has("eclb_debug")) {
+      showSuccess(true);
+      return;
+    }
+
+    // If the EN proxy isn't configured, just show the success state.
+    if (!promotion.submit_url) {
+      showSuccess();
+      return;
+    }
+
+    form.classList.add("processing");
+    try {
+      const response = await fetch(promotion.submit_url, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({ email: email }),
+      });
+      const r = await response.json();
+      if (r.success) {
+        showSuccess();
+      } else {
+        showSubmitError(form);
+        console.error('Error submitting email capture to Engaging Networks', r.error);
+      }
+    } catch (error) {
+      showSubmitError(form);
+      console.error('Error submitting email capture to Engaging Networks', error);
+    }
+    form.classList.remove("processing");
   }
 
   function addRawCode(promotion) {

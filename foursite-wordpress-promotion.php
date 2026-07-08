@@ -16,7 +16,7 @@
  * Plugin Name:       4Site Promotions Plugin
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.8.9.2
+ * Version:           1.10.4
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.8.9.2' );
+define( 'foursite_wordpress_promotion_VERSION', '1.10.4' );
 
 // Gutenberg Block
 function promotions_en_form_block() {
@@ -78,319 +78,6 @@ function fwp_template_add_in_post_page() {
             jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"template\">Template</option>' );
         });
         </script>";
-    }
-}
-
-
-
-
-// Handle sorting & filtering & generation of a custom "status" & "scheduled" columns for the promos list screen
-global $pagenow;
-if(is_admin() && 'edit.php' == $pagenow && !empty($_GET['post_type']) && 'wordpress_promotion' == $_GET['post_type']) {
-    add_filter('manage_wordpress_promotion_posts_columns', 'fwp_add_columns');
-    add_filter('manage_edit-wordpress_promotion_sortable_columns', 'fwp_set_sortable_columns');
-    add_action('manage_wordpress_promotion_posts_custom_column', 'fwp_populate_columns', 10, 2);
-    add_action('pre_get_posts', 'fwp_sort_query_orderby');
-
-    function fwp_sort_query_orderby($query) {
-        $orderby = $query->get('orderby');
-        switch($orderby) {
-            case 'fwp_schedule_start':
-                $query->set('meta_key', 'engrid_start_date');
-                $query->set('orderby', 'meta_value');
-                break;
-            case 'fwp_schedule_end':
-                $query->set('meta_key', 'engrid_end_date');
-                $query->set('orderby', 'meta_value');
-                break;
-            default;
-                break;
-        }
-    }
-
-    function fwp_set_sortable_columns($columns) {
-        //$columns['fwp_status'] = 'fwp_status';
-        $columns['fwp_schedule_start'] = 'fwp_schedule_start';
-        $columns['fwp_schedule_end'] = 'fwp_schedule_end';
-        return $columns;
-    }
-    function fwp_add_columns($columns) {
-        $columns['fwp_status'] = __('Status', ' foursite-wordpress-promotion');
-        $columns['fwp_schedule_start'] = __('Start', ' foursite-wordpress-promotion');
-        $columns['fwp_schedule_end'] = __('End', ' foursite-wordpress-promotion');
-        $columns['fwp_pages'] = __('Pages', ' foursite-wordpress-promotion');
-        return $columns;
-    }
-    function fwp_populate_columns($column, $post_id) {
-        if($column == 'fwp_status') {
-            $fwp_status = '';
-    
-            $post_status = get_post_status($post_id);
-            if(!in_array($post_status, ['publish', 'template'])) {
-                $fwp_status = "Off - Not Published";
-            } else {
-                $status = get_field('engrid_lightbox_display', $post_id);
-                if($status == 'scheduled') {
-                    $start_date = get_field('engrid_start_date', $post_id);
-                    $end_date = get_field('engrid_end_date', $post_id);
-        
-                    $current_date = new DateTime('now', new DateTimeZone('America/New_York'));
-                    $current_date = $current_date->format('Y-m-d H:i:s');
-        
-                    if($start_date > $current_date) {
-                        $fwp_status = "Scheduled - Upcoming";
-                    } else if($end_date < $current_date) {
-                        $fwp_status = "Scheduled - Expired";
-                    } else {
-                        $fwp_status = "Scheduled - Active";
-                    }
-                } else if($status == 'turned-on') {
-                    $fwp_status = 'On';
-                } else {
-                    $fwp_status = 'Off';
-                }
-            }
-    
-            if($post_status == 'template') {
-                $fwp_status = "Template";
-            }
-            echo $fwp_status;
-        } else if($column == 'fwp_schedule_start') {
-            $fwp_schedule = "--";
-            $start_date = get_field('engrid_start_date', $post_id);
-            if($start_date) {
-                $fwp_schedule = date('Y/m/d g:i a', strtotime($start_date));
-                $status = get_field('engrid_lightbox_display', $post_id);
-                if($status != 'scheduled') {
-                    $fwp_schedule = "--";
-                }
-            }
-            echo $fwp_schedule;
-        } else if($column == 'fwp_schedule_end') {
-            $fwp_schedule = "--";
-            $end_date = get_field('engrid_end_date', $post_id);
-            if($end_date) {
-                $fwp_schedule = date('Y/m/d g:i a', strtotime($end_date));
-                $status = get_field('engrid_lightbox_display', $post_id);
-                if($status != 'scheduled') {
-                    $fwp_schedule = "--";
-                }
-            }
-
-            echo $fwp_schedule;
-        } else if($column == 'fwp_pages') {
-            $whitelist = get_field('engrid_whitelist', $post_id);
-            $blacklist = get_field('engrid_blacklist', $post_id);
-            $show_on_page_ids = get_field('engrid_show_on', $post_id);
-            $hide_on_page_ids = get_field('engrid_hide_on', $post_id);
-
-            $fwp_pages = '';
-            $fwp_show_on = '';
-            $fwp_hide_on = '';
-
-            if($whitelist) {
-                $fwp_show_on .= $whitelist;
-            }
-            if($blacklist) {
-                $fwp_hide_on .= $blacklist;
-            }             
-            if($show_on_page_ids) {
-                if($fwp_show_on) {
-                    $fwp_show_on .= "<br>";
-                }
-                $page_ids = implode(',', $show_on_page_ids);
-                global $wpdb;
-                $results = $wpdb->get_results("SELECT post_title, ID FROM {$wpdb->posts} WHERE ID IN ({$page_ids})");
-                foreach($results as $result) {
-                    $page_url = get_permalink($result->ID);
-                    $fwp_show_on .= "<a href='" . $page_url . "' target='_blank'>{$result->post_title}</a><br>";
-                }
-            }
-            
-            if($hide_on_page_ids) {
-                if($fwp_hide_on) {
-                    $fwp_hide_on .= "<br>";
-                }
-                $page_ids = implode(', ', $hide_on_page_ids);
-                global $wpdb;
-                $results = $wpdb->get_results("SELECT post_title, ID FROM {$wpdb->posts} WHERE ID IN ({$page_ids})");
-                foreach($results as $result) {
-                    $page_url = get_permalink($result->ID);
-                    $fwp_hide_on .= "<a href='" . $page_url . "' target='_blank'>{$result->post_title}</a><br>";
-                }
-            }
-
-            $fwp_pages = '';
-            if($fwp_show_on) {
-                $fwp_pages .= "<strong>Show on:</strong><br>{$fwp_show_on}<br>";
-            }
-            if($fwp_hide_on) {
-                $fwp_pages .= "<strong>Hide on:</strong><br>{$fwp_hide_on}";
-            }
-            if(!$fwp_pages) {
-                $fwp_pages = '<strong>Show on:</strong><br>All Pages';
-            }
-
-            echo $fwp_pages;
-        }
-    }
-    
-    function fwp_sort_column_query($query) {
-        $orderby = $query->get('orderby');
-        if('fwp_status' == $orderby) {
-            $meta_query = array(
-                'relation' => 'OR',
-                array(
-                    'key' => 'engrid_lightbox_display',
-                    'compare' => 'NOT EXISTS',
-                ),
-                array(
-                    'key' => 'engrid_lightbox_display',
-                ),
-            );
-    
-            $query->set('meta_query', $meta_query);
-            $query->set('orderby', 'meta_value');
-        }
-    }
-
-    add_filter('parse_query', 'fwp_filter_request_query' , 10);
-    function fwp_filter_request_query($query) {
-        if(!(is_admin() AND $query->is_main_query())){ 
-            return $query;
-        }
-        if(!('wordpress_promotion' === $query->query['post_type'] AND !empty($_REQUEST['fwp_status']) ) ){
-            return $query;
-        }
-
-        $post_ids = [];
-        if('on-scheduled' == $_REQUEST['fwp_status']) {
-            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('active'));
-            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('upcoming'));
-            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('on'));
-        } else if('off-expired' == $_REQUEST['fwp_status']) {
-            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('expired'));
-            $post_ids = array_merge($post_ids, fwp_get_post_ids_for_status('off'));
-        } else {
-            $post_ids = fwp_get_post_ids_for_status($_REQUEST['fwp_status']);
-        }
-        $post_ids = array_unique($post_ids);
-        if(count($post_ids) == 0) $post_ids = [0];
-        $query->query_vars['post__in'] = $post_ids;
-        $query->query_vars['orderby'] = 'post__in';
-        return $query;
-    }
-
-    function fwp_get_post_ids_for_status($status) {
-        global $wpdb;
-        $post_ids = [];
-
-        $current_date = new DateTime('now', new DateTimeZone('America/New_York'));
-        $current_date = $current_date->format('Y-m-d H:i:s');
-
-        $joins = '';
-        $conditions = '';
-
-        if($status == 'expired') {
-            $joins = "
-                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
-            ";
-            $conditions = "
-                and p.post_status in ('publish')
-                and active_status_pm.meta_key = 'engrid_lightbox_display'
-                and active_status_pm.meta_value = 'scheduled'
-                and end_date_pm.meta_key = 'engrid_end_date'
-                and end_date_pm.meta_value < '{$current_date}' 
-            ";
-        } else if($status == 'on') {
-            $joins = "
-                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
-                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
-            ";
-            $conditions = "
-                and p.post_status in ('publish')
-                and active_status_pm.meta_key = 'engrid_lightbox_display'
-                and active_status_pm.meta_value = 'turned-on'
-            ";
-        } else if($status == 'off') {
-            $joins = "
-                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
-                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
-            ";
-            $conditions = "
-                and active_status_pm.meta_key = 'engrid_lightbox_display'
-                and (
-                    active_status_pm.meta_value = 'turned-off'
-                    or p.post_status not in ('publish', 'template')
-                )
-                and p.post_status <> 'template'
-            ";
-        } else if($status == 'active') {
-            $joins = "
-                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
-                join {$wpdb->postmeta} end_date_pm on p.ID = end_date_pm.post_id
-            ";
-            $conditions = "
-                and p.post_status in ('publish')
-                and active_status_pm.meta_key = 'engrid_lightbox_display'
-                and active_status_pm.meta_value = 'scheduled'
-                and start_date_pm.meta_key = 'engrid_start_date'
-                and start_date_pm.meta_value < '{$current_date}'
-                and end_date_pm.meta_key = 'engrid_end_date'
-                and end_date_pm.meta_value > '{$current_date}'
-            ";
-        } else if($status == 'upcoming') {
-            $joins = "
-                join {$wpdb->postmeta} start_date_pm on p.ID = start_date_pm.post_id
-            ";
-            $conditions = "
-                and p.post_status in ('publish')
-                and active_status_pm.meta_key = 'engrid_lightbox_display'
-                and active_status_pm.meta_value = 'scheduled'
-                and start_date_pm.meta_key = 'engrid_start_date'
-                and start_date_pm.meta_value <> ''
-                and start_date_pm.meta_value > '{$current_date}'
-            ";
-        }
-
-        $query = "
-            select distinct ID
-            from {$wpdb->posts} p
-            join {$wpdb->postmeta} active_status_pm on p.ID = active_status_pm.post_id
-            {$joins}
-            where p.post_type = 'wordpress_promotion'        
-            {$conditions}
-        ";
-        $post_ids = $wpdb->get_col($query);
-        if(empty($post_ids)) $post_ids = [];
-        return $post_ids;
-    }
-
-    function fwp_format_option($label, $key, $selected_key, $disabled = false) {
-        $selected_string = (!$disabled && $key == $selected_key) ? " selected" : "";
-        $disabled_string = ($disabled) ? ' disabled' : '';
-        return "<option value='{$key}'{$selected_string}{$disabled_string}>{$label}</option>";
-    }
-
-    add_action('restrict_manage_posts', 'fwp_table_filtering' );
-    function fwp_table_filtering($post_type) {
-        if($post_type !== 'wordpress_promotion' ) {
-            return;
-        }
-
-        $current_fwp_status = (!empty($_GET['fwp_status'])) ? $_GET['fwp_status'] : '';
-        $options = [];
-        $options[] = fwp_format_option(__('Show all Promotions', 'foursite-wordpress-promotions'), '', $current_fwp_status);
-        $options[] = fwp_format_option(__('On & Scheduled', 'foursite-wordpress-promotions'), 'on-scheduled', $current_fwp_status);
-        $options[] = fwp_format_option(__('Off & Expired', 'foursite-wordpress-promotions'), 'off-expired', $current_fwp_status);
-        $options[] = fwp_format_option('<hr><br><br>', '', $current_fwp_status, true);
-        $options[] = fwp_format_option(__('Off', 'foursite-wordpress-promotions'), 'off', $current_fwp_status);
-        $options[] = fwp_format_option(__('On', 'foursite-wordpress-promotions'), 'on', $current_fwp_status);
-        $options[] = fwp_format_option(__('Scheduled - Expired', 'foursite-wordpress-promotions'), 'expired', $current_fwp_status);
-        $options[] = fwp_format_option(__('Scheduled - Upcoming', 'foursite-wordpress-promotions'), 'upcoming', $current_fwp_status);
-        $options[] = fwp_format_option(__('Scheduled - Active', 'foursite-wordpress-promotions'), 'active', $current_fwp_status);
-        $options_string = implode('', $options);
-        echo "<select class='' id='' name='fwp_status'>{$options_string}</select>";
     }
 }
 
@@ -747,6 +434,124 @@ function foursite_wordpress_promotion_fes_submit() {
             wp_send_json(['success' => false, 'error' => $result['validation_messages']]);
         }
     }
+}
+
+/**
+ * Submit an email capture through the Engaging Networks proxy endpoint.
+ *
+ * The proxy authenticates to EN with its own (whitelisted) API token and writes the
+ * supporter. We send a form-urlencoded body: the email plus any number of question
+ * name/value pairs as questions[Name]=Value, which the proxy forwards to EN's questions.
+ *
+ * @param string $proxy_url Full proxy endpoint URL.
+ * @param string $email     Validated supporter email address.
+ * @param array  $questions Map of EN question name => value (e.g. ['Global Opt-In' => 'Y']).
+ * @return void  Emits a JSON response and returns.
+ */
+function foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions, $page_id = '', $appeal_code = '', $origin_source = '') {
+    $body = ['email' => $email];
+    if($page_id !== '') {
+        // Page-submission mode: the proxy submits the email through this EN page. Any opt-ins are sent
+        // alongside the page's own opt-in config.
+        $body['page_id'] = $page_id;
+        // Per-transaction tracking. Only meaningful in page mode (recorded on the page's transaction):
+        // appeal code has no page default in EN, so it can only come from here; origin source overrides
+        // the page default and is written only to brand-new supporter records.
+        if($appeal_code !== '') {
+            $body['appeal_code'] = $appeal_code;
+        }
+        if($origin_source !== '') {
+            $body['origin_source'] = $origin_source;
+        }
+    }
+    if(!empty($questions)) {
+        // wp_remote_post encodes this as questions[Name]=Value, which PHP rebuilds into
+        // $_REQUEST['questions'] on the proxy.
+        $body['questions'] = $questions;
+    }
+
+    // The proxy reads $_REQUEST / form-urlencoded input, so send it as a form post (not JSON).
+    $response = wp_remote_post($proxy_url, [
+        'body' => $body,
+        'timeout' => 15,
+    ]);
+    if(is_wp_error($response)) {
+        return wp_send_json(['success' => false, 'error' => 'Could not reach the Engaging Networks proxy.']);
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    $raw_body = wp_remote_retrieve_body($response);
+    $decoded = json_decode($raw_body, true);
+    // The proxy returns the raw EN response. EN returns HTTP 200 even for failures, signalling the
+    // error in the body via an "errors" array or a "messageId" envelope (e.g. invalid key, missing
+    // permissions). A successful supporter write returns the supporter id, not that envelope. Treat a
+    // non-2xx status, an empty body, or any EN error envelope as a failure.
+    $en_error = is_array($decoded) && (!empty($decoded['errors']) || isset($decoded['messageId']));
+    if($code < 200 || $code >= 300 || empty($raw_body) || $en_error) {
+        error_log('ECLB proxy submit failed (' . $code . '): ' . $raw_body);
+        return wp_send_json(['success' => false, 'error' => 'Engaging Networks rejected the submission.']);
+    }
+
+    return wp_send_json(['success' => true]);
+}
+
+add_action("wp_ajax_eclb_submit", "foursite_wordpress_promotion_eclb_submit");
+add_action("wp_ajax_nopriv_eclb_submit", "foursite_wordpress_promotion_eclb_submit");
+function foursite_wordpress_promotion_eclb_submit() {
+    $data = json_decode(file_get_contents("php://input"), true);
+    $required_params_present = !empty($data['email']) && !empty($_GET['promo_id']) && !empty($_GET['nonce']);
+    if(!$required_params_present) {
+        return wp_send_json(['success' => false, 'error' => 'Required parameters missing.']);
+    }
+    if(!wp_verify_nonce($_GET['nonce'], 'eclb_nonce')) {
+        return wp_send_json(['success' => false, 'error' => 'Nonce invalid.']);
+    }
+    if(!is_email($data['email'])) {
+        return wp_send_json(['success' => false, 'error' => 'Invalid email address.']);
+    }
+
+    $email = $data['email'];
+    $promo_id = $_GET['promo_id'];
+
+    $config = get_field('email_capture_lightbox', $promo_id);
+
+    // Submissions are handled by a server-side proxy that holds the API token on a whitelisted host.
+    // This keeps the token off the client and works from hosts without a fixed outbound IP (e.g. Pantheon).
+    $proxy_url = trim((string) get_field('promotion_en_proxy_url', 'options'));
+    if(!$proxy_url) {
+        return wp_send_json(['success' => false, 'error' => 'Engaging Networks proxy endpoint is not configured.']);
+    }
+
+    // Build the question name/value pairs from the Opt-Ins repeater. Each row maps an EN question
+    // name/ID to a value; the proxy forwards these verbatim to EN's questions object. Opt-ins apply to
+    // both submission methods (in page mode they are submitted alongside the page's own opt-in config).
+    $questions = [];
+    if(!empty($config['en_optins']) && is_array($config['en_optins'])) {
+        foreach($config['en_optins'] as $row) {
+            $name = isset($row['optin_name']) ? trim($row['optin_name']) : '';
+            $value = isset($row['optin_value']) ? trim($row['optin_value']) : '';
+            if($name !== '' && $value !== '') {
+                $questions[$name] = $value;
+            }
+        }
+    }
+
+    // The Submission Method field selects where the email goes:
+    //   - 'page'   : submit through a specific EN page (which also applies its own opt-in config).
+    //   - 'optins' : submit the supporter directly. Opt-ins are sent in either case.
+    $method = isset($config['en_submit_method']) && $config['en_submit_method'] ? $config['en_submit_method'] : 'optins';
+
+    if($method === 'page') {
+        $page_id = isset($config['en_page_id']) ? trim((string) $config['en_page_id']) : '';
+        if($page_id === '') {
+            return wp_send_json(['success' => false, 'error' => 'Engaging Networks page is not configured.']);
+        }
+        $appeal_code = isset($config['en_appeal_code']) ? trim((string) $config['en_appeal_code']) : '';
+        $origin_source = isset($config['en_origin_source']) ? trim((string) $config['en_origin_source']) : '';
+        return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions, $page_id, $appeal_code, $origin_source);
+    }
+
+    return foursite_wordpress_promotion_eclb_submit_via_proxy($proxy_url, $email, $questions);
 }
 
 function foursite_wordpress_promotion_plugin_data() {

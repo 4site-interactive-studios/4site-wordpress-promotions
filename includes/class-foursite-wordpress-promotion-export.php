@@ -30,7 +30,7 @@ class Foursite_Wordpress_Promotion_Export extends Foursite_Wordpress_Promotion_M
 		// The download URL is opened via a normal browser navigation, so it
 		// carries the auth cookie; the redirect appends a `wp_rest` nonce that
 		// lets cookie auth resolve the current user for this REST request.
-		return current_user_can('edit_posts');
+		return current_user_can('edit_pages');
 	}
 
 	function download_export($request) {
@@ -140,7 +140,7 @@ class Foursite_Wordpress_Promotion_Export extends Foursite_Wordpress_Promotion_M
 		if ($action !== 'fswp_export') {
 			return $redirect_to;
 		}
-		if (!current_user_can('edit_posts') || !is_array($post_ids) || count($post_ids) === 0) {
+		if (!current_user_can('edit_pages') || !is_array($post_ids) || count($post_ids) === 0) {
 			return $redirect_to;
 		}
 
