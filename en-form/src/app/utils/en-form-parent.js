@@ -117,7 +117,7 @@ export class ENFormParent {
     // console.log("ENFormParent: receiveMessage: event: ", event.data);
     const message = event.data;
     const iframe = this.getFrameByEvent(event);
-    if (!iframe.hasAttribute("data-key")) return;
+    if (!iframe || !iframe.hasAttribute("data-key")) return;
     const key = iframe.dataset.key;
 
     if (message && "frameHeight" in message) {
@@ -148,6 +148,9 @@ export class ENFormParent {
           "ENFormParent: receiveMessage: donationinfo: ",
           this.donationinfo[key]
         );
+        break;
+      case "redirect":
+        this.redirect(message.value);
         break;
     }
   }
@@ -185,6 +188,29 @@ export class ENFormParent {
         }
         break;
     }
+  }
+  // Redirect the top window to the URL sent by the child iframe, appending
+  // Engaging Networks' bare "chain" param so supporter info carries over
+  redirect(targetUrl) {
+    let url;
+    try {
+      url = new URL(targetUrl);
+    } catch (e) {
+      if (this.isDebug())
+        console.log("ENFormParent: redirect: invalid URL: ", targetUrl);
+      return;
+    }
+    if (!["http:", "https:"].includes(url.protocol)) {
+      if (this.isDebug())
+        console.log("ENFormParent: redirect: blocked protocol: ", url.protocol);
+      return;
+    }
+    if (!url.searchParams.has("chain")) {
+      url.search += (url.search ? "&" : "?") + "chain";
+    }
+    if (this.isDebug())
+      console.log("ENFormParent: redirect: ", url.toString());
+    window.location.href = url.toString();
   }
   error(error, key) {
     this.shake(key);

@@ -22,6 +22,39 @@ You can define options via data attributes on the iFrame tag. The following opti
 
 ### IMPORTANT: This project only works with the Engaging Networks Pages using the [engrid theme](https://github.com/4site-interactive-studios/engrid).
 
+## Thank You page redirect
+
+The embedded page can redirect the visitor away from the WordPress page (the top window) by posting a `redirect` message to the parent. No ENgrid changes are needed — add a code block to the Engaging Networks Thank You page with a snippet like this:
+
+```html
+<script>
+  (function () {
+    // Where to send the visitor as soon as they reach this Thank You page.
+    // The URL may already have its own query string — that's fine.
+    var redirectUrl = "https://example.org/next-page?utm_source=newsletter";
+
+    if (window.self !== window.top) {
+      // Embedded in the WordPress plugin's iframe: the parent page appends
+      // the chain argument and redirects the top window.
+      window.parent.postMessage({ key: "redirect", value: redirectUrl }, "*");
+      return;
+    }
+
+    // Viewed directly (not embedded): redirect this window, appending the
+    // chain argument the same way the parent would.
+    var url = new URL(redirectUrl);
+    if (!url.searchParams.has("chain")) {
+      url.search += (url.search ? "&" : "?") + "chain";
+    }
+    window.location.href = url.toString();
+  })();
+</script>
+```
+
+Whether the redirect happens via the parent page or directly, Engaging Networks' `chain` URL argument is appended to the target URL (`?chain` if the URL has no query string, `&chain` otherwise, and never twice). The `chain` argument takes advantage of EN's native page chaining, which pre-populates the supporter's information on the destination page while their session is active.
+
+Only absolute `http:`/`https:` URLs are honored — anything else (including relative or malformed URLs) is ignored by the parent.
+
 ## Development
 
 Your js code must be on the `src/app` folder. Styling changes must be on `src/scss`.
