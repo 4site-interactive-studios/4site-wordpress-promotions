@@ -406,6 +406,7 @@ class Foursite_Wordpress_Promotion_Public
 			'promotion_type' => 'multistep_lightbox',
 			'url' => $this->get_donation_page_url($lightbox_id),
 			'image' => get_field('engrid_image', $lightbox_id),
+			'image_url' => get_field('engrid_image_link', $lightbox_id),
 			'image_caption' => get_field('engrid_image_caption', $lightbox_id),
 			'logo' => $engrid_logo,
 			'video' => ($engrid_hero_type == 'autoplay-video' || $engrid_hero_type == 'click-to-play-video') ? get_field('engrid_video', $lightbox_id) : "",
