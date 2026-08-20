@@ -19,6 +19,7 @@ You can define options via data attributes on the iFrame tag. The following opti
 - `loading-color` - The color of the loading animation.
 - `bounce-color` - The color of the bounce animation.
 - `append-url-params` - Whether to append the current URL parameters to the iFrame URL.
+- `loading` - The `loading` attribute for the iFrame: `lazy` (default), `eager`, or `none` (omit the attribute entirely). Also available as `data-loading` on a raw embed tag; any other or empty value falls back to `lazy`.
 
 ### IMPORTANT: This project only works with the Engaging Networks Pages using the [engrid theme](https://github.com/4site-interactive-studios/engrid).
 
