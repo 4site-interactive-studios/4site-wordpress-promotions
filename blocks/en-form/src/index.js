@@ -6,6 +6,7 @@ import {
   TextControl,
   ColorIndicator,
   ToggleControl,
+  SelectControl,
 } from "@wordpress/components";
 
 /**
@@ -50,6 +51,10 @@ registerBlockType("promotions/en-form", {
       type: "boolean",
       default: true,
     },
+    loading: {
+      type: "string",
+      default: "lazy",
+    },
   },
   supports: {
     align: true, // Enables alignment options
@@ -65,6 +70,7 @@ registerBlockType("promotions/en-form", {
       loadingColor,
       bounceColor,
       appendUrlParams,
+      loading,
     } = attributes;
 
     const blockProps = useBlockProps();
@@ -126,6 +132,16 @@ registerBlockType("promotions/en-form", {
           checked={appendUrlParams}
           onChange={(value) => setAttributes({ appendUrlParams: value })}
         />
+        <SelectControl
+          label={__("iFrame Loading", "promotions")}
+          value={loading}
+          options={[
+            { label: __("Lazy (default)", "promotions"), value: "lazy" },
+            { label: __("Eager", "promotions"), value: "eager" },
+            { label: __("None (no attribute)", "promotions"), value: "none" },
+          ]}
+          onChange={(value) => setAttributes({ loading: value })}
+        />
       </div>
     );
   },
@@ -139,6 +155,7 @@ registerBlockType("promotions/en-form", {
       loadingColor,
       bounceColor,
       appendUrlParams,
+      loading,
     } = attributes;
 
     const blockProps = useBlockProps.save();
@@ -150,7 +167,9 @@ registerBlockType("promotions/en-form", {
       border-radius="${escapeHTML(borderRadius)}"
       loading-color="${escapeHTML(loadingColor)}"
       bounce-color="${escapeHTML(bounceColor)}"
-      append-url-params="${appendUrlParams}"
+      append-url-params="${appendUrlParams}"${
+      loading && loading !== "lazy" ? ` loading="${escapeHTML(loading)}"` : ""
+    }
     ]`;
 
     return <div {...blockProps}>{shortcode}</div>;

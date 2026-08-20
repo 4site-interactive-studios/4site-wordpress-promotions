@@ -18,6 +18,7 @@ export class ENFormParent {
       loading_color: "#E5E6E8",
       bounce_color: "#16233f",
       append_url_params: "false",
+      loading: "lazy",
     };
     this.options = {};
     this.container = {};
@@ -47,6 +48,7 @@ export class ENFormParent {
         this.options[key].bounce_color = data.bounce_color;
       if ("append_url_params" in data)
         this.options[key].append_url_params = data.append_url_params;
+      if ("loading" in data) this.options[key].loading = data.loading;
       if (this.isDebug())
         console.log("ENFormParent: loadOptions: options: ", this.options[key]);
     });
@@ -77,6 +79,13 @@ export class ENFormParent {
       container.classList.add("foursiteENFormParent-container");
       container.id = this.containerID[key];
       const height = this.options[key].height ?? "400px";
+      const loading = String(this.options[key].loading ?? "lazy")
+        .toLowerCase()
+        .trim();
+      const loadingAttr =
+        loading === "none"
+          ? ""
+          : ` loading='${["lazy", "eager"].includes(loading) ? loading : "lazy"}'`;
       const markup = `
         <div class="dm-content" style="border-radius: ${this.options[key].border_radius}">
             <div class="dm-loading" style="background-color: ${this.options[key].loading_color}">
@@ -85,7 +94,7 @@ export class ENFormParent {
                 <div class="double-bounce2" style="background-color: ${this.options[key].bounce_color}"></div>
               </div>
             </div>
-            <iframe style='height: ${height}; min-height: ${height};' allow='payment' loading='lazy' width='100%' scrolling='no' class='promo-form-iframe' src='${src}' data-key='${key}' frameborder='0' allowfullscreen></iframe>
+            <iframe style='height: ${height}; min-height: ${height};' allow='payment'${loadingAttr} width='100%' scrolling='no' class='promo-form-iframe' src='${src}' data-key='${key}' frameborder='0' allowfullscreen></iframe>
         </div>
             `;
       container.innerHTML = markup;
