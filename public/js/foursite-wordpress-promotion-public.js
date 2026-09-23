@@ -185,8 +185,11 @@ window.addEventListener("DOMContentLoaded", () => {
     document.head.appendChild(s);
   }
 
-  function addMultistepLightbox(promotion) {
-    ensureMultistepScript(() => addMultistepLightboxNow(promotion));
+  function addMultistepLightbox(promotion, onLaunched) {
+    ensureMultistepScript(() => {
+      addMultistepLightboxNow(promotion);
+      onLaunched();
+    });
   }
 
   function addMultistepLightboxNow(promotion) {
@@ -265,9 +268,12 @@ window.addEventListener("DOMContentLoaded", () => {
           return;
         } else {
           window.lightbox_triggered = true;
-          addMultistepLightbox(promotion);
+          // The lightbox script may still be lazy-loading, and the lightbox
+          // won't open if its suppression cookie is already set, so finish the
+          // launch (cookie + event) only once the lightbox has been built.
+          addMultistepLightbox(promotion, () => finishLaunch(promotion));
         }
-        break;
+        return;
       case "signup_lightbox":
         if (window.lightbox_triggered) {
           return;
@@ -324,6 +330,10 @@ window.addEventListener("DOMContentLoaded", () => {
         break;
     }
 
+    finishLaunch(promotion);
+  }
+
+  function finishLaunch(promotion) {
     if (promotion.cookie_hours) {
       setCookie(promotion.cookie_name, promotion.cookie_hours);
     }
