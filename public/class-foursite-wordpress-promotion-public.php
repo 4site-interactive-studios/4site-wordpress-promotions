@@ -75,7 +75,7 @@ class Foursite_Wordpress_Promotion_Public
 		 * class.
 		 */
 
-		wp_enqueue_style($this->foursite_wordpress_promotion, plugin_dir_url(__FILE__) . 'css/foursite-wordpress-promotion-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->foursite_wordpress_promotion, plugin_dir_url(__FILE__) . 'css/foursite-wordpress-promotion-public' . foursite_wordpress_promotion_MIN . '.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -278,9 +278,10 @@ class Foursite_Wordpress_Promotion_Public
 		$client_side_triggered_config = [];
 
 		$multistep_script_url = get_field('promotion_lightbox_script', 'options');
+		$lazy_load_lightbox = get_field('promotion_lightbox_lazy_load', 'options');
 
 		$script_ver = $this->version;
-		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public.js';
+		$main_script_url = plugin_dir_url(__FILE__) . 'js/foursite-wordpress-promotion-public' . foursite_wordpress_promotion_MIN . '.js';
 
 		foreach ($lightbox_ids as $lightbox_id) {
 			$config = $this->prepare_config_for_promo($lightbox_id);
@@ -295,14 +296,25 @@ class Foursite_Wordpress_Promotion_Public
 
 			// move the floating_tab promo above any lightbox promos
 			$client_side_triggered_config = $this->move_first_floating_tab_to_top($client_side_triggered_config);
-
-			if ($multistep_script_url) {
+			
+			// When lazy-loading is OFF (the default), keep the original behavior: load
+			// the lightbox parent script up front, before the main script depends on it.
+			// When ON, we hand the URL to the main script instead (see below) and let it
+			// load the parent script on demand only if a promo actually needs it. Lazy
+			// mode requires a parent script that registers its constructor on load (not
+			// only on DOMContentLoaded), so it stays opt-in per client.
+			$main_deps = array();
+			if ($multistep_script_url && !$lazy_load_lightbox) {
 				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
-				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array('multistep-lightbox'), $script_ver, false);
-			} else {
-				wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, array(), $script_ver, false);
+				$main_deps[] = 'multistep-lightbox';
 			}
+
+			wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, $main_deps, $script_ver, false);
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
+
+			if ($multistep_script_url && $lazy_load_lightbox) {
+				wp_localize_script('foursite-wordpress-promotion-public', 'foursite_promotion_multistep_script', array('url' => $multistep_script_url));
+			}
 		}
 	}
 
@@ -728,7 +740,7 @@ class Foursite_Wordpress_Promotion_Public
 
 	private function prepare_floating_tab_config($lightbox_id)
 	{
-		wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab.css', __FILE__), [], '1.0');
+		wp_enqueue_style('fs-floating-tab', plugins_url('floating-tab/fs-floating-tab' . foursite_wordpress_promotion_MIN . '.css', __FILE__), [], '1.0');
 
 		$fsft_colors = get_field('engrid_fsft_color', $lightbox_id);
 		$fsft_radius = get_field('engrid_fsft_radius', $lightbox_id);

@@ -78,6 +78,20 @@ When incrementing the version, it must be incremented in two places in /foursite
 In the multiline comment under the key, "Version"
 In the foursite_wordpress_promotion_VERSION define below that the multiline comment
 
+## Building Assets
+
+The plugin's hand-written public/admin CSS & JS are minified with [esbuild](https://esbuild.github.io/). Edit the unminified source files (e.g. `public/js/foursite-wordpress-promotion-public.js`); the build emits a sibling `*.min.js` / `*.min.css` for each.
+
+```
+npm install      # once, installs esbuild
+npm run build    # minify all assets
+npm run watch    # rebuild on change while developing
+```
+
+In production the `.min` files are enqueued. Define `SCRIPT_DEBUG` as `true` in `wp-config.php` to load the readable, unminified sources instead (handled by the `foursite_wordpress_promotion_MIN` constant). The minified files are committed so the plugin runs on a fresh clone without a build step — **always re-run `npm run build` and commit the result after editing a source asset.**
+
+The `overlay`, `pushdown`, and `signup` sub-projects have their own separate webpack builds and are not part of this process.
+
 ## General Registration
 
 Custom post-type registration and the ACF options page both occur in /admin/options.php. This is also where custom columns/interactions are registered via the appropriate hooks for the backend listing of promotions.
