@@ -502,6 +502,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.createElement("div");
     modal.classList.add("fs-cta-modal");
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("tabindex", "-1");
 
     const modal_close_button = document.createElement("div");
     modal_close_button.classList.add("fs-cta-modal-close-button");
@@ -532,8 +535,10 @@ window.addEventListener("DOMContentLoaded", () => {
     if (promotion.header) {
       const modal_header = document.createElement("div");
       modal_header.classList.add("fs-cta-modal-header");
+      modal_header.id = "fs-cta-modal-header-" + promotion.id;
       modal_header.innerHTML = promotion.header;
       modal_text_column.appendChild(modal_header);
+      modal.setAttribute("aria-labelledby", modal_header.id);
     }
 
     if (promotion.body) {
@@ -617,6 +622,9 @@ window.addEventListener("DOMContentLoaded", () => {
         width: 95%;
         max-width: 880px;
         height: fit-content;
+      }
+      .fs-cta-modal:focus {
+        outline: none;
       }
       .fs-cta-modal.fs-cta-modal-image-left {
         flex-direction: row-reverse;
@@ -761,10 +769,37 @@ window.addEventListener("DOMContentLoaded", () => {
     // Prevent scrolling of the page while the CTA modal is open
     document.body.classList.add('fs-cta-modal-noscroll');
 
-    // Handle closure of the CTA modal
-    function detectEscape(e) {
+    // Move keyboard focus into the modal, remembering where it was so it can
+    // be returned on close
+    const previously_focused = document.activeElement;
+    modal.focus({ preventScroll: true });
+
+    // Handle keyboard: Escape closes, and Tab stays within the modal
+    function handleKeydown(e) {
       if (e.key === "Escape") {
         closeCtaModal();
+      } else if (e.key === "Tab") {
+        trapFocus(e);
+      }
+    }
+    function trapFocus(e) {
+      const focusable = Array.from(modal.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter((el) => el.getClientRects().length > 0);
+      if (!focusable.length) {
+        e.preventDefault();
+        modal.focus({ preventScroll: true });
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || active === modal || !modal.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !modal.contains(active))) {
+        e.preventDefault();
+        first.focus();
       }
     }
     function clickOutsideModal(e) {
@@ -774,14 +809,17 @@ window.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
     }
     function closeCtaModal() {
-      document.body.removeEventListener('keyup', detectEscape);
+      document.removeEventListener('keydown', handleKeydown);
       document.querySelector('.fs-cta-modal-close-button').removeEventListener('click', closeCtaModal);
       document.querySelector('.fs-cta-modal-container').removeEventListener('click', clickOutsideModal);
       document.querySelector('.fs-cta-modal').removeEventListener('click', clickWithinModal);
       document.querySelector('.fs-cta-modal-container').style.display = 'none';
       document.body.classList.remove('fs-cta-modal-noscroll');
+      if (previously_focused && previously_focused.focus && document.contains(previously_focused)) {
+        previously_focused.focus({ preventScroll: true });
+      }
     }
-    document.body.addEventListener('keyup', detectEscape);
+    document.addEventListener('keydown', handleKeydown);
     document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
     document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
     document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
