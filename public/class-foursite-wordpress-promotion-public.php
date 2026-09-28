@@ -405,6 +405,19 @@ class Foursite_Wordpress_Promotion_Public
 			$engrid_js = $this->make_js_replacements($engrid_js);
 		}
 
+		// Countdown bar, only when switched on: ACF keeps the hidden fields'
+		// values, so turning the toggle off must not leave a countdown running.
+		// The picker's value is wall-clock time with no zone. Pin it to the
+		// site's time zone (ISO 8601 with offset) so every visitor counts
+		// down to the same moment; the lightbox script reads a bare
+		// "Y-m-d H:i:s" in the visitor's own zone.
+		$use_countdown = (bool) get_field('engrid_use_countdown', $lightbox_id);
+		$countdown_datetime = $use_countdown ? get_field('engrid_countdown_datetime', $lightbox_id) : '';
+		if ($countdown_datetime) {
+			$countdown_date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $countdown_datetime, wp_timezone());
+			$countdown_datetime = $countdown_date ? $countdown_date->format('c') : '';
+		}
+
 		$confetti = array();
 		if (have_rows('engrid_confetti', $lightbox_id)) {
 			while (have_rows('engrid_confetti', $lightbox_id)) {
@@ -432,6 +445,9 @@ class Foursite_Wordpress_Promotion_Public
 			'title' => get_field('engrid_title', $lightbox_id),
 			'paragraph' => get_field('engrid_paragraph', $lightbox_id),
 			'footer' => get_field('engrid_footer', $lightbox_id),
+			'countdown_datetime' => $countdown_datetime ?: '',
+			'countdown_title' => $use_countdown ? (get_field('engrid_countdown_title', $lightbox_id) ?: '') : '',
+			'countdown_copy' => $use_countdown ? (get_field('engrid_countdown_copy', $lightbox_id) ?: '') : '',
 			'bg_color' => get_field('engrid_bg_color', $lightbox_id),
 			'txt_color' => get_field('engrid_text_color', $lightbox_id),
 			'form_color' => get_field('engrid_form_color', $lightbox_id),
