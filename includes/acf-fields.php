@@ -2347,7 +2347,7 @@ add_action( 'acf/include_fields', function() {
 			'name' => 'engrid_use_countdown',
 			'aria-label' => '',
 			'type' => 'true_false',
-			'instructions' => 'Shows a countdown bar above the lightbox. This only works with multistep lightbox scripts that support it (currently the CLF and SPCAI lightboxes); others ignore these settings.',
+			'instructions' => 'Shows a countdown bar above the lightbox. This only works with multistep lightbox scripts that support it; others ignore these settings.',
 			'required' => 0,
 			'conditional_logic' => array(
 				array(
@@ -2440,7 +2440,7 @@ add_action( 'acf/include_fields', function() {
 			'name' => 'engrid_countdown_copy',
 			'aria-label' => '',
 			'type' => 'text',
-			'instructions' => 'Optional line under the countdown title. Not every lightbox script shows it (the SPCAI one does not).',
+			'instructions' => 'Optional line under the countdown title. Not every lightbox script shows it.',
 			'required' => 0,
 			'conditional_logic' => array(
 				array(
