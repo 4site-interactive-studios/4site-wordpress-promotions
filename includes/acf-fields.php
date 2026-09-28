@@ -1585,6 +1585,35 @@ add_action( 'acf/include_fields', function() {
 			'acfe_thumbnail' => 0,
 		),
 		array(
+			'key' => 'field_6a6baeccd62b5',
+			'label' => 'Image Caption',
+			'name' => 'engrid_image_caption',
+			'aria-label' => '',
+			'type' => 'text',
+			'instructions' => 'Appears in the lower-right corner of the image. Only available if the lightbox script has bundled this feature.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_63694582ec47e',
+						'operator' => '==',
+						'value' => 'multistep_lightbox',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'maxlength' => '',
+			'allow_in_bindings' => 1,
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+		),
+		array(
 			'key' => 'field_68ca061920bca',
 			'label' => 'Image Link',
 			'name' => 'engrid_image_link',
