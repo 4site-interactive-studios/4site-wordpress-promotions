@@ -904,6 +904,7 @@ class Foursite_Wordpress_Promotion_Public
 			'image' => [
 				'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
 				'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+				'caption' => isset($config['image_caption']) ? trim((string) $config['image_caption']) : '',
 				'position' => $config['image_position'],
 				'bg_color' => $config['image_bg_color']
 			],
