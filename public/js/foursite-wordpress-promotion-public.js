@@ -595,6 +595,15 @@ window.addEventListener("DOMContentLoaded", () => {
       modal_image_container.appendChild(modal_image);
 
       modal_image_column.appendChild(modal_image_container);
+
+      // Optional caption (e.g. a photo credit) over the image's lower-right corner.
+      if (promotion.image.caption) {
+        const modal_image_caption = document.createElement("div");
+        modal_image_caption.classList.add("fs-cta-modal-image-caption");
+        modal_image_caption.textContent = promotion.image.caption;
+        modal_image_column.appendChild(modal_image_caption);
+      }
+
       modal.appendChild(modal_image_column);
     }
 
@@ -653,6 +662,21 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       .fs-cta-modal-image-column {
         width: 50%;
+        position: relative;
+      }
+      .fs-cta-modal-image-caption {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        max-width: calc(100% - 16px);
+        box-sizing: border-box;
+        padding: 4px 8px;
+        border-radius: 100px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 12px;
+        line-height: 1.35;
+        pointer-events: none;
       }
       .fs-cta-modal-image-container {
         overflow: hidden;
