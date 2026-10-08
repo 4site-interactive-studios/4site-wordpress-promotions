@@ -1,6 +1,6 @@
 {
   "name": "foursite-wordpress-promotions",
-  "version": "1.11.4",
+  "version": "1.12.0",
   "private": true,
   "description": "Build tooling for the 4Site WordPress Promotions plugin's hand-written public/admin assets.",
   "scripts": {
