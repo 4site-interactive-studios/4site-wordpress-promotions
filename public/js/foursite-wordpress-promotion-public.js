@@ -548,34 +548,32 @@ window.addEventListener("DOMContentLoaded", () => {
       modal_text_column.appendChild(modal_content);
     }
 
-    if (promotion.cta_1.label && promotion.cta_1.link) {
-      const modal_cta_button_1 = document.createElement("a");
-      modal_cta_button_1.classList.add("fs-cta-modal-button");
-      modal_cta_button_1.href = promotion.cta_1.link;
-      modal_cta_button_1.target = '_blank';
-      modal_cta_button_1.innerHTML = promotion.cta_1.label;
-      if (promotion.cta_1.bg_color) {
-        modal_cta_button_1.style.backgroundColor = promotion.cta_1.bg_color;
+    // Up to three buttons. Each carries its slot number, and the modal the
+    // number shown, so a promotion's CSS can style and arrange them.
+    let modal_cta_button_count = 0;
+    [promotion.cta_1, promotion.cta_2, promotion.cta_3].forEach((cta, index) => {
+      if (!cta || !cta.label || !cta.link) {
+        return;
       }
-      if (promotion.cta_1.fg_color) {
-        modal_cta_button_1.style.color = promotion.cta_1.fg_color;
+      const modal_cta_button = document.createElement("a");
+      modal_cta_button.classList.add("fs-cta-modal-button", "fs-cta-modal-button-" + (index + 1));
+      modal_cta_button.href = cta.link;
+      modal_cta_button.target = '_blank';
+      modal_cta_button.innerHTML = cta.label;
+      if (cta.bg_color) {
+        modal_cta_button.style.backgroundColor = cta.bg_color;
       }
-      modal_text_column.appendChild(modal_cta_button_1);
-    }
+      if (cta.fg_color) {
+        modal_cta_button.style.color = cta.fg_color;
+      }
+      modal_text_column.appendChild(modal_cta_button);
+      modal_cta_button_count++;
+    });
+    modal.classList.add("fs-cta-modal-buttons-" + modal_cta_button_count);
 
-    if (promotion.cta_2.label && promotion.cta_2.link) {
-      const modal_cta_button_2 = document.createElement("a");
-      modal_cta_button_2.classList.add("fs-cta-modal-button");
-      modal_cta_button_2.href = promotion.cta_2.link;
-      modal_cta_button_2.target = '_blank';
-      modal_cta_button_2.innerHTML = promotion.cta_2.label;
-      if (promotion.cta_2.bg_color) {
-        modal_cta_button_2.style.backgroundColor = promotion.cta_2.bg_color;
-      }
-      if (promotion.cta_2.fg_color) {
-        modal_cta_button_2.style.color = promotion.cta_2.fg_color;
-      }
-      modal_text_column.appendChild(modal_cta_button_2);
+    // The link itself is drawn by the promotion's CSS; this only switches it on.
+    if (promotion.dismiss_link) {
+      modal.classList.add("fs-cta-modal-has-dismiss-link");
     }
 
     modal.appendChild(modal_text_column);
