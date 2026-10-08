@@ -4632,11 +4632,11 @@ add_action( 'acf/include_fields', function() {
 				),
 				array(
 					'key' => 'field_6ae6a1c3d0f25',
-					'label' => 'Show Dismiss Link',
+					'label' => 'Show Continue to Site Dismiss Link',
 					'name' => 'dismiss_link',
 					'aria-label' => '',
 					'type' => 'true_false',
-					'instructions' => 'Adds the class "fs-cta-modal-has-dismiss-link" to the lightbox, for Custom CSS that draws a text link closing it. Has no effect without that CSS.',
+					'instructions' => 'Adds a "Continue to the site" link under the buttons that closes the lightbox.',
 					'required' => 0,
 					'conditional_logic' => 0,
 					'wrapper' => array(

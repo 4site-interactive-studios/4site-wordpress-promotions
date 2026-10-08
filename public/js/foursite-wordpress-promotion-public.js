@@ -571,8 +571,13 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     modal.classList.add("fs-cta-modal-buttons-" + modal_cta_button_count);
 
-    // The link itself is drawn by the promotion's CSS; this only switches it on.
+    // Optional "Continue to the site" link under the buttons; closes the modal.
     if (promotion.dismiss_link) {
+      const modal_dismiss_link = document.createElement("a");
+      modal_dismiss_link.classList.add("fs-cta-modal-dismiss-link");
+      modal_dismiss_link.href = "#";
+      modal_dismiss_link.textContent = "Continue to the site";
+      modal_text_column.appendChild(modal_dismiss_link);
       modal.classList.add("fs-cta-modal-has-dismiss-link");
     }
 
@@ -703,6 +708,22 @@ window.addEventListener("DOMContentLoaded", () => {
       .fs-cta-modal-button:hover {
         text-decoration: none;
         opacity: 0.8;
+      }
+
+      .fs-cta-modal-dismiss-link {
+        display: block;
+        width: 100%;
+        color: inherit;
+        font-size: 14px;
+        font-style: italic;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .fs-cta-modal-dismiss-link:hover,
+      .fs-cta-modal-dismiss-link:focus {
+        color: inherit;
+        text-decoration: underline;
       }
 
       .fs-cta-modal-close-button {
@@ -843,6 +864,13 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     document.addEventListener('keydown', handleKeydown);
     document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
+    const dismiss_link = document.querySelector('.fs-cta-modal-dismiss-link');
+    if (dismiss_link) {
+      dismiss_link.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeCtaModal();
+      });
+    }
     document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
     document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
   }
