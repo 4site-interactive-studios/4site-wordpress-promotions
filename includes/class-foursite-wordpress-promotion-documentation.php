@@ -59,7 +59,7 @@ class Foursite_Wordpress_Promotion_Documentation {
 				<tbody>
 					<tr><td>EN Multistep Lightbox</td><td>A lightbox with an embedded Engaging Networks multistep donation page.</td></tr>
 					<tr><td>EN Lightbox</td><td>A lightbox with a single-step embedded Engaging Networks page, such as a signup or petition.</td></tr>
-					<tr><td>CTA Lightbox</td><td>A call-to-action lightbox with an image, text, and up to two buttons.</td></tr>
+					<tr><td>CTA Lightbox</td><td>A call-to-action lightbox with an image, text, and up to three buttons.</td></tr>
 					<tr><td>Email Capture Lightbox</td><td>A lightbox with an email signup form that submits to Engaging Networks.</td></tr>
 					<tr><td>Overlay</td><td>A modal or full-screen takeover, with optional donation amount buttons.</td></tr>
 					<tr><td>Pushdown</td><td>A text or image banner at the top of the page that links to another page.</td></tr>
@@ -72,7 +72,7 @@ class Foursite_Wordpress_Promotion_Documentation {
 					<tr><td>A/B Test</td><td>Splits visitors between two or more existing promotions.</td></tr>
 				</tbody>
 			</table>
-			<p>Some types need a one-time setup under <a href="<?php echo $settings_url; ?>">Promotions &gt; Settings</a>:</p>
+			<p>Some types need a one-time setup under <a href="<?php echo $settings_url; ?>">Promotions &gt; Settings</a>. If 4Site set these up as part of your site's initial build, the work is already done; just check that the fields below are filled in before you build that type of promotion.</p>
 			<ul>
 				<li><strong>EN Multistep Lightbox:</strong> the Promotion Lightbox Script URL must be filled in.</li>
 				<li><strong>Floating Email Signup:</strong> the reCAPTCHA v3 site key and secret key must be filled in, and reCAPTCHA must be disabled on the Gravity Form itself.</li>
@@ -100,6 +100,20 @@ class Foursite_Wordpress_Promotion_Documentation {
 						<li><strong>Hide On (URL Pattern)</strong> and <strong>Hide On (Individual Pages)</strong> exclude URLs or pages. Hide always wins over Show.</li>
 						<li><strong>404 Pages</strong> controls whether it runs on "page not found" pages. It does not by default.</li>
 					</ul>
+					<p><strong>How URL patterns match:</strong> each pattern is compared with the part of the address after the domain (the path, plus any <code>?query</code>), and a page matches if that part <em>contains</em> the pattern anywhere. Matching ignores upper and lower case. Separate several patterns with commas, for example <code>/blog/, /news/</code>.</p>
+					<table class="widefat striped">
+						<thead>
+							<tr><th>Pattern</th><th>Matches</th><th>Watch out for</th></tr>
+						</thead>
+						<tbody>
+							<tr><td><code>/blog/</code></td><td><code>/blog/</code> and every page under it, such as <code>/blog/my-post/</code></td><td>A section of the same name further down, such as <code>/news/blog/</code>. Usually still the pattern you want for a section.</td></tr>
+							<tr><td><code>/blog</code></td><td>Everything above, plus <code>/blogroll/</code> or any other path starting with "/blog"</td><td>Pages you did not mean to include.</td></tr>
+							<tr><td><code>blog/</code></td><td>Everything under <code>/blog/</code>, plus paths ending in "blog", such as <code>/our-blog/</code></td><td>Pages you did not mean to include.</td></tr>
+							<tr><td><code>blog</code></td><td>Any address containing "blog" anywhere, such as <code>/our-blog/</code>, <code>/blogroll/</code>, or <code>/news/blog-tips/</code></td><td>The widest match; use it only if that is what you want.</td></tr>
+							<tr><td><code>examplesite.org/blog</code></td><td>Nothing</td><td>The domain is never part of the comparison, so leave it out.</td></tr>
+						</tbody>
+					</table>
+					<p>To target a single page, Show On (Individual Pages) is simpler and more precise than a URL pattern. Avoid <code>/</code> on its own: every address contains it, so it matches every page.</p>
 				</li>
 				<li>Click <strong>Publish</strong>. The promotion is saved but not yet visible to visitors, because its visibility is still Turned Off.</li>
 				<li>When you are ready to test or go live, change the visibility to <strong>Turned On</strong> (to show it right away, with no end date) or <strong>Scheduled</strong> (see the next section) and click <strong>Update</strong>.</li>
@@ -126,8 +140,10 @@ class Foursite_Wordpress_Promotion_Documentation {
 
 			<h2 id="fswp-docs-notes">Good to know</h2>
 			<ul>
-				<li><strong>Only one lightbox shows per page.</strong> If several lightbox promotions qualify for the same page, scheduled promotions take priority over ones that are Turned On, and after that the most recently created one wins.</li>
+				<li><strong>Only one lightbox shows per page.</strong> If several lightbox promotions qualify for the same page, scheduled promotions take priority over ones that are Turned On, and after that the most recently created one wins. This limit covers the EN Multistep Lightbox, EN Lightbox, CTA Lightbox, Email Capture Lightbox, Overlay, Video Lightbox, and Floating Email Signup types, plus Raw Code promotions set to <strong>Is Lightbox</strong>.</li>
+				<li><strong>Some types can appear alongside a lightbox.</strong> A Floating Tab, a Pushdown, a Roll Up, and Raw Code set to <strong>Is Not Lightbox</strong> are not part of the one-lightbox limit, so they can show on the same page as a lightbox and alongside each other. Only one Floating Tab shows per page.</li>
 				<li><strong>You will only see a promotion once while testing.</strong> After your first view the suppression cookie hides it from you. Use a new private or incognito window each time you test.</li>
+				<li><strong>Test on a published page.</strong> A private window is not logged in to WordPress, so it cannot see Private or Draft pages. To test a promotion before it goes on a live page, publish a test page, set it to be excluded from search engines (for example with your SEO plugin's "noindex" setting), and limit the promotion to that page with <strong>Show On (Individual Pages)</strong>.</li>
 				<li><strong>A/B Test promotions control their variants.</strong> A promotion added to an A/B Test follows the test's visibility and display settings, regardless of its own.</li>
 				<li><strong>Promotions can be copied between sites.</strong> On the All Promotions screen, tick the promotions you want, choose <strong>Export</strong> from the Bulk actions dropdown, and click Apply. Then upload that file under Promotions &gt; Import Promos on the other site.</li>
 			</ul>
