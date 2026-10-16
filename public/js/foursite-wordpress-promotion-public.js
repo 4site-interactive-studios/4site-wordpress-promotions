@@ -548,34 +548,37 @@ window.addEventListener("DOMContentLoaded", () => {
       modal_text_column.appendChild(modal_content);
     }
 
-    if (promotion.cta_1.label && promotion.cta_1.link) {
-      const modal_cta_button_1 = document.createElement("a");
-      modal_cta_button_1.classList.add("fs-cta-modal-button");
-      modal_cta_button_1.href = promotion.cta_1.link;
-      modal_cta_button_1.target = '_blank';
-      modal_cta_button_1.innerHTML = promotion.cta_1.label;
-      if (promotion.cta_1.bg_color) {
-        modal_cta_button_1.style.backgroundColor = promotion.cta_1.bg_color;
+    // Up to three buttons. Each carries its slot number, and the modal the
+    // number shown, so a promotion's CSS can style and arrange them.
+    let modal_cta_button_count = 0;
+    [promotion.cta_1, promotion.cta_2, promotion.cta_3].forEach((cta, index) => {
+      if (!cta || !cta.label || !cta.link) {
+        return;
       }
-      if (promotion.cta_1.fg_color) {
-        modal_cta_button_1.style.color = promotion.cta_1.fg_color;
+      const modal_cta_button = document.createElement("a");
+      modal_cta_button.classList.add("fs-cta-modal-button", "fs-cta-modal-button-" + (index + 1));
+      modal_cta_button.href = cta.link;
+      modal_cta_button.target = '_blank';
+      modal_cta_button.innerHTML = cta.label;
+      if (cta.bg_color) {
+        modal_cta_button.style.backgroundColor = cta.bg_color;
       }
-      modal_text_column.appendChild(modal_cta_button_1);
-    }
+      if (cta.fg_color) {
+        modal_cta_button.style.color = cta.fg_color;
+      }
+      modal_text_column.appendChild(modal_cta_button);
+      modal_cta_button_count++;
+    });
+    modal.classList.add("fs-cta-modal-buttons-" + modal_cta_button_count);
 
-    if (promotion.cta_2.label && promotion.cta_2.link) {
-      const modal_cta_button_2 = document.createElement("a");
-      modal_cta_button_2.classList.add("fs-cta-modal-button");
-      modal_cta_button_2.href = promotion.cta_2.link;
-      modal_cta_button_2.target = '_blank';
-      modal_cta_button_2.innerHTML = promotion.cta_2.label;
-      if (promotion.cta_2.bg_color) {
-        modal_cta_button_2.style.backgroundColor = promotion.cta_2.bg_color;
-      }
-      if (promotion.cta_2.fg_color) {
-        modal_cta_button_2.style.color = promotion.cta_2.fg_color;
-      }
-      modal_text_column.appendChild(modal_cta_button_2);
+    // Optional "Continue to the site" link under the buttons; closes the modal.
+    if (promotion.dismiss_link) {
+      const modal_dismiss_link = document.createElement("a");
+      modal_dismiss_link.classList.add("fs-cta-modal-dismiss-link");
+      modal_dismiss_link.href = "#";
+      modal_dismiss_link.textContent = "Continue to the site";
+      modal_text_column.appendChild(modal_dismiss_link);
+      modal.classList.add("fs-cta-modal-has-dismiss-link");
     }
 
     modal.appendChild(modal_text_column);
@@ -595,6 +598,15 @@ window.addEventListener("DOMContentLoaded", () => {
       modal_image_container.appendChild(modal_image);
 
       modal_image_column.appendChild(modal_image_container);
+
+      // Optional caption (e.g. a photo credit) over the image's lower-right corner.
+      if (promotion.image.caption) {
+        const modal_image_caption = document.createElement("div");
+        modal_image_caption.classList.add("fs-cta-modal-image-caption");
+        modal_image_caption.textContent = promotion.image.caption;
+        modal_image_column.appendChild(modal_image_caption);
+      }
+
       modal.appendChild(modal_image_column);
     }
 
@@ -653,6 +665,21 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       .fs-cta-modal-image-column {
         width: 50%;
+        position: relative;
+      }
+      .fs-cta-modal-image-caption {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        max-width: calc(100% - 16px);
+        box-sizing: border-box;
+        padding: 4px 8px;
+        border-radius: 100px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 12px;
+        line-height: 1.35;
+        pointer-events: none;
       }
       .fs-cta-modal-image-container {
         overflow: hidden;
@@ -681,6 +708,22 @@ window.addEventListener("DOMContentLoaded", () => {
       .fs-cta-modal-button:hover {
         text-decoration: none;
         opacity: 0.8;
+      }
+
+      .fs-cta-modal-dismiss-link {
+        display: block;
+        width: 100%;
+        color: inherit;
+        font-size: 14px;
+        font-style: italic;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .fs-cta-modal-dismiss-link:hover,
+      .fs-cta-modal-dismiss-link:focus {
+        color: inherit;
+        text-decoration: underline;
       }
 
       .fs-cta-modal-close-button {
@@ -821,6 +864,13 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     document.addEventListener('keydown', handleKeydown);
     document.querySelector('.fs-cta-modal-close-button').addEventListener('click', closeCtaModal);
+    const dismiss_link = document.querySelector('.fs-cta-modal-dismiss-link');
+    if (dismiss_link) {
+      dismiss_link.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeCtaModal();
+      });
+    }
     document.querySelector('.fs-cta-modal').addEventListener('click', clickWithinModal);
     document.querySelector('.fs-cta-modal-container').addEventListener('click', clickOutsideModal);
   }

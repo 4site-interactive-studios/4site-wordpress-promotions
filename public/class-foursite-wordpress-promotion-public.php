@@ -901,9 +901,17 @@ class Foursite_Wordpress_Promotion_Public
 				'bg_color' => $config['cta_2_bg_color'],
 				'fg_color' => $config['cta_2_fg_color']
 			],
+			'cta_3' => [
+				'label' => isset($config['cta_3_label']) ? $config['cta_3_label'] : '',
+				'link' => isset($config['cta_3_link']) ? $config['cta_3_link'] : '',
+				'bg_color' => isset($config['cta_3_bg_color']) ? $config['cta_3_bg_color'] : '',
+				'fg_color' => isset($config['cta_3_fg_color']) ? $config['cta_3_fg_color'] : ''
+			],
+			'dismiss_link' => !empty($config['dismiss_link']),
 			'image' => [
 				'url' => isset($config['image_file']['sizes']['large']) ? $config['image_file']['sizes']['large'] : '',
 				'alt' => isset($config['image_file']['alt']) ? $config['image_file']['alt'] : '',
+				'caption' => isset($config['image_caption']) ? trim((string) $config['image_caption']) : '',
 				'position' => $config['image_position'],
 				'bg_color' => $config['image_bg_color']
 			],
