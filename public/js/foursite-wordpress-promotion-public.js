@@ -31,6 +31,13 @@ window.addEventListener("DOMContentLoaded", () => {
   let time_triggered = [];
   let hide_floating_tab = false;
 
+  // The server sends promos in priority order, but each one launches when its own
+  // trigger fires, so a lower-priority lightbox with an earlier trigger would take
+  // the one-lightbox slot first. Timed lightboxes that haven't launched yet are
+  // tracked here, and a lower-priority lightbox is held back until they have.
+  let pending_timed_lightboxes = [];
+  let held_back_lightboxes = [];
+
   window.rawCodeTriggers = [];
 
   // Kick off ad-blocker detection once per page load; resolves to true/false.
@@ -79,6 +86,7 @@ window.addEventListener("DOMContentLoaded", () => {
       trigger = Number(trigger) * 1000;
     }
     client_side_triggered_config[i].trigger_type = trigger_type;
+    client_side_triggered_config[i].priority = i;
 
     switch (trigger_type) {
       case "exit":
@@ -104,6 +112,9 @@ window.addEventListener("DOMContentLoaded", () => {
           seconds: trigger,
           promo: client_side_triggered_config[i],
         });
+        if (isOneLightboxPromo(client_side_triggered_config[i])) {
+          pending_timed_lightboxes.push(client_side_triggered_config[i]);
+        }
         break;
       default:
         break;
@@ -271,6 +282,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function runAbTest(promotion) {
     if (!Array.isArray(promotion.variants) || promotion.variants.length === 0) {
+      settleTimedLightbox(promotion);
       return;
     }
     const variant = promotion.variants[Math.floor(Math.random() * promotion.variants.length)];
@@ -288,10 +300,78 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }).catch((error) => {
       console.error("Error during ad blocker detection for AB test promotion:", promotion, "Error:", error);
+    }).finally(() => {
+      // the AB test only takes its turn once its variant has launched
+      settleTimedLightbox(promotion);
     });
   }
 
+  // Promos limited to one per page, along with window.lightbox_triggered.
+  function isOneLightboxPromo(promotion) {
+    switch (promotion.promotion_type) {
+      case "multistep_lightbox":
+      case "signup_lightbox":
+      case "cta_lightbox":
+      case "email_capture_lightbox":
+      case "overlay":
+      case "video":
+      case "floating_signup":
+        return true;
+      case "raw_code":
+        return !!promotion.is_lightbox;
+      case "ab_test":
+        return (promotion.variants || []).some(
+          (variant) =>
+            (variant.promotion && isOneLightboxPromo(variant.promotion)) ||
+            (variant.ad_blocker_promotion && isOneLightboxPromo(variant.ad_blocker_promotion))
+        );
+      default:
+        return false;
+    }
+  }
+
+  // A JS-triggered promo is opened on purpose by code on the page, so it's never held back.
+  function isHeldBack(promotion) {
+    if (promotion.priority === undefined || promotion.trigger_type === "js") {
+      return false;
+    }
+    if (!isOneLightboxPromo(promotion)) {
+      return false;
+    }
+    return pending_timed_lightboxes.some(
+      (pending) => pending !== promotion && pending.priority < promotion.priority
+    );
+  }
+
+  // Once a timed lightbox has had its turn, retry the lightboxes held back for it.
+  // Each retry is either held back again (another higher-priority lightbox is still
+  // pending) or launched, where the one-lightbox check decides whether it shows.
+  function settleTimedLightbox(promotion) {
+    const idx = pending_timed_lightboxes.indexOf(promotion);
+    if (idx === -1) {
+      return;
+    }
+    pending_timed_lightboxes.splice(idx, 1);
+
+    const retries = held_back_lightboxes;
+    held_back_lightboxes = [];
+    retries.forEach((held) => launchPromotion(held));
+  }
+
   function launchPromotion(promotion) {
+    if (isHeldBack(promotion)) {
+      held_back_lightboxes.push(promotion);
+      return;
+    }
+
+    startPromotion(promotion);
+
+    if (promotion.promotion_type !== "ab_test") {
+      settleTimedLightbox(promotion);
+    }
+  }
+
+  function startPromotion(promotion) {
     switch (promotion.promotion_type) {
       case "cta_lightbox":
         if (window.lightbox_triggered) {
