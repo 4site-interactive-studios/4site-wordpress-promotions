@@ -1845,12 +1845,19 @@ window.addEventListener("DOMContentLoaded", () => {
   function ensureRecaptcha(siteKey) {
     if (recaptchaPromise) return recaptchaPromise;
     recaptchaPromise = new Promise((resolve, reject) => {
-      if (window.grecaptcha && window.grecaptcha.execute) {
+      // Another plugin (e.g. the Gravity Forms reCAPTCHA add-on) may already
+      // have loaded reCAPTCHA, but grecaptcha.execute only accepts keys that
+      // were passed to api.js as ?render=, so reuse it only for the same key.
+      const renderParam = "render=" + encodeURIComponent(siteKey);
+      const existing = Array.from(
+        document.querySelectorAll('script[src*="recaptcha/api.js"]')
+      ).some((tag) => tag.src.includes(renderParam));
+      if (existing && window.grecaptcha && window.grecaptcha.execute) {
         resolve();
         return;
       }
       const s = document.createElement("script");
-      s.src = "https://www.google.com/recaptcha/api.js?render=" + encodeURIComponent(siteKey);
+      s.src = "https://www.google.com/recaptcha/api.js?" + renderParam;
       s.async = true;
       s.onload = () => resolve();
       s.onerror = () => {
