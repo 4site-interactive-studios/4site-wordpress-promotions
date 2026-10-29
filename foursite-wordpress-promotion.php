@@ -16,7 +16,7 @@
  * Plugin Name:       4Site Promotions Plugin
  * Plugin URI:        https://www.4sitestudios.com/foursite-wordpress-promotion/
  * Description:       Add Foursite Wordpress Promotion Form to your WordPress site.
- * Version:           1.12.5
+ * Version:           1.12.6
  * Author:            4Site Studios
  * Author URI:        https://www.4sitestudios.com/
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( defined( 'foursite_wordpress_promotion_VERSION' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'foursite_wordpress_promotion_VERSION', '1.12.5' );
+define( 'foursite_wordpress_promotion_VERSION', '1.12.6' );
 
 /**
  * Suffix for enqueued asset filenames. Resolves to '' when SCRIPT_DEBUG is on so
@@ -347,9 +347,18 @@ function foursite_wordpress_promotion_fes_submit() {
                 'response' => $token
             ]
         ]);
+        if(is_wp_error($recaptcha_response)) {
+            return wp_send_json(['success' => false, 'error' => 'Recaptcha verification request failed: ' . $recaptcha_response->get_error_message()]);
+        }
         $recaptcha_response = json_decode(wp_remote_retrieve_body($recaptcha_response), true);
-        if(!$recaptcha_response['success'] || $recaptcha_response['score'] < 0.5) {
-            return wp_send_json(['success' => false, 'error' => 'Recaptcha validation failed.']);
+        if(empty($recaptcha_response['success'])) {
+            // Google's error codes (e.g. invalid-input-secret, timeout-or-duplicate)
+            // say why verification failed without exposing anything sensitive.
+            $error_codes = $recaptcha_response['error-codes'] ?? [];
+            return wp_send_json(['success' => false, 'error' => 'Recaptcha validation failed: ' . ($error_codes ? implode(', ', $error_codes) : 'no error code')]);
+        }
+        if(($recaptcha_response['score'] ?? 0) < 0.5) {
+            return wp_send_json(['success' => false, 'error' => 'Recaptcha score too low.']);
         }
     }
 
