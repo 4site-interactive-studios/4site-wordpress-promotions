@@ -305,11 +305,13 @@ class Foursite_Wordpress_Promotion_Public
 			// only on DOMContentLoaded), so it stays opt-in per client.
 			$main_deps = array();
 			if ($multistep_script_url && !$lazy_load_lightbox) {
-				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, false);
+				wp_enqueue_script('multistep-lightbox', $multistep_script_url, array(), $script_ver, array('strategy' => 'defer'));
 				$main_deps[] = 'multistep-lightbox';
 			}
 
-			wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, $main_deps, $script_ver, false);
+			// Deferred: the main script does its work on DOMContentLoaded, which
+			// deferred scripts still run before, in order.
+			wp_enqueue_script('foursite-wordpress-promotion-public', $main_script_url, $main_deps, $script_ver, array('strategy' => 'defer'));
 			wp_localize_script('foursite-wordpress-promotion-public', 'client_side_triggered_config', $client_side_triggered_config);
 
 			if ($multistep_script_url && $lazy_load_lightbox) {
@@ -484,10 +486,9 @@ class Foursite_Wordpress_Promotion_Public
 		$gravity_form_email_field_id = get_field('fes_gravity_form_email_field_id', $lightbox_id);
 		$fes_nonce = wp_create_nonce('fes_nonce');
 
+		// The public script loads reCAPTCHA on demand (on email focus or submit),
+		// so it isn't enqueued here.
 		$recaptcha_site_key = get_field('promotion_lightbox_recaptcha_site_key', 'options');
-		if ($recaptcha_site_key) {
-			wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js?render=' . $recaptcha_site_key);
-		}
 
 		return [
 			'id' => $lightbox_id,
