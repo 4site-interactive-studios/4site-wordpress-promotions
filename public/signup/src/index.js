@@ -19,7 +19,7 @@ window.launchENLightbox = function(options) {
     content += `<p>${options.paragraph}</p>`;
   }
 
-  content += `<iframe width='100%' scrolling='no' class='en-iframe ' src='${options.url}' frameborder='0' allowfullscreen='' style='display:none' allow='autoplay; encrypted-media; payment;'></iframe>`;
+  content += `<iframe width='100%' scrolling='no' class='en-iframe ' src='${options.url}' frameborder='0' allowfullscreen='' style='display:block;height:0;visibility:hidden' allow='autoplay; encrypted-media; payment;'></iframe>`;
 
   let footer = "";
   if(two_col_layout && options.footer) {
@@ -47,7 +47,7 @@ window.launchENLightbox = function(options) {
   const body = document.querySelector("body");
   body.insertAdjacentHTML("afterbegin",
     `
-      <div class="fs-signup-lightbox fs-signup-hidden ${layout_class}" style="display: flex;">
+      <div class="fs-signup-lightbox fs-signup-hidden ${layout_class}" style="display: flex; visibility: hidden;">
         <div class="fs-signup-container">
           <div class="fs-signup-lightbox-content">
             <div class="fs-signup-close-btn"></div>
@@ -69,11 +69,18 @@ window.launchENLightbox = function(options) {
   const lightBoxClose = document.querySelector(".fs-signup-close-btn");
   lightBoxClose && lightBoxClose.addEventListener("click", () => closeLightbox(lightbox));
 
-  setTimeout(function () {
+  // The lightbox stays invisible (and lets clicks through to the page) until
+  // the embedded form reports its height, so visitors never see an empty box
+  // while the form loads. If the form never loads, the lightbox never shows.
+  let revealed = false;
+  function revealLightbox() {
+    if (revealed) return;
+    revealed = true;
+    lightbox.style.visibility = "";
     lightbox.classList.remove("fs-signup-hidden");
     lightbox.classList.add("fs-signup-visible");
     body.style.overflow = "hidden";
-  }, 0);
+  }
 
   lightbox.addEventListener("transitionend", () => {
     if (lightbox.classList.contains("fs-signup-hidden")) {
@@ -102,10 +109,19 @@ window.launchENLightbox = function(options) {
     var iframe = getFrameByEvent(e);
     if (iframe) {        
       if (e.data.hasOwnProperty("frameHeight")) {
-        iframe.style.display = "block";
+        // The iframe starts hidden but laid out (height 0, visibility hidden)
+        // rather than display:none, so the embedded page can measure its real
+        // height on its first message. A display:none frame reports 0 and is
+        // loaded with lower priority, which kept the lightbox an empty bar.
         if (e.data.frameHeight) {
           iframe.style.height = `${e.data.frameHeight}px`;
+        } else if (iframe.style.visibility === "hidden") {
+          // No usable height before the first reveal: fall back to the
+          // browser's default iframe height instead of staying at 0.
+          iframe.style.height = "";
         }
+        iframe.style.visibility = "visible";
+        revealLightbox();
       } else if (e.data.hasOwnProperty("scroll") && e.data.scroll > 0) {
         const elDistanceToTop =
           window.pageYOffset + iframe.getBoundingClientRect().top;

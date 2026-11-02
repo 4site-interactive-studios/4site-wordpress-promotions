@@ -1837,6 +1837,39 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // reCAPTCHA v3 is only needed when a floating signup is submitted, so rather
+  // than loading it on every page we load it the first time a visitor focuses
+  // the signup's email field (or submits, if they never focused it).
+  let recaptchaPromise = null;
+
+  function ensureRecaptcha(siteKey) {
+    if (recaptchaPromise) return recaptchaPromise;
+    recaptchaPromise = new Promise((resolve, reject) => {
+      // Another plugin (e.g. the Gravity Forms reCAPTCHA add-on) may already
+      // have loaded reCAPTCHA, but grecaptcha.execute only accepts keys that
+      // were passed to api.js as ?render=, so reuse it only for the same key.
+      const renderParam = "render=" + encodeURIComponent(siteKey);
+      const existing = Array.from(
+        document.querySelectorAll('script[src*="recaptcha/api.js"]')
+      ).some((tag) => tag.src.includes(renderParam));
+      if (existing && window.grecaptcha && window.grecaptcha.execute) {
+        resolve();
+        return;
+      }
+      const s = document.createElement("script");
+      s.src = "https://www.google.com/recaptcha/api.js?" + renderParam;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => {
+        // allow a later focus/submit to try again
+        recaptchaPromise = null;
+        reject(new Error("Failed to load reCAPTCHA."));
+      };
+      document.head.appendChild(s);
+    });
+    return recaptchaPromise;
+  }
+
   async function floatingEmailSignupSubmit(form, token, promotion) {
     const email_input = form.querySelector('.fes-container__inner__form__email');
     const is_valid = validateEmail(email_input);
@@ -1916,11 +1949,15 @@ window.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const form = e.target.closest('.fes-container__inner__form');
       if(promotion.recaptcha) {
-        grecaptcha.ready(() => {
-          grecaptcha.execute(promotion.recaptcha, {action: 'submit'}).then(function(token) {       
-            floatingEmailSignupSubmit(form, token, promotion);
+        ensureRecaptcha(promotion.recaptcha).then(() => {
+          grecaptcha.ready(() => {
+            grecaptcha.execute(promotion.recaptcha, {action: 'submit'}).then(function(token) {
+              floatingEmailSignupSubmit(form, token, promotion);
+            });
           });
-        });  
+        }).catch((error) => {
+          console.error('Error submitting floating signup form', error);
+        });
       } else {
         floatingEmailSignupSubmit(form, null, promotion);
       }
@@ -1932,6 +1969,11 @@ window.addEventListener("DOMContentLoaded", () => {
     floating_signup_email.setAttribute("type", "email");
     floating_signup_email.setAttribute("name", "email");
     floating_signup_email.setAttribute("placeholder", "Email Address");
+    if(promotion.recaptcha) {
+      floating_signup_email.addEventListener("focus", () => {
+        ensureRecaptcha(promotion.recaptcha).catch((error) => console.error(error));
+      }, { once: true });
+    }
 
     const floating_signup_submit = document.createElement("button");
     floating_signup_submit.classList.add("fes-container__inner__form__submit");
